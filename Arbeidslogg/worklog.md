@@ -14,7 +14,5 @@
 - Inserted approved proposal.\
 - Added Word report draft.\
 - Set up GitHub workflow.\
-\
-Next step:\
-- Structure report sections.\
-}
+- Completed full introduction section in report.
+- Added background, research question, and scope clarification.
