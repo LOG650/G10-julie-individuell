@@ -16,3 +16,16 @@
 - Set up GitHub workflow.\
 - Completed full introduction section in report.
 - Added background, research question, and scope clarification.
+  
+## 25.02.2026
+
+- Simulated dataset for PSV vessels (historical on-hire / off-hire periods).
+- Defined assumptions behind simulation (technical failure vs. market unavailability).
+- Structured dataset variables for further quantitative analysis.
+- Drafted literature review section in report.
+- Identified recent contributions related to AI-based forecasting in logistics.
+
+Next step:
+- Refine literature review with proper academic references.
+- Define forecasting models to test (e.g., ARIMA vs. ML-based models).
+- Prepare dataset for preprocessing. 
