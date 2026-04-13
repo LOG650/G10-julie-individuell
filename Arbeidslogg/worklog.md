@@ -35,6 +35,9 @@
 - Tested the models on the anonymized dataset currently available in the repository.
 - Confirmed that Exponential Smoothing, XGBoost, and LSTM run on the current dataset, while SARIMA is not methodologically defensible yet because the time series is too short for a seasonal monthly model.
 - Cleaned up the Git worktree, moved only the necessary modeling files into version control, and pushed the changes to GitHub.
+- Structured the modeling folder so each model now has separate code and result logs for systematic documentation.
+- Added automatic generation of model-specific result files and a combined comparison file to support the final report writing.
+- Included the anonymized dataset, generated modeling outputs, and documentation files in the repository so the full workflow is traceable for delivery.
 
 Next step:
 - Continue writing the method, data, and modeling chapters so they reflect the implemented pipeline and the actual dataset limitations.
