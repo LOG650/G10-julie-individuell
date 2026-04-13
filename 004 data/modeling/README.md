@@ -40,6 +40,19 @@ python '004 data/modeling/run_models.py'
 ```
 
 Skriptet skriver resultater til `004 data/modeling/results/`.
+I tillegg skriver det modellspesifikke dokumenter til `004 data/modeling/model_logs/`.
+
+## Versjonering
+
+For leveransen skal følgende under `004 data/` ligge i Git:
+
+- den anonymiserte CSV-filen som brukes som datagrunnlag
+- modelleringskode og avhengigheter i `004 data/modeling/`
+- genererte resultater i `004 data/modeling/results/`
+- modellspesifikke kode- og resultatlogger i `004 data/modeling/model_logs/`
+- en samlet sammenligningsfil i `004 data/modeling/model_logs/Modellsammenligning.md`
+
+Dette gjør at både datagrunnlag, kode og siste kjørte modellresultater kan spores og leveres samlet.
 
 ## Utdata
 
@@ -47,5 +60,19 @@ Skriptet lager:
 
 - `004 data/modeling/results/metrics.json`
 - `004 data/modeling/results/predictions.csv`
+- `004 data/modeling/results/sarima_metrics.json`
+- `004 data/modeling/results/exponential_smoothing_metrics.json`
+- `004 data/modeling/results/xgboost_metrics.json`
+- `004 data/modeling/results/lstm_metrics.json`
+- `004 data/modeling/results/<modell>_predictions.csv` for modeller som faktisk produserer prediksjoner
+- `004 data/modeling/model_logs/SARIMA kode.md`
+- `004 data/modeling/model_logs/SARIMA resultater.md`
+- `004 data/modeling/model_logs/Eksponentiell glatting kode.md`
+- `004 data/modeling/model_logs/Eksponentiell glatting resultater.md`
+- `004 data/modeling/model_logs/XGBoost kode.md`
+- `004 data/modeling/model_logs/XGBoost resultater.md`
+- `004 data/modeling/model_logs/LSTM kode.md`
+- `004 data/modeling/model_logs/LSTM resultater.md`
+- `004 data/modeling/model_logs/Modellsammenligning.md`
 
 I tillegg skriver det en kort oppsummering til terminalen om hvilke modeller som ble kjørt, og hvilke som eventuelt ble hoppet over på grunn av datamengde.

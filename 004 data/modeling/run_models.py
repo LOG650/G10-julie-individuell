@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import inspect
 import json
 import os
 import warnings
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -32,6 +34,8 @@ warnings.filterwarnings(
 ROOT = Path(__file__).resolve().parents[2]
 DATA_PATH = ROOT / "004 data" / "Data som skal brukes Anonymisert.csv"
 RESULTS_DIR = Path(__file__).resolve().parent / "results"
+MODEL_LOG_DIR = Path(__file__).resolve().parent / "model_logs"
+COMPARISON_LOG_PATH = MODEL_LOG_DIR / "Modellsammenligning.md"
 
 MONTH_ORDER = {
     "Januar": 1,
@@ -49,6 +53,25 @@ MONTH_ORDER = {
 }
 MONTH_COLUMNS = list(MONTH_ORDER.keys())
 SYNTHETIC_YEAR = 2025
+
+MODEL_METADATA = {
+    "sarima": {
+        "display_name": "SARIMA",
+        "function_name": "run_sarima",
+    },
+    "exponential_smoothing": {
+        "display_name": "Eksponentiell glatting",
+        "function_name": "run_exponential_smoothing",
+    },
+    "xgboost": {
+        "display_name": "XGBoost",
+        "function_name": "run_xgboost",
+    },
+    "lstm": {
+        "display_name": "LSTM",
+        "function_name": "run_lstm",
+    },
+}
 
 
 @dataclass
@@ -70,6 +93,292 @@ def rmse(y_true: np.ndarray, y_pred: np.ndarray) -> float:
 
 def ensure_results_dir() -> None:
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    MODEL_LOG_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def format_markdown_value(value: Any) -> str:
+    if pd.isna(value):
+        return ""
+    if isinstance(value, (float, np.floating)):
+        return f"{float(value):.4f}"
+    return str(value).replace("|", "\\|")
+
+
+def dataframe_to_markdown(df: pd.DataFrame, max_rows: int = 10) -> str:
+    if df.empty:
+        return "_Ingen prediksjoner lagret for denne modellen._"
+
+    preview = df.head(max_rows).copy()
+    headers = preview.columns.tolist()
+    lines = [
+        "| " + " | ".join(headers) + " |",
+        "| " + " | ".join(["---"] * len(headers)) + " |",
+    ]
+    for _, row in preview.iterrows():
+        values = [format_markdown_value(row[column]) for column in headers]
+        lines.append("| " + " | ".join(values) + " |")
+    return "\n".join(lines)
+
+
+def write_model_code_log(model_name: str) -> None:
+    metadata = MODEL_METADATA[model_name]
+    function_name = metadata["function_name"]
+    function_source = inspect.getsource(globals()[function_name]).rstrip()
+    file_path = MODEL_LOG_DIR / f"{metadata['display_name']} kode.md"
+    content = (
+        f"# {metadata['display_name']} kode\n\n"
+        "Dette dokumentet genereres automatisk fra den aktive implementasjonen i "
+        "`004 data/modeling/run_models.py`.\n\n"
+        f"- Modell: `{model_name}`\n"
+        f"- Funksjon: `{function_name}`\n\n"
+        "```python\n"
+        f"{function_source}\n"
+        "```\n"
+    )
+    file_path.write_text(content, encoding="utf-8")
+
+
+def write_model_result_log(
+    result: ModelResult,
+    pred_df: pd.DataFrame,
+    generated_at: str,
+) -> None:
+    metadata = MODEL_METADATA[result.model]
+    file_path = MODEL_LOG_DIR / f"{metadata['display_name']} resultater.md"
+    details_json = json.dumps(result.details or {}, indent=2, ensure_ascii=False)
+    predictions_preview = dataframe_to_markdown(pred_df)
+    content_lines = [
+        f"# {metadata['display_name']} resultater",
+        "",
+        "Dette dokumentet genereres automatisk ved hver kjøring av "
+        "`004 data/modeling/run_models.py`.",
+        "",
+        f"- Sist generert: `{generated_at}`",
+        f"- Status: `{result.status}`",
+        (
+            f"- MAE: `{result.mae:.4f}`"
+            if result.mae is not None
+            else "- MAE: `ikke tilgjengelig`"
+        ),
+        (
+            f"- RMSE: `{result.rmse:.4f}`"
+            if result.rmse is not None
+            else "- RMSE: `ikke tilgjengelig`"
+        ),
+        "",
+        "## Detaljer",
+        "",
+        "```json",
+        details_json,
+        "```",
+        "",
+        "## Prediksjoner",
+        "",
+        predictions_preview,
+    ]
+    if not pred_df.empty and len(pred_df) > 10:
+        content_lines.extend(
+            [
+                "",
+                f"Viser de første 10 av totalt {len(pred_df)} prediksjonsrader.",
+            ]
+        )
+    file_path.write_text("\n".join(content_lines) + "\n", encoding="utf-8")
+
+
+def format_metric(value: float | None) -> str:
+    if value is None:
+        return "ikke tilgjengelig"
+    return f"{value:.4f}"
+
+
+def summarize_result_details(result: ModelResult) -> str:
+    details = result.details or {}
+    if result.status != "ok":
+        return str(details.get("reason", "")).replace("|", "\\|")
+
+    if result.model == "exponential_smoothing" and "vessels_used" in details:
+        return f"Fartøy brukt: {details['vessels_used']}"
+    if result.model == "xgboost":
+        return (
+            f"Train/Test-rader: {details.get('train_rows', 'ukjent')}/"
+            f"{details.get('test_rows', 'ukjent')}"
+        )
+    if result.model == "lstm":
+        return (
+            f"Train/Test-sekvenser: {details.get('train_sequences', 'ukjent')}/"
+            f"{details.get('test_sequences', 'ukjent')}"
+        )
+    if result.model == "sarima" and "series_type" in details:
+        return f"Serie: {details['series_type']}"
+    return ""
+
+
+def write_model_comparison_log(results: list[ModelResult], generated_at: str) -> None:
+    sorted_results = sorted(
+        results,
+        key=lambda result: (
+            result.status != "ok",
+            float("inf") if result.mae is None else result.mae,
+            MODEL_METADATA[result.model]["display_name"],
+        ),
+    )
+    successful_results = [
+        result
+        for result in sorted_results
+        if result.status == "ok" and result.mae is not None and result.rmse is not None
+    ]
+    skipped_or_failed = [
+        result for result in sorted_results if result.status in {"skipped", "failed"}
+    ]
+
+    content_lines = [
+        "# Modellsammenligning",
+        "",
+        "Dette dokumentet oppsummerer siste kjøring av alle modellene og er ment som "
+        "arbeidsgrunnlag for metode-, analyse- og diskusjonsdelen i rapporten.",
+        "",
+        f"- Sist generert: `{generated_at}`",
+        "",
+        "## Samlet oversikt",
+        "",
+        "| Modell | Status | MAE | RMSE | Kommentar |",
+        "| --- | --- | --- | --- | --- |",
+    ]
+
+    for result in sorted_results:
+        display_name = MODEL_METADATA[result.model]["display_name"]
+        detail_summary = summarize_result_details(result) or "-"
+        content_lines.append(
+            "| "
+            + " | ".join(
+                [
+                    display_name,
+                    result.status,
+                    format_metric(result.mae),
+                    format_metric(result.rmse),
+                    detail_summary,
+                ]
+            )
+            + " |"
+        )
+
+    content_lines.extend(
+        [
+            "",
+            "## Lenker til detaljfiler",
+            "",
+        ]
+    )
+    for model_name in MODEL_METADATA:
+        display_name = MODEL_METADATA[model_name]["display_name"]
+        content_lines.append(
+            f"- [{display_name} kode]({display_name} kode.md) og "
+            f"[{display_name} resultater]({display_name} resultater.md)"
+        )
+
+    content_lines.extend(
+        [
+            "",
+            "## Rangering basert på MAE",
+            "",
+        ]
+    )
+    if successful_results:
+        for index, result in enumerate(successful_results, start=1):
+            display_name = MODEL_METADATA[result.model]["display_name"]
+            content_lines.append(
+                f"{index}. {display_name} med MAE {result.mae:.4f} og RMSE {result.rmse:.4f}"
+            )
+    else:
+        content_lines.append("Ingen modeller med fullførte resultater i siste kjøring.")
+
+    content_lines.extend(
+        [
+            "",
+            "## Hovedfunn",
+            "",
+        ]
+    )
+    if successful_results:
+        best_mae = min(successful_results, key=lambda result: result.mae or float("inf"))
+        best_rmse = min(successful_results, key=lambda result: result.rmse or float("inf"))
+        content_lines.append(
+            f"- Lavest MAE i siste kjøring: `{MODEL_METADATA[best_mae.model]['display_name']}` "
+            f"({best_mae.mae:.4f})."
+        )
+        content_lines.append(
+            f"- Lavest RMSE i siste kjøring: `{MODEL_METADATA[best_rmse.model]['display_name']}` "
+            f"({best_rmse.rmse:.4f})."
+        )
+    else:
+        content_lines.append("- Ingen modeller produserte komplette metrikker i siste kjøring.")
+
+    if skipped_or_failed:
+        for result in skipped_or_failed:
+            display_name = MODEL_METADATA[result.model]["display_name"]
+            reason = (result.details or {}).get("reason", "Ingen detalj oppgitt.")
+            content_lines.append(f"- `{display_name}` ble {result.status} i siste kjøring: {reason}")
+
+    content_lines.extend(
+        [
+            "- Resultatene må tolkes som foreløpige fordi datasettet per nå bare dekker 9 måneder.",
+            "",
+            "## Notater Til Rapport",
+            "",
+            "- Bruk tabellen over direkte som grunnlag for sammenligning av modellprestasjon.",
+            "- Beskriv at SARIMA ikke kunne evalueres faglig forsvarlig med dagens tidsdybde.",
+            "- Diskuter om lav MAE alene er nok, eller om modellens tolkbarhet og datakrav også bør vektlegges.",
+        ]
+    )
+
+    COMPARISON_LOG_PATH.write_text("\n".join(content_lines) + "\n", encoding="utf-8")
+
+
+def save_model_specific_outputs(
+    results: list[ModelResult],
+    prediction_frames: dict[str, pd.DataFrame],
+) -> None:
+    generated_at = datetime.now().isoformat(timespec="seconds")
+    for model_name in MODEL_METADATA:
+        write_model_code_log(model_name)
+
+        metrics_path = RESULTS_DIR / f"{model_name}_metrics.json"
+        predictions_path = RESULTS_DIR / f"{model_name}_predictions.csv"
+
+        result = next((item for item in results if item.model == model_name), None)
+        pred_df = prediction_frames.get(model_name, pd.DataFrame())
+
+        if result is None:
+            write_model_result_log(
+                ModelResult(model=model_name, status="not_run", details={}),
+                pred_df,
+                generated_at,
+            )
+            metrics_path.unlink(missing_ok=True)
+            predictions_path.unlink(missing_ok=True)
+            continue
+
+        metrics_payload = {
+            "model": result.model,
+            "status": result.status,
+            "mae": result.mae,
+            "rmse": result.rmse,
+            "details": result.details or {},
+        }
+        metrics_path.write_text(
+            json.dumps(metrics_payload, indent=2, ensure_ascii=False),
+            encoding="utf-8",
+        )
+
+        if pred_df.empty:
+            predictions_path.unlink(missing_ok=True)
+        else:
+            pred_df.to_csv(predictions_path, index=False)
+
+        write_model_result_log(result, pred_df, generated_at)
+
+    write_model_comparison_log(results, generated_at)
 
 
 def load_dataset() -> pd.DataFrame:
@@ -471,7 +780,10 @@ def run_lstm(panel_df: pd.DataFrame) -> tuple[ModelResult, pd.DataFrame]:
     return metrics, pred_df
 
 
-def save_outputs(results: list[ModelResult], prediction_frames: list[pd.DataFrame]) -> None:
+def save_outputs(
+    results: list[ModelResult],
+    prediction_frames: dict[str, pd.DataFrame],
+) -> None:
     metrics_payload = [
         {
             "model": result.model,
@@ -487,7 +799,9 @@ def save_outputs(results: list[ModelResult], prediction_frames: list[pd.DataFram
         encoding="utf-8",
     )
 
-    non_empty_frames = [frame for frame in prediction_frames if not frame.empty]
+    save_model_specific_outputs(results, prediction_frames)
+
+    non_empty_frames = [frame for frame in prediction_frames.values() if not frame.empty]
     if non_empty_frames:
         combined = pd.concat(
             non_empty_frames,
@@ -495,6 +809,8 @@ def save_outputs(results: list[ModelResult], prediction_frames: list[pd.DataFram
         )
         if not combined.empty:
             combined.to_csv(RESULTS_DIR / "predictions.csv", index=False)
+    else:
+        (RESULTS_DIR / "predictions.csv").unlink(missing_ok=True)
 
 
 def main() -> None:
@@ -502,7 +818,7 @@ def main() -> None:
     panel_df = load_dataset()
 
     results: list[ModelResult] = []
-    prediction_frames: list[pd.DataFrame] = []
+    prediction_frames: dict[str, pd.DataFrame] = {}
 
     features_df = build_panel_features(panel_df, lags=3)
 
@@ -517,7 +833,7 @@ def main() -> None:
         try:
             result, pred_df = runner()
             results.append(result)
-            prediction_frames.append(pred_df)
+            prediction_frames[model_name] = pred_df
         except DataTooShortError as exc:
             results.append(
                 ModelResult(

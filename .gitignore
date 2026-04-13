@@ -15,14 +15,8 @@ __pycache__/
 # Jupyter
 .ipynb_checkpoints/
 
-# Modeling outputs
-004 data/modeling/results/
-
 # Local reference library
 003 references/*.pdf
-
-# Local working data
-004 data/Data som skal brukes Anonymisert.csv
 
 # Local report working files
 014 fase 4 - report/Rapport.docx

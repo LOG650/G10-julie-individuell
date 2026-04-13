@@ -1,0 +1,10 @@
+{
+  "model": "sarima",
+  "status": "skipped",
+  "mae": null,
+  "rmse": null,
+  "details": {
+    "reason": "SARIMA ble ikke kjørt fordi dataserien er for kort for en forsvarlig månedlig sesongmodell. Minst 24 observasjoner anbefales.",
+    "observations": 9
+  }
+}
