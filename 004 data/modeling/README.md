@@ -61,8 +61,12 @@ Generer først eksplisitte train/test-filer:
 python '004 data/modeling/generate_train_test_split.py'
 ```
 
-I denne fasen kjøres bare `Eksponentiell glatting` fullt ut i standardskriptet.
-De andre modellene beholdes i koden, men brukes ikke i standardkjøringen før vi eksplisitt velger dem senere.
+Standardskriptet kjører nå alle fire modellene:
+
+- `SARIMA`
+- `Eksponentiell glatting`
+- `XGBoost`
+- `LSTM`
 
 ```bash
 python '004 data/modeling/run_models.py'
@@ -95,8 +99,17 @@ Skriptet lager:
 - `004 data/modeling/models/<modell>/metrics.json`
 - `004 data/modeling/models/<modell>/predictions.csv`
 - `004 data/modeling/models/<modell>/future_predictions.csv`
+- `004 data/modeling/models/<modell>/metode.md`
 - `004 data/modeling/models/<modell>/kode.md`
 - `004 data/modeling/models/<modell>/resultater.md`
 - `004 data/modeling/model_logs/Modellsammenligning.md`
+
+For `SARIMA` genereres det i tillegg Box-Jenkins-artefakter:
+
+- `004 data/modeling/models/SARIMA/stasjonaritet.csv`
+- `004 data/modeling/models/SARIMA/kandidatmodeller.csv`
+- `004 data/modeling/models/SARIMA/acf.png`
+- `004 data/modeling/models/SARIMA/pacf.png`
+- `004 data/modeling/models/SARIMA/residualdiagnostikk.png`
 
 I tillegg skriver det en kort oppsummering til terminalen om hvilke modeller som ble kjørt, og hvilke som eventuelt ble hoppet over på grunn av datamengde.

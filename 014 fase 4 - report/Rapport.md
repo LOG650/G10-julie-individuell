@@ -332,6 +332,54 @@ Heatmapet viser at offhire i liten grad er jevnt fordelt mellom fartøyene. Enke
 
 I modelleringsoppsettet skilles det mellom historisk evaluering og endelig prognose. Under evaluering trenes modellene på treningssettet fra april 2021 til desember 2024 og testes deretter på perioden januar 2025 til mars 2026. Etter at modellens ytelse er evaluert på denne splitten, brukes hele datasettet fram til mars 2026 som grunnlag for å lage prognoser for april og mai 2026. Dette gjør at evalueringen og den endelige forecasten holdes metodisk adskilt.
 
+For å strukturere modelleringsarbeidet brukes en stegvis tilnærming inspirert av forelesningens gjennomgang av Box-Jenkins-metoden. De samme hovedstegene brukes som ramme for alle modellene, men innholdet i stegene er tilpasset den enkelte modelltypen. Detaljerte figurer, diagnostiske plott og tekniske artefakter er lagret i repoet under `004 data/modeling/models/`, mens hovedteksten nedenfor oppsummerer de viktigste metodiske valgene.
+
+## SARIMA
+
+`SARIMA` er den modellen som ligger nærmest den klassiske Box-Jenkins-tilnærmingen og behandles derfor mest eksplisitt gjennom de seks stegene. Analysen gjennomføres på flåtenivå ved å aggregere månedlig offhire på tvers av fartøyene. Dette er gjort fordi en samlet serie gir et mer stabilt grunnlag for klassisk tidsserieanalyse enn de enkelte fartøyseriene, som ofte er korte og svært nulltunge.
+
+1. Datainnsamling: Det bygges en aggregert månedlig flåteserie fra treningsperioden april 2021 til desember 2024.
+2. Stasjonaritet: Serien testes for stasjonaritet, og differensiering vurderes før endelig modellvalg.
+3. ACF- og PACF-analyse: Autokorrelasjonsstruktur brukes til å identifisere kandidatmodeller.
+4. Modellestimering: Flere SARIMA-kandidater estimeres, og endelig modell velges på bakgrunn av informasjonskriterier og faglig rimelighet.
+5. Modellvalidering: Residualdiagnostikk kombineres med evaluering på testperioden januar 2025 til mars 2026.
+6. Prognose: Den valgte modellen refittes på hele historikken før prognoser for april og mai 2026 genereres.
+
+## Eksponentiell glatting
+
+Eksponentiell glatting brukes som en tradisjonell og relativt transparent baseline på fartøynivå. Modellen er særlig relevant fordi den kan håndtere nivå og eventuell trend uten at det kreves like omfattende identifikasjonssteg som i en SARIMA-modell.
+
+1. Datainnsamling: Det bygges separate månedlige tidsserier for hvert fartøy.
+2. Mønsteranalyse: Seriene vurderes som korte, ujevne og dominert av mange nullperioder.
+3. Modellspesifikasjon: Det velges en ikke-sesongbasert glattemodell per fartøy, mens additiv trend bare aktiveres når historikken er lang nok og ikke konstant.
+4. Modellestimering: Hver fartøysserie estimeres på treningsperioden.
+5. Modellvalidering: Modellen testes på holdout-perioden med én-stegs prediksjoner gjennom testvinduet.
+6. Prognose: Etter evaluering brukes full historikk til å lage prognoser for april og mai 2026.
+
+## XGBoost
+
+`XGBoost` representerer den trebaserte maskinlæringstilnærmingen i studien. I motsetning til de klassiske tidsseriemodellene bygger denne modellen på et eksplisitt feature-set, der historikk og kalendereffekter omformes til forklaringsvariabler.
+
+1. Datainnsamling: Rådataene omformes til paneldata med én observasjon per fartøy og måned.
+2. Featureanalyse: Tidligere offhire-verdier, rullerende statistikk, månedssyklus, fartøy-ID og spesielle behov brukes som inputvariabler.
+3. Modellspesifikasjon: Modellen settes opp med et fast utvalg hyperparametre og samme feature-set for hele datasettet.
+4. Modellestimering: XGBoost trenes på treningssettet etter feature engineering.
+5. Modellvalidering: Prediksjonsfeil vurderes på testperioden med samme metrikker som de øvrige modellene.
+6. Prognose: Prognoser for april og mai 2026 genereres rekursivt ved at predikerte verdier brukes som nye lags.
+
+## LSTM
+
+`LSTM` representerer den sekvensbaserte dyp læringsmodellen i studien. Modellen er inkludert fordi den i teorien kan fange opp mer komplekse og ikke-lineære tidsavhengigheter enn både klassiske tidsseriemodeller og trebaserte metoder.
+
+1. Datainnsamling: Historikken per fartøy bygges om til sekvenser av tidligere observasjoner.
+2. Sekvensanalyse: Modellen bruker de tre siste tidsstegene sammen med månedssyklus og informasjon om spesielle behov som input.
+3. Modellspesifikasjon: Det velges en LSTM-arkitektur med ett tilbakekoblet lag og ett tett skjult lag, kombinert med skalering av input og målvariabel.
+4. Modellestimering: Nettverket trenes på treningssekvensene med tidlig stopping når valideringssplit er tilgjengelig.
+5. Modellvalidering: Ytelsen måles på testperioden med samme evalueringsmål som for de øvrige modellene.
+6. Prognose: Etter evaluering brukes full historikk til å generere sekvensielle prognoser for april og mai 2026.
+
+Denne stegdelingen gjør at alle modellene kan presenteres innenfor en felles metodisk ramme, samtidig som de viktige forskjellene mellom klassisk tidsserieanalyse, glattemodeller, trebasert maskinlæring og sekvensbasert dyp læring kommer tydelig fram. I hovedteksten er formålet å gi en konsis modellbeskrivelse, mens detaljerte diagnostiske resultater og modellartefakter legges i repoet og kan brukes som vedleggsmateriale i den endelige oppgaven.
+
 # Analyse
 
 Den deskriptive analysen av de historiske dataene brukes her for å identifisere mønstre i nivå, spredning og variasjon mellom fartøyene før selve modelleringen vurderes. Formålet i denne delen er derfor ikke å evaluere prognosemodeller, men å forstå hvilke trekk i datasettet som senere kan påvirke valg av modell og tolkning av prediksjonsresultater.

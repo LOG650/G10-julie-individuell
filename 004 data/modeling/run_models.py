@@ -4,21 +4,34 @@ import inspect
 import json
 import os
 import re
+import tempfile
 import warnings
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+os.environ.setdefault(
+    "MPLCONFIGDIR",
+    str(Path(tempfile.gettempdir()) / "g10-julie-individuell-matplotlib"),
+)
+
+import matplotlib
 import numpy as np
 import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+from statsmodels.stats.diagnostic import acorr_ljungbox
 from statsmodels.tools.sm_exceptions import ConvergenceWarning
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
 from statsmodels.tsa.statespace.sarimax import SARIMAX
+from statsmodels.tsa.stattools import adfuller
+
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 
 warnings.filterwarnings(
     "ignore",
@@ -79,7 +92,7 @@ MODEL_METADATA = {
         "function_name": "run_lstm",
     },
 }
-ACTIVE_MODELS = ["exponential_smoothing"]
+ACTIVE_MODELS = ["sarima", "exponential_smoothing", "xgboost", "lstm"]
 
 
 @dataclass
@@ -162,6 +175,53 @@ def dataframe_to_markdown(
     return "\n".join(lines)
 
 
+def write_dataframe_artifacts(df: pd.DataFrame, csv_path: Path, markdown_title: str) -> None:
+    if df.empty:
+        csv_path.unlink(missing_ok=True)
+        csv_path.with_suffix(".md").unlink(missing_ok=True)
+        return
+
+    csv_path.parent.mkdir(parents=True, exist_ok=True)
+    df.to_csv(csv_path, index=False)
+    markdown_content = [
+        f"# {markdown_title}",
+        "",
+        dataframe_to_markdown(df, max_rows=len(df)),
+        "",
+    ]
+    csv_path.with_suffix(".md").write_text("\n".join(markdown_content), encoding="utf-8")
+
+
+def model_method_path(model_name: str) -> Path:
+    return model_artifact_path(model_name, "metode.md")
+
+
+def model_extra_artifact_paths(model_name: str) -> list[Path]:
+    paths = [model_method_path(model_name)]
+    if model_name == "sarima":
+        paths.extend(
+            [
+                model_artifact_path(model_name, "stasjonaritet.csv"),
+                model_artifact_path(model_name, "stasjonaritet.md"),
+                model_artifact_path(model_name, "kandidatmodeller.csv"),
+                model_artifact_path(model_name, "kandidatmodeller.md"),
+                model_artifact_path(model_name, "acf.png"),
+                model_artifact_path(model_name, "pacf.png"),
+                model_artifact_path(model_name, "residualdiagnostikk.png"),
+            ]
+        )
+    return paths
+
+
+def cleanup_extra_artifacts(model_name: str) -> None:
+    for artifact_path in model_extra_artifact_paths(model_name):
+        artifact_path.unlink(missing_ok=True)
+
+
+def format_order_tuple(values: tuple[int, ...]) -> str:
+    return "(" + ", ".join(str(value) for value in values) + ")"
+
+
 def write_model_code_log(model_name: str) -> None:
     metadata = MODEL_METADATA[model_name]
     function_name = metadata["function_name"]
@@ -179,6 +239,199 @@ def write_model_code_log(model_name: str) -> None:
         "```\n"
     )
     file_path.write_text(content, encoding="utf-8")
+
+
+def write_model_method_log(result: ModelResult) -> None:
+    metadata = MODEL_METADATA[result.model]
+    details = result.details or {}
+    file_path = model_method_path(result.model)
+    file_path.parent.mkdir(parents=True, exist_ok=True)
+
+    header_lines = [
+        f"# {metadata['display_name']} metode",
+        "",
+        f"- Modell: `{result.model}`",
+        f"- Evalueringsnivå: `{details.get('evaluation_level', 'ikke oppgitt')}`",
+        f"- Train: `{details.get('evaluation_train_period', 'ikke oppgitt')}`",
+        f"- Test: `{details.get('evaluation_test_period', 'ikke oppgitt')}`",
+        "",
+    ]
+
+    step_lines: list[str]
+    if result.status != "ok":
+        step_lines = [
+            "## Status",
+            "",
+            f"Modellen ble ikke fullført i siste kjøring. Årsak: `{details.get('reason', 'ukjent')}`.",
+        ]
+        file_path.write_text("\n".join(header_lines + step_lines) + "\n", encoding="utf-8")
+        return
+
+    if result.model == "sarima":
+        selected_order = details.get("selected_order", {})
+        seasonal_order = details.get("selected_seasonal_order", {})
+        step_lines = [
+            "## Steg 1. Datagrunnlag",
+            "",
+            (
+                "Aggregert månedlig flåteserie bygget fra train-settet. "
+                f"Train-serien dekker `{details.get('evaluation_train_period', 'ukjent')}`."
+            ),
+            "",
+            "## Steg 2. Stasjonaritet",
+            "",
+            (
+                "Stasjonaritet ble vurdert med ADF-test på originalserie og differensierte serier. "
+                f"Valgt differensiering: `d={details.get('selected_d', 'ukjent')}`, "
+                f"`D={details.get('selected_D', 'ukjent')}`."
+            ),
+            "",
+            "## Steg 3. ACF- og PACF-analyse",
+            "",
+            (
+                "ACF og PACF ble brukt på den valgte stasjonære serien for å identifisere "
+                "kandidatmodeller. Se `acf.png`, `pacf.png` og `kandidatmodeller.md`."
+            ),
+            "",
+            "## Steg 4. Modellestimering",
+            "",
+            (
+                "Kandidatmodeller ble estimert og rangert med AIC. "
+                f"Valgt modell: `{format_order_tuple(tuple(selected_order.values()))}` x "
+                f"`{format_order_tuple(tuple(seasonal_order.values()) + (12,))}`."
+            ),
+            "",
+            "## Steg 5. Modellvalidering",
+            "",
+            (
+                "Residualdiagnostikk ble gjennomført med residualplott og Ljung-Box-test, "
+                f"og modellen ble deretter evaluert på holdout-perioden med "
+                f"`MAE={format_metric(result.mae)}` og `RMSE={format_metric(result.rmse)}`."
+            ),
+            "",
+            "## Steg 6. Prognose",
+            "",
+            (
+                "Endelig prognose for april og mai 2026 ble laget ved å refitte valgt modell "
+                "på full historikk til og med mars 2026."
+            ),
+            "",
+            "## Repo-artefakter",
+            "",
+            "- `stasjonaritet.md`",
+            "- `kandidatmodeller.md`",
+            "- `acf.png`",
+            "- `pacf.png`",
+            "- `residualdiagnostikk.png`",
+        ]
+    elif result.model == "exponential_smoothing":
+        step_lines = [
+            "## Steg 1. Datagrunnlag",
+            "",
+            "Egne månedlige tidsserier per fartøy bygget fra train-settet.",
+            "",
+            "## Steg 2. Mønsteranalyse",
+            "",
+            (
+                "Seriene ble vurdert som korte, nulltunge og ujevne. Det ble derfor ikke brukt "
+                "egen sesongkomponent i modellen."
+            ),
+            "",
+            "## Steg 3. Modellspesifikasjon",
+            "",
+            (
+                "Det ble brukt ikke-sesongbasert eksponentiell glatting per fartøy. "
+                "Additiv trend ble bare aktivert når train-serien hadde minst 5 observasjoner "
+                "og mer enn én unik verdi."
+            ),
+            "",
+            "## Steg 4. Modellestimering",
+            "",
+            "Hver fartøysserie ble estimert separat på train-settet.",
+            "",
+            "## Steg 5. Modellvalidering",
+            "",
+            (
+                "Modellen ble evaluert med ekspanderende 1-stegs prognoser gjennom testperioden. "
+                f"Resultat: `MAE={format_metric(result.mae)}` og `RMSE={format_metric(result.rmse)}`."
+            ),
+            "",
+            "## Steg 6. Prognose",
+            "",
+            "Prognose for april og mai 2026 ble laget per fartøy på full historikk til og med mars 2026.",
+        ]
+    elif result.model == "xgboost":
+        step_lines = [
+            "## Steg 1. Datagrunnlag",
+            "",
+            "Paneldata med én rad per fartøy og måned, bygget fra train/test-splittet.",
+            "",
+            "## Steg 2. Featureanalyse",
+            "",
+            (
+                "Modellen bruker laggede offhire-verdier, rullerende gjennomsnitt og standardavvik, "
+                "måned som sykliske variabler, fartøy-ID og flagg for spesielle behov."
+            ),
+            "",
+            "## Steg 3. Modellspesifikasjon",
+            "",
+            (
+                "XGBoost ble satt opp som en gradient boosted tree-modell med et fast feature-set og "
+                "forhåndsvalgte hyperparametre for dybde, læringsrate og antall trær."
+            ),
+            "",
+            "## Steg 4. Modellestimering",
+            "",
+            "Modellen ble trent på train-rader etter feature engineering.",
+            "",
+            "## Steg 5. Modellvalidering",
+            "",
+            (
+                f"Modellen ble evaluert på holdout-perioden med `MAE={format_metric(result.mae)}` "
+                f"og `RMSE={format_metric(result.rmse)}`."
+            ),
+            "",
+            "## Steg 6. Prognose",
+            "",
+            "Prognosen for april og mai 2026 ble generert rekursivt ved å føre prediksjoner tilbake som nye lags.",
+        ]
+    else:
+        step_lines = [
+            "## Steg 1. Datagrunnlag",
+            "",
+            "Sekvensdata bygget fra historiske observasjoner per fartøy.",
+            "",
+            "## Steg 2. Sekvensanalyse",
+            "",
+            (
+                "Historikken ble omsatt til sekvenser med tre tidligere tidssteg, der både nivå, "
+                "månedssyklus og spesialkrav inngår som input."
+            ),
+            "",
+            "## Steg 3. Modellspesifikasjon",
+            "",
+            (
+                "LSTM-modellen ble definert med én LSTM-lag, et tett skjult lag og standardisering "
+                "av både input og målvariabel."
+            ),
+            "",
+            "## Steg 4. Modellestimering",
+            "",
+            "Modellen ble trent på train-sekvenser med tidlig stopping når validering var tilgjengelig.",
+            "",
+            "## Steg 5. Modellvalidering",
+            "",
+            (
+                f"Holdout-evaluering på testsekvenser ga `MAE={format_metric(result.mae)}` "
+                f"og `RMSE={format_metric(result.rmse)}`."
+            ),
+            "",
+            "## Steg 6. Prognose",
+            "",
+            "Prognosen for april og mai 2026 ble generert sekvensielt ved å bruke siste observerte eller predikerte verdier som ny input.",
+        ]
+
+    file_path.write_text("\n".join(header_lines + step_lines) + "\n", encoding="utf-8")
 
 
 def write_model_result_log(
@@ -288,8 +541,12 @@ def summarize_result_details(result: ModelResult) -> str:
             f"Train/Test-sekvenser: {details.get('train_sequences', 'ukjent')}/"
             f"{details.get('test_sequences', 'ukjent')}"
         )
-    if result.model == "sarima" and "series_type" in details:
-        return f"Serie: {details['series_type']}"
+    if result.model == "sarima" and "selected_order" in details:
+        return (
+            "Flåtenivå | "
+            f"({details['selected_order']['p']}, {details['selected_order']['d']}, {details['selected_order']['q']}) x "
+            f"({details['selected_seasonal_order']['P']}, {details['selected_seasonal_order']['D']}, {details['selected_seasonal_order']['Q']}, 12)"
+        )
     return ""
 
 
@@ -409,7 +666,8 @@ def write_model_comparison_log(
     for model_name in active_models:
         display_name = MODEL_METADATA[model_name]["display_name"]
         content_lines.append(
-            f"- [{display_name} kode](../models/{display_name}/kode.md) og "
+            f"- [{display_name} metode](../models/{display_name}/metode.md), "
+            f"[{display_name} kode](../models/{display_name}/kode.md) og "
             f"[{display_name} resultater](../models/{display_name}/resultater.md)"
         )
 
@@ -520,6 +778,7 @@ def save_model_specific_outputs(
             future_predictions_path.unlink(missing_ok=True)
             continue
 
+        write_model_method_log(result)
         metrics_payload = {
             "model": result.model,
             "status": result.status,
@@ -767,12 +1026,17 @@ def fit_or_fallback_exponential_forecast(
     return np.clip(forecast, 0.0, None)
 
 
-def fit_or_fallback_sarima_forecast(train_series: pd.Series, steps: int) -> np.ndarray:
+def fit_or_fallback_sarima_forecast(
+    train_series: pd.Series,
+    steps: int,
+    order: tuple[int, int, int] = (1, 0, 1),
+    seasonal_order: tuple[int, int, int, int] = (1, 0, 0, 12),
+) -> np.ndarray:
     try:
         model = SARIMAX(
             train_series,
-            order=(1, 0, 1),
-            seasonal_order=(1, 0, 0, 12),
+            order=order,
+            seasonal_order=seasonal_order,
             enforce_stationarity=False,
             enforce_invertibility=False,
         )
@@ -784,6 +1048,171 @@ def fit_or_fallback_sarima_forecast(train_series: pd.Series, steps: int) -> np.n
         forecast = np.repeat(float(train_series.iloc[-1]), steps)
 
     return np.clip(forecast, 0.0, None)
+
+
+def run_adf_test(series: pd.Series, label: str, d: int, D: int) -> dict[str, Any]:
+    clean_series = series.dropna().astype(float)
+    if len(clean_series) < 12:
+        return {
+            "label": label,
+            "d": d,
+            "D": D,
+            "n_obs": int(len(clean_series)),
+            "adf_stat": None,
+            "p_value": None,
+            "stationary": False,
+        }
+
+    test_stat, p_value, _, _, critical_values, _ = adfuller(clean_series, autolag="AIC")
+    return {
+        "label": label,
+        "d": d,
+        "D": D,
+        "n_obs": int(len(clean_series)),
+        "adf_stat": float(test_stat),
+        "p_value": float(p_value),
+        "stationary": bool(p_value < 0.05),
+        "critical_5pct": float(critical_values.get("5%", np.nan)),
+    }
+
+
+def apply_sarima_differencing(
+    series: pd.Series,
+    d: int,
+    D: int,
+    seasonal_period: int = 12,
+) -> pd.Series:
+    transformed = series.copy()
+    for _ in range(d):
+        transformed = transformed.diff()
+    for _ in range(D):
+        transformed = transformed.diff(seasonal_period)
+    return transformed.dropna()
+
+
+def select_sarima_differencing(train_series: pd.Series) -> tuple[int, int, pd.Series, list[dict[str, Any]]]:
+    candidates = [
+        {"label": "Ingen differensiering", "d": 0, "D": 0},
+        {"label": "Første differense", "d": 1, "D": 0},
+        {"label": "Sesongdifferense (12)", "d": 0, "D": 1},
+        {"label": "Første + sesongdifferense", "d": 1, "D": 1},
+    ]
+
+    results: list[dict[str, Any]] = []
+    for candidate in candidates:
+        transformed = apply_sarima_differencing(
+            train_series,
+            d=candidate["d"],
+            D=candidate["D"],
+        )
+        test_result = run_adf_test(
+            transformed,
+            label=candidate["label"],
+            d=candidate["d"],
+            D=candidate["D"],
+        )
+        results.append(test_result)
+
+    stationary_candidates = [item for item in results if item["stationary"]]
+    if stationary_candidates:
+        selected = min(
+            stationary_candidates,
+            key=lambda item: (item["d"] + item["D"], item["p_value"] or float("inf")),
+        )
+    else:
+        selected = min(results, key=lambda item: item["p_value"] or float("inf"))
+
+    transformed_series = apply_sarima_differencing(
+        train_series,
+        d=int(selected["d"]),
+        D=int(selected["D"]),
+    )
+    return int(selected["d"]), int(selected["D"]), transformed_series, results
+
+
+def fit_sarima_candidates(
+    train_series: pd.Series,
+    d: int,
+    D: int,
+    seasonal_period: int = 12,
+) -> pd.DataFrame:
+    candidate_rows: list[dict[str, Any]] = []
+    for p in range(0, 3):
+        for q in range(0, 3):
+            for P in range(0, 2):
+                for Q in range(0, 2):
+                    try:
+                        model = SARIMAX(
+                            train_series,
+                            order=(p, d, q),
+                            seasonal_order=(P, D, Q, seasonal_period),
+                            enforce_stationarity=False,
+                            enforce_invertibility=False,
+                        )
+                        fit = model.fit(disp=False)
+                        candidate_rows.append(
+                            {
+                                "p": p,
+                                "d": d,
+                                "q": q,
+                                "P": P,
+                                "D": D,
+                                "Q": Q,
+                                "s": seasonal_period,
+                                "aic": float(fit.aic),
+                                "bic": float(fit.bic),
+                            }
+                        )
+                    except Exception:
+                        continue
+
+    if not candidate_rows:
+        raise DataTooShortError("Ingen SARIMA-kandidatmodeller kunne estimeres.")
+
+    return pd.DataFrame(candidate_rows).sort_values(["aic", "bic"]).reset_index(drop=True)
+
+
+def save_sarima_diagnostic_plots(
+    train_series: pd.Series,
+    transformed_series: pd.Series,
+    residuals: pd.Series,
+) -> None:
+    acf_path = model_artifact_path("sarima", "acf.png")
+    pacf_path = model_artifact_path("sarima", "pacf.png")
+    residuals_path = model_artifact_path("sarima", "residualdiagnostikk.png")
+    acf_path.parent.mkdir(parents=True, exist_ok=True)
+
+    fig, ax = plt.subplots(figsize=(9, 4.5))
+    plot_acf(transformed_series.dropna(), ax=ax, lags=min(24, max(len(transformed_series.dropna()) - 1, 1)))
+    ax.set_title("SARIMA ACF")
+    fig.tight_layout()
+    fig.savefig(acf_path, dpi=200)
+    plt.close(fig)
+
+    fig, ax = plt.subplots(figsize=(9, 4.5))
+    plot_pacf(
+        transformed_series.dropna(),
+        ax=ax,
+        lags=min(24, max(len(transformed_series.dropna()) // 2 - 1, 1)),
+        method="ywm",
+    )
+    ax.set_title("SARIMA PACF")
+    fig.tight_layout()
+    fig.savefig(pacf_path, dpi=200)
+    plt.close(fig)
+
+    fig, axes = plt.subplots(2, 1, figsize=(10, 7))
+    axes[0].plot(residuals.index, residuals.values, color="#0F4C5C", linewidth=1.8)
+    axes[0].axhline(0, color="#D97706", linestyle="--", linewidth=1)
+    axes[0].set_title("SARIMA residualer over tid")
+    axes[0].set_ylabel("Residual")
+    axes[1].hist(residuals.values, bins=12, color="#2C7A7B", alpha=0.85, edgecolor="white")
+    axes[1].set_title("Fordeling av SARIMA-residualer")
+    axes[1].set_xlabel("Residual")
+    axes[1].set_ylabel("Frekvens")
+    fig.tight_layout()
+    fig.savefig(residuals_path, dpi=200)
+    plt.close(fig)
 
 
 def run_exponential_smoothing(
@@ -842,6 +1271,9 @@ def run_exponential_smoothing(
             "vessels_used": int(pred_df["vessel"].nunique()),
             "test_rows": int(len(pred_df)),
             "evaluation_method": "ekspanderende 1-stegs prognose gjennom testperioden",
+            "evaluation_level": "fartøynivå",
+            "step_2_summary": "Seriene er korte, nulltunge og ujevne, så sesongkomponent ble ikke brukt.",
+            "step_3_summary": "Ikke-sesongbasert eksponentiell glatting per fartøy; additiv trend brukes bare når train-serien er lang nok og ikke konstant.",
         },
     )
     return metrics, pred_df
@@ -899,10 +1331,57 @@ def run_sarima(
             pd.DataFrame(),
         )
 
+    selected_d, selected_D, transformed_series, stationarity_results = select_sarima_differencing(
+        train_series
+    )
+    candidate_df = fit_sarima_candidates(train_series, d=selected_d, D=selected_D)
+    best_candidate = candidate_df.iloc[0]
+    selected_order = (
+        int(best_candidate["p"]),
+        int(best_candidate["d"]),
+        int(best_candidate["q"]),
+    )
+    selected_seasonal_order = (
+        int(best_candidate["P"]),
+        int(best_candidate["D"]),
+        int(best_candidate["Q"]),
+        int(best_candidate["s"]),
+    )
+
+    final_model = SARIMAX(
+        train_series,
+        order=selected_order,
+        seasonal_order=selected_seasonal_order,
+        enforce_stationarity=False,
+        enforce_invertibility=False,
+    )
+    final_fit = final_model.fit(disp=False)
+    residuals = pd.Series(final_fit.resid, index=train_series.index).dropna()
+    ljung_lag = min(12, max(len(residuals) // 2, 1))
+    ljung_box = acorr_ljungbox(residuals, lags=[ljung_lag], return_df=True)
+    save_sarima_diagnostic_plots(train_series, transformed_series, residuals)
+    write_dataframe_artifacts(
+        pd.DataFrame(stationarity_results),
+        model_artifact_path("sarima", "stasjonaritet.csv"),
+        "SARIMA stasjonaritet",
+    )
+    write_dataframe_artifacts(
+        candidate_df.head(10),
+        model_artifact_path("sarima", "kandidatmodeller.csv"),
+        "SARIMA kandidatmodeller",
+    )
+
     history = train_series.copy()
     prediction_rows: list[dict[str, Any]] = []
     for date_value, actual in test_series.items():
-        prediction = float(fit_or_fallback_sarima_forecast(history, 1)[0])
+        prediction = float(
+            fit_or_fallback_sarima_forecast(
+                history,
+                1,
+                order=selected_order,
+                seasonal_order=selected_seasonal_order,
+            )[0]
+        )
         prediction_rows.append(
             {
                 "model": "sarima",
@@ -929,21 +1408,67 @@ def run_sarima(
             "series_type": "fleet_total",
             "test_rows": int(len(pred_df)),
             "evaluation_method": "ekspanderende 1-stegs prognose på aggregert flåteserie",
+            "evaluation_level": "flåtenivå",
+            "selected_d": selected_d,
+            "selected_D": selected_D,
+            "selected_order": {
+                "p": selected_order[0],
+                "d": selected_order[1],
+                "q": selected_order[2],
+            },
+            "selected_seasonal_order": {
+                "P": selected_seasonal_order[0],
+                "D": selected_seasonal_order[1],
+                "Q": selected_seasonal_order[2],
+            },
+            "selected_aic": float(best_candidate["aic"]),
+            "selected_bic": float(best_candidate["bic"]),
+            "ljung_box_lag": int(ljung_lag),
+            "ljung_box_pvalue": float(ljung_box["lb_pvalue"].iloc[0]),
+            "stationarity_results": stationarity_results,
+            "candidate_models": candidate_df.head(10).to_dict(orient="records"),
+            "artifact_files": {
+                "stasjonaritet": "stasjonaritet.md",
+                "kandidatmodeller": "kandidatmodeller.md",
+                "acf": "acf.png",
+                "pacf": "pacf.png",
+                "residualdiagnostikk": "residualdiagnostikk.png",
+            },
         },
     )
     return metrics, pred_df
 
 
-def forecast_sarima(panel_df: pd.DataFrame, horizon: int = 2) -> pd.DataFrame:
+def forecast_sarima(
+    panel_df: pd.DataFrame,
+    sarima_details: dict[str, Any] | None = None,
+    horizon: int = 2,
+) -> pd.DataFrame:
     fleet_series = build_fleet_series(panel_df)
     if len(fleet_series) < 24:
         return pd.DataFrame()
 
+    if sarima_details and "selected_order" in sarima_details:
+        selected_order = (
+            int(sarima_details["selected_order"]["p"]),
+            int(sarima_details["selected_order"]["d"]),
+            int(sarima_details["selected_order"]["q"]),
+        )
+        selected_seasonal_order = (
+            int(sarima_details["selected_seasonal_order"]["P"]),
+            int(sarima_details["selected_seasonal_order"]["D"]),
+            int(sarima_details["selected_seasonal_order"]["Q"]),
+            12,
+        )
+    else:
+        selected_order = (1, 0, 1)
+        selected_seasonal_order = (1, 0, 0, 12)
+
     future_dates = future_dates_from_panel(panel_df, horizon)
     model = SARIMAX(
         fleet_series,
-        order=(1, 0, 1),
-        seasonal_order=(1, 0, 0, 12),
+        order=selected_order,
+        seasonal_order=selected_seasonal_order,
         enforce_stationarity=False,
         enforce_invertibility=False,
     )
@@ -1030,6 +1555,15 @@ def run_xgboost(
             "train_rows": int(len(train_df)),
             "test_rows": int(len(test_df)),
             "evaluation_method": "fast holdout med historiske lags og testperiode 2025-01 til 2026-03",
+            "evaluation_level": "fartøynivå",
+            "feature_columns": feature_columns,
+            "model_hyperparameters": {
+                "n_estimators": 200,
+                "max_depth": 4,
+                "learning_rate": 0.05,
+                "subsample": 0.9,
+                "colsample_bytree": 0.9,
+            },
         },
     )
     return metrics, pred_df
@@ -1245,6 +1779,15 @@ def run_lstm(
             "train_sequences": int(train_mask.sum()),
             "test_sequences": int(test_mask.sum()),
             "evaluation_method": "fast holdout med sekvenser og testperiode 2025-01 til 2026-03",
+            "evaluation_level": "fartøynivå",
+            "sequence_length": 3,
+            "input_features": ["offhire_days", "month_sin", "month_cos", "special_flag"],
+            "architecture": {
+                "lstm_units": 32,
+                "dense_units": 16,
+                "batch_size": 4,
+                "max_epochs": 200,
+            },
         },
     )
     return metrics, pred_df
@@ -1373,6 +1916,8 @@ def main() -> None:
     )
     split_metadata = build_split_metadata(train_panel, test_panel, full_panel)
     active_models = ACTIVE_MODELS.copy()
+    for model_name in active_models:
+        cleanup_extra_artifacts(model_name)
 
     results: list[ModelResult] = []
     prediction_frames: dict[str, pd.DataFrame] = {}
@@ -1392,7 +1937,7 @@ def main() -> None:
         "lstm": lambda: run_lstm(evaluation_panel, split_metadata),
     }
     future_forecasters = {
-        "sarima": lambda: forecast_sarima(full_panel),
+        "sarima": lambda details=None: forecast_sarima(full_panel, details),
         "exponential_smoothing": lambda: forecast_exponential_smoothing(full_panel),
         "xgboost": lambda: forecast_xgboost(full_panel, forecast_features_df),
         "lstm": lambda: forecast_lstm(full_panel),
@@ -1405,6 +1950,7 @@ def main() -> None:
             results.append(result)
             prediction_frames[model_name] = pred_df
         except DataTooShortError as exc:
+            cleanup_extra_artifacts(model_name)
             results.append(
                 ModelResult(
                     model=model_name,
@@ -1413,6 +1959,7 @@ def main() -> None:
                 )
             )
         except Exception as exc:  # pragma: no cover - defensive logging for experimentation
+            cleanup_extra_artifacts(model_name)
             results.append(
                 ModelResult(
                     model=model_name,
@@ -1424,7 +1971,16 @@ def main() -> None:
     for model_name in active_models:
         forecaster = future_forecasters[model_name]
         try:
-            future_prediction_frames[model_name] = forecaster()
+            if model_name == "sarima":
+                sarima_result = next(
+                    (result for result in results if result.model == "sarima"),
+                    None,
+                )
+                future_prediction_frames[model_name] = forecaster(
+                    sarima_result.details if sarima_result else None
+                )
+            else:
+                future_prediction_frames[model_name] = forecaster()
         except DataTooShortError:
             future_prediction_frames[model_name] = pd.DataFrame()
         except Exception:

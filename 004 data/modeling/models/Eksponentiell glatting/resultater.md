@@ -2,7 +2,7 @@
 
 Dette dokumentet genereres automatisk ved hver kjøring av `004 data/modeling/run_models.py`.
 
-- Sist generert: `2026-04-14T17:52:50`
+- Sist generert: `2026-04-14T18:53:23`
 - Status: `ok`
 - MAE: `6.7212`
 - RMSE: `17.5192`
@@ -22,7 +22,10 @@ Dette dokumentet genereres automatisk ved hver kjøring av `004 data/modeling/ru
   "forecast_observations": 902,
   "vessels_used": 15,
   "test_rows": 225,
-  "evaluation_method": "ekspanderende 1-stegs prognose gjennom testperioden"
+  "evaluation_method": "ekspanderende 1-stegs prognose gjennom testperioden",
+  "evaluation_level": "fartøynivå",
+  "step_2_summary": "Seriene er korte, nulltunge og ujevne, så sesongkomponent ble ikke brukt.",
+  "step_3_summary": "Ikke-sesongbasert eksponentiell glatting per fartøy; additiv trend brukes bare når train-serien er lang nok og ikke konstant."
 }
 ```
 

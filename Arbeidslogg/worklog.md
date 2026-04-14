@@ -57,3 +57,9 @@ Next step:
 - Updated the modeling code so historical evaluation now runs on the explicit train/test split, while future forecasts still use the full history up to March 2026.
 - Regenerated Exponential Smoothing results under the new split and documented the revised evaluation setup in both the report and modeling README.
 - Committed and pushed the main implementation changes to GitHub in commits `d336d02` (`Update analysis assets and add historical visualizations`) and `8dfcf9d` (`Add explicit train-test split for model evaluation`).
+- Reworked the modeling chapter around a shared six-step structure so each model is now described through model-specific stages from data preparation to validation and forecasting.
+- Expanded the report with separate subsections for `SARIMA`, `Eksponentiell glatting`, `XGBoost`, and `LSTM`, while keeping the detailed diagnostics and technical artifacts in the repository.
+- Re-enabled all four models in the pipeline so the standard run now evaluates the full model set on the same train/test split.
+- Implemented a Box-Jenkins-style `SARIMA` workflow on fleet level with stationarity testing, ACF/PACF diagnostics, candidate model selection, residual diagnostics, and documented model choice.
+- Added automatic generation of `metode.md` for each model and extra SARIMA artifacts such as stationarity tables, candidate model tables, and diagnostic plots.
+- Ran the full pipeline on the current dataset and confirmed that all four models complete under the shared evaluation setup, with updated comparison outputs written to the modeling folders.

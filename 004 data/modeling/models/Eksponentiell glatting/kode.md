@@ -62,6 +62,9 @@ def run_exponential_smoothing(
             "vessels_used": int(pred_df["vessel"].nunique()),
             "test_rows": int(len(pred_df)),
             "evaluation_method": "ekspanderende 1-stegs prognose gjennom testperioden",
+            "evaluation_level": "fartøynivå",
+            "step_2_summary": "Seriene er korte, nulltunge og ujevne, så sesongkomponent ble ikke brukt.",
+            "step_3_summary": "Ikke-sesongbasert eksponentiell glatting per fartøy; additiv trend brukes bare når train-serien er lang nok og ikke konstant.",
         },
     )
     return metrics, pred_df
