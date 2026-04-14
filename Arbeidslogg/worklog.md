@@ -43,3 +43,17 @@ Next step:
 - Continue writing the method, data, and modeling chapters so they reflect the implemented pipeline and the actual dataset limitations.
 - Assess whether more historical observations are needed before SARIMA can be included in the final empirical comparison.
 - Keep updating the report text and bibliography as additional references are added.
+
+## 14.04.2026
+- Merged and synchronized `main` with GitHub, including the new `005 report` folder and the latest repository state.
+- Replaced the old simulated dataset setup with the updated anonymized operational dataset covering April 2021 to March 2026.
+- Updated the data parser in the modeling pipeline so the code correctly reads the multi-year CSV structure with annual blocks from 2021 to 2026.
+- Restricted the active model run to Exponential Smoothing while keeping the other model implementations in the codebase for later comparison.
+- Reorganized the modeling output so model-specific files are grouped under dedicated folders instead of being spread across the modeling directory.
+- Built a separate historical visualization pipeline under `004 data/visualization` and generated figures and summary tables for the descriptive data analysis.
+- Inserted the key historical figures and explanatory text directly into the report, and refined the report text so the case is described as 16 vessels operating within the same offshore segment.
+- Identified that the previous evaluation setup was too weak, and rebuilt the modeling workflow around an explicit time-based train/test split.
+- Added `004 data/train.csv` and `004 data/test.csv` in the same raw format as the master dataset, with train covering `2021-04` to `2024-12` and test covering `2025-01` to `2026-03`.
+- Updated the modeling code so historical evaluation now runs on the explicit train/test split, while future forecasts still use the full history up to March 2026.
+- Regenerated Exponential Smoothing results under the new split and documented the revised evaluation setup in both the report and modeling README.
+- Committed and pushed the main implementation changes to GitHub in commits `d336d02` (`Update analysis assets and add historical visualizations`) and `8dfcf9d` (`Add explicit train-test split for model evaluation`).
