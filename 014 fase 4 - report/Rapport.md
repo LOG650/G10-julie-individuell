@@ -290,6 +290,8 @@ Tidsperioden i datasettet strekker seg fra april 2021 til mars 2026. Materialet 
 
 Databehandlingen har bestått av flere trinn. Først ble tomme rader, overskriftsrader og verdier markert som `N/A` fjernet fra analysegrunnlaget. Deretter ble prosentverdier standardisert til numeriske verdier, blant annet ved å omforme komma til punktum i desimaltall. Til slutt ble datasettet gjort om fra et bredt årsformat til et analyseklar long-format med variablene fartøy, måned, dato, offhire-verdi og eventuelle spesielle behov eller krav. Denne omstruktureringen var nødvendig for å kunne bruke både tradisjonelle tidsseriemodeller og maskinlæringsmodeller på samme datagrunnlag.
 
+For selve modelleringen ble datasettet i tillegg delt i et eksplisitt trenings- og testsett. Treningsdelen dekker perioden fra april 2021 til desember 2024, mens testdelen dekker januar 2025 til mars 2026. Denne tidsbaserte splitten er valgt for å sikre at modellene evalueres på observasjoner som ligger etter treningsperioden i tid, og dermed ikke får tilgang til informasjon fra framtiden under evalueringen. I det rensede analysegrunnlaget gir dette 675 observasjoner i treningssettet og 227 observasjoner i testsettet.
+
 Datasettet er ikke offentlig tilgjengelig, og kan derfor ikke deles fritt med leseren. Dette skyldes at materialet bygger på interne og anonymiserte virksomhetsdata. For å sikre transparens beskrives derfor variablene, tidsperioden, databehandlingen og antall observasjoner eksplisitt i oppgaven, slik at analyseopplegget kan forstås og etterprøves metodisk selv om rådataene ikke publiseres åpent.
 
 Tabell 1 oppsummerer hovedtrekkene i datagrunnlaget. Tabellen tydeliggjør at dataserien ikke dekker hele 2021 og 2026, noe som må tas hensyn til når nivå og variasjon i materialet senere tolkes.
@@ -327,6 +329,8 @@ Mens figur 1 viser totalnivået i datasettet, viser figur 2 hvordan variasjonen 
 Heatmapet viser at offhire i liten grad er jevnt fordelt mellom fartøyene. Enkelte fartøy har gjentatte og tydelige topper over flere perioder, mens andre i hovedsak har nullregistreringer. Særlig skiller `Fartøy 10`, `Fartøy 8` og `Fartøy 2` seg ut med flere markerte utslag, mens `Fartøy 13` og `Fartøy 16` ikke har positive registreringer i det rensede datagrunnlaget. Figuren synliggjør også at 2021 er et oppstartsår fra april og at 2026 foreløpig bare dekker årets tre første måneder.
 
 # Modellering
+
+I modelleringsoppsettet skilles det mellom historisk evaluering og endelig prognose. Under evaluering trenes modellene på treningssettet fra april 2021 til desember 2024 og testes deretter på perioden januar 2025 til mars 2026. Etter at modellens ytelse er evaluert på denne splitten, brukes hele datasettet fram til mars 2026 som grunnlag for å lage prognoser for april og mai 2026. Dette gjør at evalueringen og den endelige forecasten holdes metodisk adskilt.
 
 # Analyse
 

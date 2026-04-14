@@ -11,9 +11,18 @@ Målet er å sammenligne fire modeller mot samme problemstilling:
 
 ## Datagrunnlag
 
-Pipelinen leser `004 data/Data som skal brukes Anonymisert.csv` og reshaper den til et long-format med én rad per fartøy og måned.
+Pipelinen bruker `004 data/Data som skal brukes Anonymisert.csv` som masterfil.
+Fra denne genereres to eksplisitte råformat-filer i `004 data/`:
 
-Det nåværende datasettet dekker månedlige observasjoner fra april 2021 til mars 2026.
+- `train.csv`
+- `test.csv`
+
+Disse brukes til historisk evaluering av modellene med en fast tidsbasert splitt:
+
+- `train`: april 2021 til desember 2024
+- `test`: januar 2025 til mars 2026
+
+Det opprinnelige datasettet dekker månedlige observasjoner fra april 2021 til mars 2026.
 Det gir normalt inntil 60 tidssteg per fartøy, men med to praktiske begrensninger:
 
 - 2021 starter i april fordi dataserien dekker de siste fem årene
@@ -21,8 +30,8 @@ Det gir normalt inntil 60 tidssteg per fartøy, men med to praktiske begrensning
 
 Pipelinen brukes derfor til to ting:
 
-- historisk evaluering av modellene på de siste observerte månedene
-- prognoser for april og mai 2026 basert på alle tilgjengelige observasjoner til og med mars 2026
+- historisk evaluering på `train.csv` og `test.csv`
+- prognoser for april og mai 2026 basert på hele historikken til og med mars 2026
 
 ## Oppsett
 
@@ -46,6 +55,12 @@ pip install -r '004 data/modeling/requirements.txt'
 
 ## Kjøring
 
+Generer først eksplisitte train/test-filer:
+
+```bash
+python '004 data/modeling/generate_train_test_split.py'
+```
+
 I denne fasen kjøres bare `Eksponentiell glatting` fullt ut i standardskriptet.
 De andre modellene beholdes i koden, men brukes ikke i standardkjøringen før vi eksplisitt velger dem senere.
 
@@ -55,12 +70,14 @@ python '004 data/modeling/run_models.py'
 
 Skriptet skriver resultater til `004 data/modeling/results/`.
 I tillegg skriver det modellspesifikke filer til egne mapper under `004 data/modeling/models/`.
+Ved hver kjøring verifiserer og oppdaterer skriptet også `train.csv` og `test.csv` fra masterfilen.
 
 ## Versjonering
 
 For leveransen skal følgende under `004 data/` ligge i Git:
 
 - den anonymiserte CSV-filen som brukes som datagrunnlag
+- `train.csv` og `test.csv` som eksplisitt train/test-splitt for modellene
 - modelleringskode og avhengigheter i `004 data/modeling/`
 - genererte resultater i `004 data/modeling/results/`
 - modellspesifikke kode- og resultatfiler i `004 data/modeling/models/<modell>/`

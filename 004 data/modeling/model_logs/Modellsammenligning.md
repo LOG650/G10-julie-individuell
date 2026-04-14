@@ -2,13 +2,16 @@
 
 Dette dokumentet oppsummerer siste kjøring av alle modellene og er ment som arbeidsgrunnlag for metode-, analyse- og diskusjonsdelen i rapporten.
 
-- Sist generert: `2026-04-14T16:24:29`
+- Sist generert: `2026-04-14T17:52:50`
+- Evaluering train: `2021-04 til 2024-12`
+- Evaluering test: `2025-01 til 2026-03`
+- Fremtidsprognoser trener på full historikk: `2021-04 til 2026-03`
 
 ## Samlet oversikt
 
 | Modell | Status | MAE | RMSE | Kommentar |
 | --- | --- | --- | --- | --- |
-| Eksponentiell glatting | ok | 10.7483 | 23.5255 | Fartøy brukt: 15 |
+| Eksponentiell glatting | ok | 6.7212 | 17.5192 | Fartøy brukt: 15 |
 
 ## Lenker til detaljfiler
 
@@ -16,12 +19,12 @@ Dette dokumentet oppsummerer siste kjøring av alle modellene og er ment som arb
 
 ## Rangering basert på MAE
 
-1. Eksponentiell glatting med MAE 10.7483 og RMSE 23.5255
+1. Eksponentiell glatting med MAE 6.7212 og RMSE 17.5192
 
 ## Hovedfunn
 
-- Lavest MAE i siste kjøring: `Eksponentiell glatting` (10.7483).
-- Lavest RMSE i siste kjøring: `Eksponentiell glatting` (23.5255).
+- Lavest MAE i siste kjøring: `Eksponentiell glatting` (6.7212).
+- Lavest RMSE i siste kjøring: `Eksponentiell glatting` (17.5192).
 
 ## Fremtidsprognoser
 
