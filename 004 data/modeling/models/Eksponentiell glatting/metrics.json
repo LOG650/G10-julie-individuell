@@ -1,8 +1,8 @@
 {
   "model": "exponential_smoothing",
   "status": "ok",
-  "mae": 2.9110853810396238,
-  "rmse": 7.799553127183302,
+  "mae": 10.748325271902258,
+  "rmse": 23.52546039360519,
   "details": {
     "vessels_used": 15
   }

@@ -3,6 +3,7 @@ from __future__ import annotations
 import inspect
 import json
 import os
+import re
 import warnings
 from dataclasses import dataclass
 from datetime import datetime
@@ -35,6 +36,7 @@ ROOT = Path(__file__).resolve().parents[2]
 DATA_PATH = ROOT / "004 data" / "Data som skal brukes Anonymisert.csv"
 RESULTS_DIR = Path(__file__).resolve().parent / "results"
 MODEL_LOG_DIR = Path(__file__).resolve().parent / "model_logs"
+MODEL_ARTIFACTS_DIR = Path(__file__).resolve().parent / "models"
 COMPARISON_LOG_PATH = MODEL_LOG_DIR / "Modellsammenligning.md"
 
 MONTH_ORDER = {
@@ -52,7 +54,8 @@ MONTH_ORDER = {
     "Desember": 12,
 }
 MONTH_COLUMNS = list(MONTH_ORDER.keys())
-SYNTHETIC_YEAR = 2025
+MONTH_NAME_BY_NUMBER = {value: key for key, value in MONTH_ORDER.items()}
+YEAR_PATTERN = re.compile(r"År:\s*(\d{4})")
 
 MODEL_METADATA = {
     "sarima": {
@@ -72,6 +75,7 @@ MODEL_METADATA = {
         "function_name": "run_lstm",
     },
 }
+ACTIVE_MODELS = ["exponential_smoothing"]
 
 
 @dataclass
@@ -94,6 +98,15 @@ def rmse(y_true: np.ndarray, y_pred: np.ndarray) -> float:
 def ensure_results_dir() -> None:
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
     MODEL_LOG_DIR.mkdir(parents=True, exist_ok=True)
+    MODEL_ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def model_artifact_dir(model_name: str) -> Path:
+    return MODEL_ARTIFACTS_DIR / MODEL_METADATA[model_name]["display_name"]
+
+
+def model_artifact_path(model_name: str, filename: str) -> Path:
+    return model_artifact_dir(model_name) / filename
 
 
 def format_markdown_value(value: Any) -> str:
@@ -104,9 +117,13 @@ def format_markdown_value(value: Any) -> str:
     return str(value).replace("|", "\\|")
 
 
-def dataframe_to_markdown(df: pd.DataFrame, max_rows: int = 10) -> str:
+def dataframe_to_markdown(
+    df: pd.DataFrame,
+    max_rows: int = 10,
+    empty_message: str = "_Ingen rader lagret._",
+) -> str:
     if df.empty:
-        return "_Ingen prediksjoner lagret for denne modellen._"
+        return empty_message
 
     preview = df.head(max_rows).copy()
     headers = preview.columns.tolist()
@@ -124,7 +141,8 @@ def write_model_code_log(model_name: str) -> None:
     metadata = MODEL_METADATA[model_name]
     function_name = metadata["function_name"]
     function_source = inspect.getsource(globals()[function_name]).rstrip()
-    file_path = MODEL_LOG_DIR / f"{metadata['display_name']} kode.md"
+    file_path = model_artifact_path(model_name, "kode.md")
+    file_path.parent.mkdir(parents=True, exist_ok=True)
     content = (
         f"# {metadata['display_name']} kode\n\n"
         "Dette dokumentet genereres automatisk fra den aktive implementasjonen i "
@@ -141,12 +159,21 @@ def write_model_code_log(model_name: str) -> None:
 def write_model_result_log(
     result: ModelResult,
     pred_df: pd.DataFrame,
+    future_df: pd.DataFrame,
     generated_at: str,
 ) -> None:
     metadata = MODEL_METADATA[result.model]
-    file_path = MODEL_LOG_DIR / f"{metadata['display_name']} resultater.md"
+    file_path = model_artifact_path(result.model, "resultater.md")
+    file_path.parent.mkdir(parents=True, exist_ok=True)
     details_json = json.dumps(result.details or {}, indent=2, ensure_ascii=False)
-    predictions_preview = dataframe_to_markdown(pred_df)
+    predictions_preview = dataframe_to_markdown(
+        pred_df,
+        empty_message="_Ingen evalueringsprediksjoner lagret for denne modellen._",
+    )
+    future_preview = dataframe_to_markdown(
+        future_df,
+        empty_message="_Ingen fremtidsprognoser lagret for denne modellen._",
+    )
     content_lines = [
         f"# {metadata['display_name']} resultater",
         "",
@@ -175,12 +202,23 @@ def write_model_result_log(
         "## Prediksjoner",
         "",
         predictions_preview,
+        "",
+        "## Fremtidsprognoser",
+        "",
+        future_preview,
     ]
     if not pred_df.empty and len(pred_df) > 10:
         content_lines.extend(
             [
                 "",
                 f"Viser de første 10 av totalt {len(pred_df)} prediksjonsrader.",
+            ]
+        )
+    if not future_df.empty and len(future_df) > 10:
+        content_lines.extend(
+            [
+                "",
+                f"Viser de første 10 av totalt {len(future_df)} fremtidsprognoser.",
             ]
         )
     file_path.write_text("\n".join(content_lines) + "\n", encoding="utf-8")
@@ -214,7 +252,44 @@ def summarize_result_details(result: ModelResult) -> str:
     return ""
 
 
-def write_model_comparison_log(results: list[ModelResult], generated_at: str) -> None:
+def build_dataset_notes(panel_df: pd.DataFrame) -> list[str]:
+    if panel_df.empty:
+        return ["- Ingen gyldige observasjoner ble lest fra datasettet."]
+
+    min_date = panel_df["date"].min()
+    max_date = panel_df["date"].max()
+    unique_years = panel_df["date"].dt.year.nunique()
+    notes = [
+        (
+            f"- Datasettet dekker observasjoner fra `{min_date:%Y-%m}` til "
+            f"`{max_date:%Y-%m}` fordelt på {unique_years} kalenderår."
+        )
+    ]
+    if max_date.month < 12:
+        notes.append(
+            (
+                f"- Siste år i datasettet er foreløpig ufullstendig og går til "
+                f"`{MONTH_NAME_BY_NUMBER[max_date.month]} {max_date.year}`."
+            )
+        )
+    return notes
+
+
+def future_dates_from_panel(panel_df: pd.DataFrame, horizon: int = 2) -> list[pd.Timestamp]:
+    if panel_df.empty:
+        raise DataTooShortError("Datasettet er tomt, så fremtidsdatoer kan ikke bygges.")
+
+    start = panel_df["date"].max() + pd.offsets.MonthBegin(1)
+    return list(pd.date_range(start=start, periods=horizon, freq="MS"))
+
+
+def write_model_comparison_log(
+    results: list[ModelResult],
+    generated_at: str,
+    panel_df: pd.DataFrame,
+    future_prediction_frames: dict[str, pd.DataFrame],
+    active_models: list[str],
+) -> None:
     sorted_results = sorted(
         results,
         key=lambda result: (
@@ -270,11 +345,11 @@ def write_model_comparison_log(results: list[ModelResult], generated_at: str) ->
             "",
         ]
     )
-    for model_name in MODEL_METADATA:
+    for model_name in active_models:
         display_name = MODEL_METADATA[model_name]["display_name"]
         content_lines.append(
-            f"- [{display_name} kode]({display_name} kode.md) og "
-            f"[{display_name} resultater]({display_name} resultater.md)"
+            f"- [{display_name} kode](../models/{display_name}/kode.md) og "
+            f"[{display_name} resultater](../models/{display_name}/resultater.md)"
         )
 
     content_lines.extend(
@@ -320,14 +395,32 @@ def write_model_comparison_log(results: list[ModelResult], generated_at: str) ->
             reason = (result.details or {}).get("reason", "Ingen detalj oppgitt.")
             content_lines.append(f"- `{display_name}` ble {result.status} i siste kjøring: {reason}")
 
+    future_frames = [frame for frame in future_prediction_frames.values() if not frame.empty]
+    if future_frames:
+        combined_future = pd.concat(future_frames, ignore_index=True)
+        unique_future_dates = sorted(pd.to_datetime(combined_future["date"]).dt.strftime("%Y-%m-%d").unique())
+        content_lines.extend(
+            [
+                "",
+                "## Fremtidsprognoser",
+                "",
+                (
+                    "- Prognoser for neste måneder er lagret i "
+                    "`004 data/modeling/results/future_predictions.csv` for datoene "
+                    + ", ".join(f"`{date}`" for date in unique_future_dates)
+                    + "."
+                ),
+            ]
+        )
+
     content_lines.extend(
         [
-            "- Resultatene må tolkes som foreløpige fordi datasettet per nå bare dekker 9 måneder.",
+            *build_dataset_notes(panel_df),
             "",
             "## Notater Til Rapport",
             "",
             "- Bruk tabellen over direkte som grunnlag for sammenligning av modellprestasjon.",
-            "- Beskriv at SARIMA ikke kunne evalueres faglig forsvarlig med dagens tidsdybde.",
+            "- Beskriv eksplisitt hvilken tidsdekning datasettet faktisk har, og at siste år kan være ufullstendig.",
             "- Diskuter om lav MAE alene er nok, eller om modellens tolkbarhet og datakrav også bør vektlegges.",
         ]
     )
@@ -338,25 +431,32 @@ def write_model_comparison_log(results: list[ModelResult], generated_at: str) ->
 def save_model_specific_outputs(
     results: list[ModelResult],
     prediction_frames: dict[str, pd.DataFrame],
+    future_prediction_frames: dict[str, pd.DataFrame],
+    panel_df: pd.DataFrame,
+    active_models: list[str],
 ) -> None:
     generated_at = datetime.now().isoformat(timespec="seconds")
-    for model_name in MODEL_METADATA:
+    for model_name in active_models:
         write_model_code_log(model_name)
 
-        metrics_path = RESULTS_DIR / f"{model_name}_metrics.json"
-        predictions_path = RESULTS_DIR / f"{model_name}_predictions.csv"
+        metrics_path = model_artifact_path(model_name, "metrics.json")
+        predictions_path = model_artifact_path(model_name, "predictions.csv")
+        future_predictions_path = model_artifact_path(model_name, "future_predictions.csv")
 
         result = next((item for item in results if item.model == model_name), None)
         pred_df = prediction_frames.get(model_name, pd.DataFrame())
+        future_df = future_prediction_frames.get(model_name, pd.DataFrame())
 
         if result is None:
             write_model_result_log(
                 ModelResult(model=model_name, status="not_run", details={}),
                 pred_df,
+                future_df,
                 generated_at,
             )
             metrics_path.unlink(missing_ok=True)
             predictions_path.unlink(missing_ok=True)
+            future_predictions_path.unlink(missing_ok=True)
             continue
 
         metrics_payload = {
@@ -376,46 +476,85 @@ def save_model_specific_outputs(
         else:
             pred_df.to_csv(predictions_path, index=False)
 
-        write_model_result_log(result, pred_df, generated_at)
+        if future_df.empty:
+            future_predictions_path.unlink(missing_ok=True)
+        else:
+            future_df.to_csv(future_predictions_path, index=False)
 
-    write_model_comparison_log(results, generated_at)
+        write_model_result_log(result, pred_df, future_df, generated_at)
+
+    write_model_comparison_log(
+        results,
+        generated_at,
+        panel_df,
+        future_prediction_frames,
+        active_models,
+    )
 
 
 def load_dataset() -> pd.DataFrame:
-    df = pd.read_csv(DATA_PATH, sep=";", encoding="utf-8-sig")
-    df.columns = [col.strip() for col in df.columns]
-    df["Fartøy/Måned"] = df["Fartøy/Måned"].astype(str).str.strip()
+    raw_df = pd.read_csv(DATA_PATH, sep=";", header=None, encoding="utf-8-sig", dtype=str)
+    records: list[dict[str, Any]] = []
+    current_year: int | None = None
 
-    long_df = df.melt(
-        id_vars=["Fartøy/Måned", "Spesielle behov/krav"],
-        value_vars=MONTH_COLUMNS,
-        var_name="month_name",
-        value_name="offhire_days_raw",
-    )
+    for row in raw_df.itertuples(index=False, name=None):
+        values = ["" if pd.isna(value) else str(value).strip() for value in row]
+        if not any(values):
+            continue
 
-    long_df = long_df[long_df["offhire_days_raw"].notna()].copy()
-    long_df["offhire_days_raw"] = long_df["offhire_days_raw"].astype(str).str.strip()
-    long_df = long_df[long_df["offhire_days_raw"].str.lower().ne("nan")].copy()
-    long_df = long_df[long_df["offhire_days_raw"].ne("N/A")].copy()
-    long_df = long_df[long_df["offhire_days_raw"].ne("")].copy()
+        label = values[1] if len(values) > 1 else ""
+        year_match = YEAR_PATTERN.fullmatch(label)
+        if year_match:
+            current_year = int(year_match.group(1))
+            continue
 
-    long_df["offhire_days"] = (
-        long_df["offhire_days_raw"].str.replace(",", ".", regex=False).astype(float)
-    )
-    long_df["month_num"] = long_df["month_name"].map(MONTH_ORDER)
-    long_df["date"] = pd.to_datetime(
-        {
-            "year": np.full(len(long_df), SYNTHETIC_YEAR, dtype=int),
-            "month": long_df["month_num"].astype(int),
-            "day": 1,
-        }
-    )
-    long_df = long_df.rename(columns={"Fartøy/Måned": "vessel"})
+        if label == "Måned/Fartøy":
+            continue
+
+        if not label.startswith("Fartøy ") or current_year is None:
+            continue
+
+        special_requirements = values[14] if len(values) > 14 else ""
+        for column_index, month_name in enumerate(MONTH_COLUMNS, start=2):
+            raw_value = values[column_index] if len(values) > column_index else ""
+            if raw_value in {"", "N/A"}:
+                continue
+
+            numeric_value = (
+                raw_value.replace("%", "").replace(" ", "").replace(",", ".")
+            )
+            if numeric_value == "":
+                continue
+
+            records.append(
+                {
+                    "vessel": re.sub(r"\s+", " ", label).strip(),
+                    "month_name": month_name,
+                    "month_num": MONTH_ORDER[month_name],
+                    "date": pd.Timestamp(
+                        year=current_year,
+                        month=MONTH_ORDER[month_name],
+                        day=1,
+                    ),
+                    "offhire_days": float(numeric_value),
+                    "Spesielle behov/krav": special_requirements,
+                }
+            )
+
+    if not records:
+        raise DataTooShortError("Fant ingen gyldige observasjoner i CSV-filen.")
+
+    long_df = pd.DataFrame.from_records(records)
     long_df = long_df.sort_values(["vessel", "date"]).reset_index(drop=True)
-    long_df["vessel"] = long_df["vessel"].str.replace(r"\s+", " ", regex=True).str.strip()
     return long_df[
         ["vessel", "month_name", "month_num", "date", "offhire_days", "Spesielle behov/krav"]
     ]
+
+
+def build_fleet_series(panel_df: pd.DataFrame) -> pd.Series:
+    fleet_series = panel_df.groupby("date", as_index=True)["offhire_days"].sum().sort_index()
+    fleet_series.index = pd.DatetimeIndex(fleet_series.index)
+    return fleet_series.asfreq("MS")
 
 
 def build_panel_features(panel_df: pd.DataFrame, lags: int = 3) -> pd.DataFrame:
@@ -454,6 +593,31 @@ def train_test_split_panel(features_df: pd.DataFrame) -> tuple[pd.DataFrame, pd.
     return train_df, test_df
 
 
+def fit_or_fallback_exponential_forecast(
+    train_series: pd.Series, steps: int
+) -> np.ndarray:
+    trend = "add" if train_series.nunique() > 1 and len(train_series) >= 5 else None
+
+    try:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=ConvergenceWarning)
+            warnings.simplefilter("ignore", category=RuntimeWarning)
+            model = ExponentialSmoothing(
+                train_series,
+                trend=trend,
+                seasonal=None,
+                initialization_method="estimated",
+            )
+            fit = model.fit(optimized=True, use_brute=True)
+        forecast = np.asarray(fit.forecast(steps), dtype=float)
+        if not np.isfinite(forecast).all():
+            raise ValueError("Forecast contains non-finite values.")
+    except Exception:
+        forecast = np.repeat(float(train_series.iloc[-1]), steps)
+
+    return np.clip(forecast, 0.0, None)
+
+
 def run_exponential_smoothing(panel_df: pd.DataFrame) -> tuple[ModelResult, pd.DataFrame]:
     predictions: list[dict[str, Any]] = []
     for vessel, vessel_df in panel_df.groupby("vessel"):
@@ -467,26 +631,7 @@ def run_exponential_smoothing(panel_df: pd.DataFrame) -> tuple[ModelResult, pd.D
             continue
 
         train_series = train_df["offhire_days"].astype(float)
-        trend = "add" if train_series.nunique() > 1 and len(train_series) >= 5 else None
-
-        try:
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore", category=ConvergenceWarning)
-                warnings.simplefilter("ignore", category=RuntimeWarning)
-                model = ExponentialSmoothing(
-                    train_series,
-                    trend=trend,
-                    seasonal=None,
-                    initialization_method="estimated",
-                )
-                fit = model.fit(optimized=True, use_brute=True)
-            forecast = np.asarray(fit.forecast(len(test_df)), dtype=float)
-            if not np.isfinite(forecast).all():
-                raise ValueError("Forecast contains non-finite values.")
-        except Exception:
-            # Fallback for very short or numerically unstable vessel series.
-            forecast = np.repeat(float(train_series.iloc[-1]), len(test_df))
-        forecast = np.clip(forecast, 0.0, None)
+        forecast = fit_or_fallback_exponential_forecast(train_series, len(test_df))
 
         for date_value, actual, pred in zip(test_df["date"], test_df["offhire_days"], forecast):
             predictions.append(
@@ -520,10 +665,36 @@ def run_exponential_smoothing(panel_df: pd.DataFrame) -> tuple[ModelResult, pd.D
     return metrics, pred_df
 
 
+def forecast_exponential_smoothing(panel_df: pd.DataFrame, horizon: int = 2) -> pd.DataFrame:
+    future_dates = future_dates_from_panel(panel_df, horizon)
+    predictions: list[dict[str, Any]] = []
+
+    for vessel, vessel_df in panel_df.groupby("vessel"):
+        vessel_df = vessel_df.sort_values("date").reset_index(drop=True)
+        if len(vessel_df) < 4:
+            continue
+
+        forecast = fit_or_fallback_exponential_forecast(
+            vessel_df["offhire_days"].astype(float), horizon
+        )
+        for date_value, pred in zip(future_dates, forecast):
+            predictions.append(
+                {
+                    "model": "exponential_smoothing",
+                    "vessel": vessel,
+                    "date": date_value.strftime("%Y-%m-%d"),
+                    "prediction": float(pred),
+                }
+            )
+
+    if not predictions:
+        return pd.DataFrame()
+
+    return pd.DataFrame(predictions).sort_values(["vessel", "date"]).reset_index(drop=True)
+
+
 def run_sarima(panel_df: pd.DataFrame) -> tuple[ModelResult, pd.DataFrame]:
-    fleet_series = (
-        panel_df.groupby("date", as_index=True)["offhire_days"].sum().sort_index()
-    )
+    fleet_series = build_fleet_series(panel_df)
     if len(fleet_series) < 24:
         return (
             ModelResult(
@@ -571,10 +742,34 @@ def run_sarima(panel_df: pd.DataFrame) -> tuple[ModelResult, pd.DataFrame]:
     return metrics, pred_df
 
 
-def run_xgboost(features_df: pd.DataFrame) -> tuple[ModelResult, pd.DataFrame]:
+def forecast_sarima(panel_df: pd.DataFrame, horizon: int = 2) -> pd.DataFrame:
+    fleet_series = build_fleet_series(panel_df)
+    if len(fleet_series) < 24:
+        return pd.DataFrame()
+
+    future_dates = future_dates_from_panel(panel_df, horizon)
+    model = SARIMAX(
+        fleet_series,
+        order=(1, 0, 1),
+        seasonal_order=(1, 0, 0, 12),
+        enforce_stationarity=False,
+        enforce_invertibility=False,
+    )
+    fit = model.fit(disp=False)
+    forecast = np.clip(np.asarray(fit.forecast(steps=horizon), dtype=float), 0.0, None)
+    return pd.DataFrame(
+        {
+            "model": "sarima",
+            "vessel": "fleet_total",
+            "date": [date_value.strftime("%Y-%m-%d") for date_value in future_dates],
+            "prediction": forecast,
+        }
+    )
+
+
+def build_xgboost_pipeline() -> tuple[Pipeline, list[str]]:
     from xgboost import XGBRegressor
 
-    train_df, test_df = train_test_split_panel(features_df)
     numeric_features = [
         "month_num",
         "lag_1",
@@ -614,8 +809,12 @@ def run_xgboost(features_df: pd.DataFrame) -> tuple[ModelResult, pd.DataFrame]:
             ("model", model),
         ]
     )
+    return pipeline, numeric_features + categorical_features
 
-    feature_columns = numeric_features + categorical_features
+
+def run_xgboost(features_df: pd.DataFrame) -> tuple[ModelResult, pd.DataFrame]:
+    train_df, test_df = train_test_split_panel(features_df)
+    pipeline, feature_columns = build_xgboost_pipeline()
     pipeline.fit(train_df[feature_columns], train_df["offhire_days"])
     predictions = np.clip(pipeline.predict(test_df[feature_columns]), 0.0, None)
 
@@ -637,6 +836,70 @@ def run_xgboost(features_df: pd.DataFrame) -> tuple[ModelResult, pd.DataFrame]:
         },
     )
     return metrics, pred_df
+
+
+def forecast_xgboost(
+    panel_df: pd.DataFrame,
+    features_df: pd.DataFrame,
+    horizon: int = 2,
+) -> pd.DataFrame:
+    if features_df.empty:
+        return pd.DataFrame()
+
+    pipeline, feature_columns = build_xgboost_pipeline()
+    pipeline.fit(features_df[feature_columns], features_df["offhire_days"])
+    future_dates = future_dates_from_panel(panel_df, horizon)
+    predictions: list[dict[str, Any]] = []
+
+    for vessel, vessel_df in panel_df.groupby("vessel"):
+        vessel_df = vessel_df.sort_values("date").reset_index(drop=True)
+        if len(vessel_df) < 3:
+            continue
+
+        history_values = vessel_df["offhire_days"].astype(float).tolist()
+        special_flag = bool(
+            vessel_df["Spesielle behov/krav"].fillna("").astype(str).str.strip().iloc[-1]
+        )
+
+        for date_value in future_dates:
+            latest_values = np.asarray(history_values[-3:], dtype=float)
+            feature_row = pd.DataFrame(
+                [
+                    {
+                        "month_num": date_value.month,
+                        "lag_1": float(latest_values[-1]),
+                        "lag_2": float(latest_values[-2]),
+                        "lag_3": float(latest_values[-3]),
+                        "rolling_mean_3": float(latest_values.mean()),
+                        "rolling_std_3": (
+                            float(np.std(latest_values, ddof=1))
+                            if len(latest_values) > 1
+                            else 0.0
+                        ),
+                        "month_sin": float(np.sin(2 * np.pi * date_value.month / 12.0)),
+                        "month_cos": float(np.cos(2 * np.pi * date_value.month / 12.0)),
+                        "vessel": vessel,
+                        "special_flag": special_flag,
+                    }
+                ]
+            )
+            prediction = float(
+                np.clip(pipeline.predict(feature_row[feature_columns])[0], 0.0, None)
+            )
+            predictions.append(
+                {
+                    "model": "xgboost",
+                    "vessel": vessel,
+                    "date": date_value.strftime("%Y-%m-%d"),
+                    "prediction": prediction,
+                }
+            )
+            history_values.append(prediction)
+
+    if not predictions:
+        return pd.DataFrame()
+
+    return pd.DataFrame(predictions).sort_values(["vessel", "date"]).reset_index(drop=True)
 
 
 def build_lstm_sequences(
@@ -683,33 +946,18 @@ def build_lstm_sequences(
     return np.asarray(sequences, dtype=np.float32), np.asarray(targets, dtype=np.float32), metadata
 
 
-def run_lstm(panel_df: pd.DataFrame) -> tuple[ModelResult, pd.DataFrame]:
+def train_lstm_regressor(
+    X_train: np.ndarray,
+    y_train: np.ndarray,
+) -> tuple[Any, StandardScaler, StandardScaler]:
     os.environ.setdefault("TF_CPP_MIN_LOG_LEVEL", "2")
     import tensorflow as tf
     from tensorflow import keras
 
-    X, y, metadata = build_lstm_sequences(panel_df, window_size=3)
-    dates = pd.to_datetime([item["date"] for item in metadata])
-    unique_dates = sorted(dates.unique())
-    if len(unique_dates) < 4:
-        raise DataTooShortError("For få datoer til å evaluere LSTM-modellen.")
-
-    test_dates = set(unique_dates[-2:])
-    test_mask = np.array([date in test_dates for date in dates], dtype=bool)
-    train_mask = ~test_mask
-
-    if train_mask.sum() == 0 or test_mask.sum() == 0:
-        raise DataTooShortError("Train/test-splitt for LSTM ble tom.")
-
-    X_train, X_test = X[train_mask], X[test_mask]
-    y_train, y_test = y[train_mask], y[test_mask]
-
     x_scaler = StandardScaler()
     X_train_flat = X_train.reshape(-1, X_train.shape[-1])
-    X_test_flat = X_test.reshape(-1, X_test.shape[-1])
     x_scaler.fit(X_train_flat)
     X_train_scaled = x_scaler.transform(X_train_flat).reshape(X_train.shape)
-    X_test_scaled = x_scaler.transform(X_test_flat).reshape(X_test.shape)
 
     y_scaler = StandardScaler()
     y_train_scaled = y_scaler.fit_transform(y_train.reshape(-1, 1)).reshape(-1)
@@ -738,16 +986,41 @@ def run_lstm(panel_df: pd.DataFrame) -> tuple[ModelResult, pd.DataFrame]:
         patience=10,
         restore_best_weights=True,
     )
-    model.fit(
-        X_train_scaled,
-        y_train_scaled,
-        validation_split=0.2,
-        epochs=200,
-        batch_size=4,
-        verbose=0,
-        shuffle=False,
-        callbacks=[callback],
-    )
+    fit_kwargs = {
+        "x": X_train_scaled,
+        "y": y_train_scaled,
+        "epochs": 200,
+        "batch_size": 4,
+        "verbose": 0,
+        "shuffle": False,
+    }
+    if len(X_train_scaled) >= 10:
+        fit_kwargs["validation_split"] = 0.2
+        fit_kwargs["callbacks"] = [callback]
+
+    model.fit(**fit_kwargs)
+    return model, x_scaler, y_scaler
+
+
+def run_lstm(panel_df: pd.DataFrame) -> tuple[ModelResult, pd.DataFrame]:
+    X, y, metadata = build_lstm_sequences(panel_df, window_size=3)
+    dates = pd.to_datetime([item["date"] for item in metadata])
+    unique_dates = sorted(dates.unique())
+    if len(unique_dates) < 4:
+        raise DataTooShortError("For få datoer til å evaluere LSTM-modellen.")
+
+    test_dates = set(unique_dates[-2:])
+    test_mask = np.array([date in test_dates for date in dates], dtype=bool)
+    train_mask = ~test_mask
+
+    if train_mask.sum() == 0 or test_mask.sum() == 0:
+        raise DataTooShortError("Train/test-splitt for LSTM ble tom.")
+
+    X_train, X_test = X[train_mask], X[test_mask]
+    y_test = y[test_mask]
+
+    model, x_scaler, y_scaler = train_lstm_regressor(X_train, y[train_mask])
+    X_test_scaled = x_scaler.transform(X_test.reshape(-1, X_test.shape[-1])).reshape(X_test.shape)
     predictions_scaled = model.predict(X_test_scaled, verbose=0).reshape(-1, 1)
     predictions = y_scaler.inverse_transform(predictions_scaled).reshape(-1)
     predictions = np.clip(predictions, 0.0, None)
@@ -780,9 +1053,69 @@ def run_lstm(panel_df: pd.DataFrame) -> tuple[ModelResult, pd.DataFrame]:
     return metrics, pred_df
 
 
+def forecast_lstm(panel_df: pd.DataFrame, horizon: int = 2) -> pd.DataFrame:
+    X, y, _ = build_lstm_sequences(panel_df, window_size=3)
+    model, x_scaler, y_scaler = train_lstm_regressor(X, y)
+    future_dates = future_dates_from_panel(panel_df, horizon)
+    predictions: list[dict[str, Any]] = []
+
+    for vessel, vessel_df in panel_df.groupby("vessel"):
+        vessel_df = vessel_df.sort_values("date").reset_index(drop=True)
+        if len(vessel_df) <= 3:
+            continue
+
+        history_values = vessel_df["offhire_days"].astype(float).tolist()
+        history_months = vessel_df["month_num"].astype(float).tolist()
+        history_special = (
+            vessel_df["Spesielle behov/krav"]
+            .fillna("")
+            .astype(str)
+            .str.strip()
+            .ne("")
+            .astype(float)
+            .tolist()
+        )
+        latest_special_flag = history_special[-1] if history_special else 0.0
+
+        for date_value in future_dates:
+            sequence = np.stack(
+                [
+                    np.asarray(history_values[-3:], dtype=np.float32),
+                    np.sin(2 * np.pi * np.asarray(history_months[-3:], dtype=np.float32) / 12.0),
+                    np.cos(2 * np.pi * np.asarray(history_months[-3:], dtype=np.float32) / 12.0),
+                    np.asarray(history_special[-3:], dtype=np.float32),
+                ],
+                axis=1,
+            )
+            sequence_scaled = x_scaler.transform(sequence).reshape(1, sequence.shape[0], sequence.shape[1])
+            prediction_scaled = model.predict(sequence_scaled, verbose=0).reshape(-1, 1)
+            prediction = float(
+                np.clip(y_scaler.inverse_transform(prediction_scaled).reshape(-1)[0], 0.0, None)
+            )
+            predictions.append(
+                {
+                    "model": "lstm",
+                    "vessel": vessel,
+                    "date": date_value.strftime("%Y-%m-%d"),
+                    "prediction": prediction,
+                }
+            )
+            history_values.append(prediction)
+            history_months.append(float(date_value.month))
+            history_special.append(float(latest_special_flag))
+
+    if not predictions:
+        return pd.DataFrame()
+
+    return pd.DataFrame(predictions).sort_values(["vessel", "date"]).reset_index(drop=True)
+
+
 def save_outputs(
     results: list[ModelResult],
     prediction_frames: dict[str, pd.DataFrame],
+    future_prediction_frames: dict[str, pd.DataFrame],
+    panel_df: pd.DataFrame,
+    active_models: list[str],
 ) -> None:
     metrics_payload = [
         {
@@ -799,7 +1132,13 @@ def save_outputs(
         encoding="utf-8",
     )
 
-    save_model_specific_outputs(results, prediction_frames)
+    save_model_specific_outputs(
+        results,
+        prediction_frames,
+        future_prediction_frames,
+        panel_df,
+        active_models,
+    )
 
     non_empty_frames = [frame for frame in prediction_frames.values() if not frame.empty]
     if non_empty_frames:
@@ -812,24 +1151,43 @@ def save_outputs(
     else:
         (RESULTS_DIR / "predictions.csv").unlink(missing_ok=True)
 
+    non_empty_future_frames = [
+        frame for frame in future_prediction_frames.values() if not frame.empty
+    ]
+    if non_empty_future_frames:
+        combined_future = pd.concat(non_empty_future_frames, ignore_index=True)
+        combined_future = combined_future.sort_values(["model", "vessel", "date"]).reset_index(drop=True)
+        combined_future.to_csv(RESULTS_DIR / "future_predictions.csv", index=False)
+    else:
+        (RESULTS_DIR / "future_predictions.csv").unlink(missing_ok=True)
+
 
 def main() -> None:
     ensure_results_dir()
     panel_df = load_dataset()
+    active_models = ACTIVE_MODELS.copy()
 
     results: list[ModelResult] = []
     prediction_frames: dict[str, pd.DataFrame] = {}
+    future_prediction_frames: dict[str, pd.DataFrame] = {}
 
     features_df = build_panel_features(panel_df, lags=3)
 
-    model_runners = [
-        ("sarima", lambda: run_sarima(panel_df)),
-        ("exponential_smoothing", lambda: run_exponential_smoothing(panel_df)),
-        ("xgboost", lambda: run_xgboost(features_df)),
-        ("lstm", lambda: run_lstm(panel_df)),
-    ]
+    model_runners = {
+        "sarima": lambda: run_sarima(panel_df),
+        "exponential_smoothing": lambda: run_exponential_smoothing(panel_df),
+        "xgboost": lambda: run_xgboost(features_df),
+        "lstm": lambda: run_lstm(panel_df),
+    }
+    future_forecasters = {
+        "sarima": lambda: forecast_sarima(panel_df),
+        "exponential_smoothing": lambda: forecast_exponential_smoothing(panel_df),
+        "xgboost": lambda: forecast_xgboost(panel_df, features_df),
+        "lstm": lambda: forecast_lstm(panel_df),
+    }
 
-    for model_name, runner in model_runners:
+    for model_name in active_models:
+        runner = model_runners[model_name]
         try:
             result, pred_df = runner()
             results.append(result)
@@ -851,7 +1209,22 @@ def main() -> None:
                 )
             )
 
-    save_outputs(results, prediction_frames)
+    for model_name in active_models:
+        forecaster = future_forecasters[model_name]
+        try:
+            future_prediction_frames[model_name] = forecaster()
+        except DataTooShortError:
+            future_prediction_frames[model_name] = pd.DataFrame()
+        except Exception:
+            future_prediction_frames[model_name] = pd.DataFrame()
+
+    save_outputs(
+        results,
+        prediction_frames,
+        future_prediction_frames,
+        panel_df,
+        active_models,
+    )
 
     print("Modellkjøring fullført.")
     for result in results:
@@ -862,6 +1235,21 @@ def main() -> None:
         else:
             reason = (result.details or {}).get("reason", "ingen detalj")
             print(f"- {result.model}: {result.status.upper()} | {reason}")
+
+    combined_future_rows = sum(len(frame) for frame in future_prediction_frames.values())
+    if combined_future_rows:
+        future_dates = sorted(
+            {
+                date_value
+                for frame in future_prediction_frames.values()
+                if not frame.empty
+                for date_value in frame["date"].tolist()
+            }
+        )
+        print(
+            "- fremtidsprognoser: "
+            f"{combined_future_rows} rader for {', '.join(future_dates)}"
+        )
 
 
 if __name__ == "__main__":

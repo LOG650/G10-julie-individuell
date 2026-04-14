@@ -1,17 +1,125 @@
-﻿Fartøy/Måned;Januar;Februar;Mars;April;Mai;Juni;Juli;August;September;Oktober;November;Desember;Spesielle behov/krav
-Fartøy 1 ;N/A;N/A;N/A;0;0;4,2;8,68;8,99;0;0;2,1;0,31;
-Fartøy 2;N/A;N/A;N/A;21,3;16,12;0;0;0;0;10,54;10,8;23,87;
-Fartøy 3;N/A;N/A;N/A;0;0;0;0;1,55;5,7;0;0;0;
-Fartøy 4;N/A;N/A;N/A;2,4;0;0;12,09;23,56;0;0;6,9;0;
-Fartøy 5;N/A;N/A;N/A;0;0;0;0;0;0,6;9,92;25,2;1,24;
-Fartøy 6;N/A;N/A;N/A;0;0;0;0;0;0;0;0;0;
-Fartøy 7;N/A;N/A;N/A;0;0;0;0;0;0;0;0;30,38;
-Fartøy 8;N/A;N/A;N/A;30;8,68;0;0;0;0;0;0;0;
-Fartøy 9;N/A;N/A;N/A;0,6;25,73;0;0;0;0;0;0;0;
-Fartøy 10;N/A;N/A;N/A;18,6;0;0;1,86;0;1,2;0,62;0;0;
-Fartøy 11;N/A;N/A;N/A;0,3;4,65;0;0;2,69;0;0;0;0;
-Fartøy 12;N/A;N/A;N/A;0;0;0;0;0;0;0;0;0;
-Fartøy 13;N/A;N/A;N/A;0;0;0;0;0;0;0;0;0;
-Fartøy 14 ;N/A;N/A;N/A;0;0;0;0;0;0;0;0;0;
-Fartøy 15;N/A;N/A;N/A;0;0;0;0;0;0;0;0;0;
-Fartøy 16;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;Fartøy 16 lagt i opplag
+﻿Antall dager i prosenter uten kontrakt ;År: 2021;;;;;;;;;;;;;
+;Måned/Fartøy ;Januar ;Februar;Mars;April;Mai;Juni;Juli;August ;September;Oktober;November;Desember;Spesielle Behov/Krav
+;Fartøy 1;N/A;N/A;N/A;0;0;14 %;28 %;29 %;0;0;7 %;1 %;
+;Fartøy 2;N/A;N/A;N/A;71 %;52 %;0;0;0;0;34 %;36 %;77 %;
+;Fartøy 3;N/A;N/A;N/A;0;0;0;0;5 %;19 %;0;0;0;
+;Fartøy 4;N/A;N/A;N/A;8 %;0;0;39 %;24 %;0;0;23 %;0;
+;Fartøy 5;N/A;N/A;N/A;0;0;0;0;0;2 %;32 %;84 %;4 %;
+;Fartøy 6;N/A;N/A;N/A;0;0;0;0;0;0;0;0;0;
+;Fartøy 7;N/A;N/A;N/A;0;0;0;0;0;0;0;0;98 %;
+;Fartøy 8;N/A;N/A;N/A;28 %;0;0;0;0;0;0;0;0;
+;Fartøy 9;N/A;N/A;N/A;2 %;83 %;0;0;0;0;0;0;0;
+;Fartøy 10;N/A;N/A;N/A;62 %;0;0;6 %;0;4 %;2 %;0;0;
+;Fartøy 11;N/A;N/A;N/A;1 %;15 %;0;0;9 %;0;0;0;0;
+;Fartøy 12;N/A;N/A;N/A;0;0;0;0;0;0;0;0;0;
+;Fartøy 13;N/A;N/A;N/A;0;0;0;0;0;0;0;0;0;
+;Fartøy 14;N/A;N/A;N/A;0;0;0;0;0;0;0;0;0;
+;Fartøy 15;N/A;N/A;N/A;0;0;0;0;0;0;0;0;0;
+;Fartøy 16;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;Lagt i opplag 
+;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;
+;År: 2022;;;;;;;;;;;;;
+;Måned/Fartøy ;Januar ;Februar;Mars;April;Mai;Juni;Juli;August ;September;Oktober;November;Desember;Spesielle Behov/Krav
+;Fartøy 1;7 %;0;0;0;0;12 %;5 %;9 %;8 %;0;17 %;67 %;
+;Fartøy 2;77 %;12 %;29 %;65 %;45 %;0;0;0;0;0 %;0 %;33 %;
+;Fartøy 3;0;0;0;0;0;0;0;0 %;0 %;0;0;0;
+;Fartøy 4;0;25 %;16 %;0 %;0;0;0 %;0 %;0;0;0 %;0;
+;Fartøy 5;12 %;40 %;0;0;88 %;21 %;0;0;0 %;41 %;2 %;0 %;
+;Fartøy 6;96 %;16 %;0;0;0;5 %;0;6 %;0;0;0;0;
+;Fartøy 7;32 %;0;0;0;0;5 %;0;0;1 %;56 %;65 %;0 %;
+;Fartøy 8;59 %;55 %;43 %;0 %;2 %;58 %;32 %;8 %;38 %;45 %;46 %;93 %;
+;Fartøy 9;0;0;0;0 %;0 %;0;0;0;0;0;0;0;
+;Fartøy 10;0;10 %;0;0 %;0;1 %;100 %;4 %;15 %;44 %;77 %;20 %;
+;Fartøy 11;0;0;0;0 %;0 %;0;0;0 %;0;0;0;0;
+;Fartøy 12;0;0;0;0;0;0;0;0;0;28 %;0;0;
+;Fartøy 13;0;0;0;0;0;0;0;0;0;0;0;0;
+;Fartøy 14;0;0;0;0;0;0;0;0;0;0;0;0;
+;Fartøy 15;0;0;0;0;0;0;0;0;0;0;0;0;
+;Fartøy 16;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;Lagt i opplag 
+;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;
+;År: 2023;;;;;;;;;;;;;
+;Måned/Fartøy ;Januar ;Februar;Mars;April;Mai;Juni;Juli;August ;September;Oktober;November;Desember;Spesielle Behov/Krav
+;Fartøy 1;5 %;62 %;0;40 %;0;0 %;9 %;0 %;0 %;28 %;0 %;0 %;
+;Fartøy 2;100 %;93 %;33 %;51 %;0 %;0;0;0;0;0 %;0 %;0 %;
+;Fartøy 3;0;0;0;0;0;0;0;0 %;0 %;0;0;0;
+;Fartøy 4;0;0 %;0 %;13 %;11 %;0;0 %;0 %;0;0;0 %;0;
+;Fartøy 5;0 %;0 %;0;0;0 %;0 %;0;0;0 %;0 %;0 %;0 %;
+;Fartøy 6;0 %;0 %;0;0;0;5 %;0;0 %;0;0;0;0;
+;Fartøy 7;0 %;0;0;0;0;0 %;0;0;0 %;0 %;0 %;0 %;
+;Fartøy 8;12 %;29 %;8 %;0 %;0 %;0 %;0 %;0 %;0 %;0 %;0 %;0 %;
+;Fartøy 9;0;0;0;0 %;0 %;0;0;0;0;0;0;0;
+;Fartøy 10;0;0 %;0;28 %;100 %;19 %;0 %;0 %;0 %;0 %;0 %;0 %;
+;Fartøy 11;0;48 %;0;0 %;0 %;0;0;0 %;0;0;0;0;
+;Fartøy 12;0;8 %;0;0;0;0;0;8 %;0;0 %;0;0;
+;Fartøy 13;0;0;0;0;0;0;0;0;0;0;0;0;
+;Fartøy 14;0;0;0;0;0;13 %;0;0;0;0;0;0;
+;Fartøy 15;0;0;0;0;0;0;0;0;26 %;31 %;0;0;
+;Fartøy 16;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;Lagt i opplag og solgt til et annet rederi
+;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;
+;År: 2024;;;;;;;;;;;;;
+;Måned/Fartøy ;Januar ;Februar;Mars;April;Mai;Juni;Juli;August ;September;Oktober;November;Desember;Spesielle Behov/Krav
+;Fartøy 1;0 %;0 %;0;0 %;0;0 %;0 %;0 %;0 %;0 %;0 %;0 %;Bareboat charter i Brasil
+;Fartøy 2;0 %;31 %;73 %;2 %;12 %;0;0;0;0 %;0 %;0 %;0 %;
+;Fartøy 3;0;0;0;0;0;0;0;0 %;0 %;9,14 %;34,40 %;0 %;
+;Fartøy 4;84 %;1 %;0 %;0 %;0 %;0;0 %;0 %;0 %;0;0 %;0 %;
+;Fartøy 5;0 %;0 %;0;0;0 %;0 %;0;71,51 %;4 %;0 %;0 %;0 %;
+;Fartøy 6;0 %;0 %;0;0;0;23 %;0;0 %;0;0;0;0 %;
+;Fartøy 7;0 %;0;0;0;0;0 %;0;0;0;0 %;0 %;0 %;
+;Fartøy 8;0 %;0 %;0 %;0 %;27 %;68 %;35 %;5 %;0;9 %;22 %;26 %;
+;Fartøy 9;0;0;0;26 %;0 %;0;0;0;0;0;0;0;
+;Fartøy 10;0;0 %;0;0 %;0 %;0 %;0 %;32 %;0;17 %;0 %;0 %;
+;Fartøy 11;0;28 %;0;0 %;0 %;0;0;0 %;0;7,09 %;0 %;63,81 %;
+;Fartøy 12;0;0 %;10,65 %;0;0;0;0;0 %;0;0 %;0 %;0,00 %;
+;Fartøy 13;0;0;0;0;0;0;0;0;0;0;0 %;0;
+;Fartøy 14;0;0;0;0;0;0 %;0;0;0;0;0 %;0;
+;Fartøy 15;0;0;0;0;0;0;0;0;0;0 %;0 %;0;
+;Fartøy 16;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;
+;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;
+;År: 2025;;;;;;;;;;;;;
+;Måned/Fartøy ;Januar ;Februar;Mars;April;Mai;Juni;Juli;August ;September;Oktober;November;Desember;Spesielle Behov/Krav
+;Fartøy 1;0 %;0 %;0;0 %;0;0 %;0 %;0 %;0 %;0 %;0 %;0 %;Bareboat charter i Brasil
+;Fartøy 2;0 %;0 %;0;0 %;0 %;0 %;0 %;0 %;0 %;0 %;0 %;0 %;
+;Fartøy 3;0 %;0 %;0;0 %;1,79 %;0 %;0 %;0 %;0 %;0 %;0 %;0 %;
+;Fartøy 4;0 %;0 %;0;0 %;0 %;0 %;0 %;0 %;0 %;0 %;0 %;0 %;
+;Fartøy 5;0 %;0 %;0;3,88 %;0 %;0 %;0 %;0 %;0 %;0 %;13 %;0 %;
+;Fartøy 6;0 %;0 %;0;0;0 %;0 %;0 %;0 %;0 %;0 %;0;0 %;
+;Fartøy 7;0 %;0;0;0;0 %;0 %;3,13 %;0 %;0 %;0 %;0;0 %;
+;Fartøy 8;74 %;56 %;0;54 %;0 %;0 %;0 %;0 %;0 %;0 %;0;0 %;
+;Fartøy 9;0;0;0;0 %;0 %;0 %;0;0 %;40,45 %;100 %;100 %;88,97 %;
+;Fartøy 10;0;0;61,45 %;54 %;0 %;0 %;87 %;29 %;0 %;52 %;35 %;79 %;
+;Fartøy 11;0;0;0,00 %;0 %;0 %;43,74 %;25,28 %;0 %;0 %;0,00 %;0 %;11,02 %;
+;Fartøy 12;0;0;0,00 %;0 %;0 %;0 %;0;0 %;0 %;0,00 %;0 %;0,00 %;
+;Fartøy 13;0;0;0,00 %;0 %;0 %;0 %;0;0 %;0 %;0,00 %;0 %;0,00 %;
+;Fartøy 14;0;0;0,00 %;0 %;0 %;0 %;0;0 %;0 %;0,00 %;0 %;0,00 %;
+;Fartøy 15;19,89 %;0;0,00 %;0 %;0 %;0 %;0;0 %;0 %;0,00 %;0 %;0,00 %;
+;Fartøy 16;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;
+;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;
+;År: 2026;;;;;;;;;;;;;
+;Måned/Fartøy ;Januar ;Februar;Mars;April;Mai;Juni;Juli;August ;September;Oktober;November;Desember;Spesielle Behov/Krav
+;Fartøy 1;0 %;0 %;0 %;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;Bareboat charter i Brasil
+;Fartøy 2;0 %;0 %;0 %;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;
+;Fartøy 3;0 %;0 %;0 %;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;
+;Fartøy 4;0 %;0 %;80 %;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;
+;Fartøy 5;0 %;0 %;0 %;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;
+;Fartøy 6;0 %;0 %;0 %;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;
+;Fartøy 7;1 %;0 %;0 %;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;
+;Fartøy 8;0 %;0 %;0 %;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;
+;Fartøy 9;0 %;0 %;0 %;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;
+;Fartøy 10;70,08 %;0 %;3,36 %;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;
+;Fartøy 11;59,41 %;58 %;18,68 %;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;
+;Fartøy 12;0 %;0 %;0,00 %;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;
+;Fartøy 13;0 %;0 %;0,00 %;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;
+;Fartøy 14;0 %;0 %;0,00 %;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;
+;Fartøy 15;0 %;0 %;0,00 %;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;
+;Fartøy 16;N/A;0 %;0,00 %;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;N/A;Fartøy 16 kjøpt Februar 2026

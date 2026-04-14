@@ -19,26 +19,7 @@ def run_exponential_smoothing(panel_df: pd.DataFrame) -> tuple[ModelResult, pd.D
             continue
 
         train_series = train_df["offhire_days"].astype(float)
-        trend = "add" if train_series.nunique() > 1 and len(train_series) >= 5 else None
-
-        try:
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore", category=ConvergenceWarning)
-                warnings.simplefilter("ignore", category=RuntimeWarning)
-                model = ExponentialSmoothing(
-                    train_series,
-                    trend=trend,
-                    seasonal=None,
-                    initialization_method="estimated",
-                )
-                fit = model.fit(optimized=True, use_brute=True)
-            forecast = np.asarray(fit.forecast(len(test_df)), dtype=float)
-            if not np.isfinite(forecast).all():
-                raise ValueError("Forecast contains non-finite values.")
-        except Exception:
-            # Fallback for very short or numerically unstable vessel series.
-            forecast = np.repeat(float(train_series.iloc[-1]), len(test_df))
-        forecast = np.clip(forecast, 0.0, None)
+        forecast = fit_or_fallback_exponential_forecast(train_series, len(test_df))
 
         for date_value, actual, pred in zip(test_df["date"], test_df["offhire_days"], forecast):
             predictions.append(
