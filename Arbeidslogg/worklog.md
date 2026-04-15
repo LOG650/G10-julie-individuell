@@ -63,3 +63,18 @@ Next step:
 - Implemented a Box-Jenkins-style `SARIMA` workflow on fleet level with stationarity testing, ACF/PACF diagnostics, candidate model selection, residual diagnostics, and documented model choice.
 - Added automatic generation of `metode.md` for each model and extra SARIMA artifacts such as stationarity tables, candidate model tables, and diagnostic plots.
 - Ran the full pipeline on the current dataset and confirmed that all four models complete under the shared evaluation setup, with updated comparison outputs written to the modeling folders.
+
+## 15.04.2026
+- Reviewed the lecturers' example structure and used it to tighten the report logic around literature, theory, modeling, and results.
+- Reworked the report so `Litteratur` now functions as a research review, while `Teori` is structured around the four actual model families used in the thesis: `SARIMA`, `Eksponentiell glatting`, `XGBoost`, and `LSTM`.
+- Updated the theory chapter to rely on more established forecasting and model references, and aligned the writing more clearly with APA 7 style in the report.
+- Rebuilt the modeling workflow so all four models are evaluated on the same historical setup at vessel level with a shared train/test split and expanding `1-step` evaluation through the full test period.
+- Refactored `SARIMA` from a fleet-level setup to a per-vessel `ARIMA/SARIMA` workflow with stationarity support, bounded candidate search, model selection tables, residual diagnostics, and representative validation plots.
+- Refactored `Eksponentiell glatting` into a comparable per-vessel benchmark with explicit ETS specification selection, residual diagnostics, and representative test plots.
+- Refactored `XGBoost` into a cleaner panel-data workflow with lag features, rolling features, calendar features, vessel encoding, feature importance outputs, and month-by-month walk-forward evaluation.
+- Refactored `LSTM` into a shared sequence-based evaluation workflow with `12`-month input windows, train-only scaling, training-history artifacts, and representative test plots.
+- Added combined verification outputs under `004 data/modeling/results`, including summary tables by model, vessel, and month, plus figure outputs for `MAE` comparison and vessel-level error heatmaps.
+- Removed `future_predictions.csv` from the standard modeling run so the default pipeline now documents only model building, testing, and verification, while future forecasting is left for a later report section.
+- Updated the modeling README and the report chapters so they match the revised workflow and explicitly use figures/tables as verification material for each model.
+- Ran the full pipeline after the refactor and confirmed the latest shared historical test ranking: `SARIMA` best, followed by `XGBoost`, `LSTM`, and `Eksponentiell glatting`.
+- Committed and pushed the main work in `d3186e6` (`rewrite theory and literature sections`) and `5ad242a` (`refine model testing and verification workflow`).
