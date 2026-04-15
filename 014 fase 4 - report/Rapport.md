@@ -122,6 +122,24 @@ Oppgaver som er unntatt offentlighet eller båndlagt vil ikke bli publisert.
 
 [Prognostisering som beslutningsstøtte [6](#prognostisering-som-beslutningsstøtte)](#prognostisering-som-beslutningsstøtte)
 
+[Tidsserier og sentrale komponenter [6](#tidsserier-og-sentrale-komponenter)](#tidsserier-og-sentrale-komponenter)
+
+[Klassiske tidsseriemodeller [6](#klassiske-tidsseriemodeller)](#klassiske-tidsseriemodeller)
+
+[SARIMA [6](#sarima-1)](#sarima-1)
+
+[Eksponentiell glatting [6](#eksponentiell-glatting-1)](#eksponentiell-glatting-1)
+
+[Maskinlæring og dyp læring i prognostisering [7](#maskinlæring-og-dyp-læring-i-prognostisering)](#maskinlæring-og-dyp-læring-i-prognostisering)
+
+[XGBoost [7](#xgboost-1)](#xgboost-1)
+
+[LSTM [7](#lstm-1)](#lstm-1)
+
+[Modellvalg og sammenligningskriterier [7](#modellvalg-og-sammenligningskriterier)](#modellvalg-og-sammenligningskriterier)
+
+[Teoretisk forankring av modellvalget [7](#teoretisk-forankring-av-modellvalget)](#teoretisk-forankring-av-modellvalget)
+
 [4.0 Casebeskrivelse [10](#casebeskrivelse)](#casebeskrivelse)
 
 [5.0 Metode og data (kan splittes i to) [11](#metode-og-data-kan-splittes-i-to)](#metode-og-data-kan-splittes-i-to)
@@ -131,6 +149,14 @@ Oppgaver som er unntatt offentlighet eller båndlagt vil ikke bli publisert.
 [5.2 Data [12](#data)](#data)
 
 [6.0 Modellering [12](#modellering)](#modellering)
+
+[6.1 SARIMA [12](#sarima)](#sarima)
+
+[6.2 Eksponentiell glatting [12](#eksponentiell-glatting)](#eksponentiell-glatting)
+
+[6.3 XGBoost [12](#xgboost)](#xgboost)
+
+[6.4 LSTM [12](#lstm)](#lstm)
 
 [7.0 Analyse [12](#analyse)](#analyse)
 
@@ -150,9 +176,9 @@ Fartøy som opererer innenfor offshoresegmentet er helt essensielle for petroleu
 
 Nedetid har ikke bare tapte inntekter i form av at det er tapte charterdager, men har også indirekte effekt på produksjonen til operatørene, kan få kontrakts sanksjoner og en svekket konkurranseevne i forhold til andre rederier i et allerede volatilt marked. Videre så har offshoremarkedet opplevd betydelige svingninger i etterspørsel og rate på fartøyene, noe som forsterker behovet for bedre beslutningstøtte i flåten (Menon Economics, 2026).
 
-Tradisjonelt har prognoser innen logistikk og operasjonsstyring vært basert på klassiske statistiske metoder, slik som ARIMA (IBM, 2026). Slike modeller har vist seg å være effektive for å identifisere trender og sesongmønstre, men har begrensninger når det kommer til å håndtere komplekse og ikke- linære sammenhenger mellom forklaringsvariablene. De siste tiårene har maskinlæring fått større oppmerksomhet innen prognostisering og beslutningsstøtte. Studier innen logistikk har vist at maskinlæringsmodeller i flere tilfeller kan oppnå høyere prediksjonsnøyaktighet enn tradisjonelle metoder (Carbonneau et al., 2006). Resultatene fra M4- konkurransen indikerer også at kombinasjoner av statistiske og maskinlæringsbaserte metoder kan gi forbedrede prognoser (Makridakis et al., 2018).
+Tradisjonelt har prognoser innen logistikk og operasjonsstyring vært basert på klassiske statistiske metoder, særlig ARIMA-lignende modeller og eksponentiell glatting. Disse modellene er metodisk etablerte og godt egnet til å beskrive mønstre i historiske tidsserier når problemstrukturen er relativt stabil (Gardner, 1985; Hyndman et al., 2002; Hyndman & Khandakar, 2008). Samtidig peker forskning innen logistikk og supply chain management på at maskinlæringsmodeller kan være konkurransedyktige eller bedre når datastrukturen er mer kompleks og sammenhengene er mer ikke-lineære (Carbonneau et al., 2008; Schmid et al., 2025).
 
-Innen maritim sektor har forskning på kunstig intelligens i stor grad vært rettet mot energieffektivitet og operasjonelle optimaliseringer (Assani et al., 2023). Bruken av maskinlæring for prediksjon av operasjonell nedetid i offshoreflåter er derimot mindre undersøkt. Dette aktualiserer behovet for å undersøke om og i hvilken form maskinlæringsmodeller kan bidra til prediksjon av offhire hendelser sammenlignet med tradisjonelle statistiske modeller.
+Innen maritim sektor har datadrevne metoder de siste årene i stor grad vært brukt til prediktivt vedlikehold og operasjonelle beslutningsproblemer, mens forskning på operasjonell nedetid og offhire på fartøynivå fortsatt er mer begrenset. Dette gjør det relevant å undersøke hvordan både tradisjonelle tidsseriemodeller og KI-baserte modeller presterer i akkurat denne konteksten (Chu et al., 2024; Kalafatelis et al., 2025; Kjeldsberg & Munim, 2024).
 
 ## Problemstilling
 
@@ -194,49 +220,77 @@ Det antas at formålet med analysen er prediksjon og ikke kausal forklaring. Mod
 
 # Litteratur
 
-De siste fem årene har forskningen på prognostisering i logistikk og forsyningskjeder vært preget av en tydelig vekst i bruk av maskinlæring og dyp læring. Douaioui et al. (2024) gjennomgår 119 studier publisert mellom 2015 og 2024 og viser at interessen for KI- baserte prognosemodeller har økt markant, særlig etter 2021. Gjennomgangen fremhever at nyere forskning i økende grad vektlegger modellering av komplekse og ikke lineære sammenhenger, samtidig som datakvalitet, modelltolkbarhet og implementering fortsatt trekkes frem som sentrale utfordringer. En bredere oversiktstudie av Khedr og Rani (2024) viser på samme måte at maskinlæring og dyp læring nå anvendes på tvers av flere deler av supply chain management, blant annet innen leverandørvalg, produksjon, lagerstyring, transport og etterspørsel estimering. Samlet peker disse oversiktene på at nyere forskning i liten grad begrenser seg til tradisjonelle tidsseriemetoder, men i stedet undersøker hvordan mer avanserte algoritmer kan håndtere komplekse beslutningsmiljøer bedre.
+De siste årene har forskningen på prognostisering i logistikk og forsyningskjeder vært preget av en tydelig vekst i bruk av maskinlæring og dyp læring. Douaioui et al. (2024) viser i en bred litteraturgjennomgang at interessen for KI-baserte prognosemodeller har økt markant, særlig etter 2021. Oversikten peker samtidig på at nyere studier i større grad undersøker hvordan mer fleksible modeller kan håndtere komplekse og ikke-lineære datastrukturer i etterspørselsprognoser.
 
-Et viktig trekk ved den nyere litteraturen er at metodiske diskusjoner i større grad er knyttet til ustabile og forstyrrende omgivelser. Fildes et al. (2022) oppdatere tidligere forskning på retail forecasting i lys av pandemien og peker på at perioden etter COVID-19 har utløst både nye metodiske utfordringer og en betydelig vekst i forskning på maskinlæringsalgoritmer. I litteraturen beskrives dermed prognostisering i mindre grad som et spørsmål om å ekstrapolere stabile historiske mønstre, og i større grad som et spørsmål om å håndtere brudd, skift og uregelmessighet i datagrunnlaget. Denne utviklingen har gjort nyere prognoseforskning mer opptatt av modellfleksibilitet, skalerbarhet og robusthet enn tidligere.
+Et annet trekk i den nyere litteraturen er at metodiske diskusjoner i større grad knyttes til ustabile og forstyrrende omgivelser. Fildes et al. (2022) viser at retail forecasting etter COVID-19 i mindre grad kan forstås som ren ekstrapolering av stabile historiske mønstre, og i større grad som et spørsmål om hvordan modeller håndterer brudd, skift og uregelmessighet. Dette har gjort robusthet og fleksibilitet viktigere i vurderingen av prognosemetoder.
 
-Et sentralt bidrag i denne utviklingen er M5 Konkurransen. Makridakis et al. (2020) presenterer resultatene fra M5 nøyaktighets konkurransen, hvor målet va å prognostisere 42 840 hierarkiske tidsserier fra Walmart. Studien har fått en sentral plass i nyere prognoselitteratur fordi den samler et stort antall metoder i en felles benchmark og tydelig viser hvor viktig modellvalg er i komplekse datasett. Samtidig viser den tilhørende kommentarlitteraturen at resultatene ikke bør leses som et enkelt bevis på at mer komplekse modeller alltid er best. Kolassa (2022) understreker blant annet at enkle metoder fortsatt kan prestere overraskende godt, og diskuterer både forklarbarhet og avkastningen av økt modellkompleksitet som sentrale temaer i vurderingen av prognosemetoder. Dermed viser M5 konkurransen både en teknologisk utvikling og en vedvarende metodisk uenighet om forholdet mellom nøyaktighet, enkelhet og praktisk anvendbarhet.
+M5-konkurransen har blitt et sentralt referansepunkt i denne diskusjonen. Makridakis et al. (2022) viser hvordan store komparative benchmark-studier kan tydeliggjøre hvor viktig modellvalg er i komplekse datasett. Samtidig understreker Kolassa (2022) at slike resultater ikke bør tolkes som et enkelt bevis på at mer komplekse modeller alltid er best. Litteraturen peker dermed mot en mer nyansert forståelse der nøyaktighet, tolkbarhet og praktisk anvendbarhet må vurderes samlet.
 
-Nyere studier har også i større grad forsøkt å sammenligne tradisjonelle tidsseriemodeller og maskinlæringsmodeller direkte i logistikk-kontekst. Schmid et al. (2025) sammenligner sesong og ARIMA baserte modeller med Random Forest og XGBoost i en simuleringsstudie for data drevet logistikk. Studien viser at Random Forest med differensierte data presterer best i flere komplekse scenarier, særlig når dataseriene inneholder hopp, random walk komponenter eller andre ikke lineære forstyrrelser. Samtidig viser studien at tradisjonelle tidsserietilnærminger fortsatt er konkurransedyktige i mindre komplekse settinger. Dette er en viktig nyanse i nyere forskning da det er en generell forestilling om at maskinlæring generelt utkonkurrerer statistiske metoder. I stedet peker forskningen mot at ytelsen avhenger av datagenererende prosesser og problemstruktur.
+Nyere studier har også i større grad sammenlignet tradisjonelle tidsseriemodeller og maskinlæringsmodeller direkte. Schmid et al. (2025) viser i en simuleringsstudie for data-drevet logistikk at maskinlæringsmetoder presterer særlig godt i komplekse scenarier med ikke-lineariteter og forstyrrelser, mens tradisjonelle tidsseriemodeller fortsatt er konkurransedyktige i enklere settinger. Dette understøtter at modellens ytelse avhenger av datagenererende prosesser og problemstruktur, ikke bare av modellens teknologiske kompleksitet.
 
-Innen maritim forskning har utviklingen de siste fem årene vært tematisk konsentrerte. Kalafatelis et al. (2025) viser i en oversiktsartikkel om prediktivt vedlikehold i maritim industri at nyere forskning i hovedsak har rettet seg mot komponentfeil, vedlikeholds strategier og teknisk tilgjengelighet, med anvendelser som spenner fra grunnleggende maskinlæringsmodeller til mer avanserte dyp læringsarkitekturer. I tillegg har det også blitt gjort en del forskning når det kommer til havneoperasjoner. Chu (2024) utviklet en XGBoost modell for prediksjon av vessel turnaround time og viser at modellen reduserer både MAE og RMSE sammenlignet med fartøyenes egne estimater. Den maritime litteraturen viser dermed en økende interesse for operative prediksjonsproblemer, men hovedvekten ligger fortsatt på vedlikehold, energieffektivitet og havnerelaterte prosesser enn kontraktsmessig eller kommersiell tilgjengelighet på fartøynivå.
+Innen maritim forskning er bildet mer tematisk konsentrert. Kalafatelis et al. (2025) viser at KI i stor grad har blitt brukt innen prediktivt vedlikehold, med fokus på tekniske komponenter, feil og tilgjengelighet. Chu et al. (2024) viser på sin side at `XGBoost` kan forbedre prediksjoner av vessel turnaround time i havnesammenheng. Felles for disse studiene er at de viser økende bruk av datadrevne modeller i maritime beslutningsproblemer, men hovedvekten ligger fortsatt på teknisk drift og havneoperasjoner fremfor kommersiell eller kontraktsmessig tilgjengelighet på fartøynivå.
 
-Når det gjelder offshore og PSV segmentet er litteraturen fortsatt begrenset. Kjeldsberg og Munim (2024) undersøker prognostisering av PSV fraktrater ved hjelp av Auto ML og peker eksplisitt på at tidligere litteratur mangler studier som predikerer PSV fraktrater. Studien tester 79 maskinlæringsmodeller og sammenligner dem med triple exponential smoothing, og viser samtidig at PSV markedet påvirkes av et komplekst sett av ikke lineære faktorer (Kjeldsberg & Munim, 2024). Dette er et viktig bidrag fordi det viser avanserte prognosemetoder begynner å bli anvendt i PSV segmentet, men også at forskningen fortsatt i hovedsak er orientert mot markeds og rateprognoser. Samlet sett tyder litteraturen dermed på at det fortsatt finnes et relativt begrenset antall studier som sammenligner prognosemodeller for operasjonelle hendelser på fartøynivå i offshore segmentet.
+Når det gjelder offshore- og PSV-segmentet er litteraturen fortsatt begrenset. Kjeldsberg og Munim (2024) viser at AutoML og avanserte maskinlæringsmodeller kan brukes til å predikere PSV-fraktrater i et marked preget av flere samtidige og ikke-lineære drivere. Samtidig er studien rettet mot markeds- og rateprognoser, ikke mot offhire-hendelser. Samlet peker litteraturen derfor mot et forskningsgap: det finnes fortsatt relativt få studier som sammenligner prognosemodeller for operasjonelle hendelser og nedetid på fartøynivå i offshoresegmentet. Det er dette gapet den foreliggende studien søker å adressere.
 
 # Teori
 
 ## Prognostisering som beslutningsstøtte
 
-Prognostisering er et sentralt element i logistikk og operasjonsstyring forid beslutninger om ressursbruk, kapasitetsplanlegging, vedlikehold og kontrakter ofte må tas før utfallet av framtidige hendelser er kjent. I et slikt perspektiv er prognoser ikke bare estimater av framtidige verdier, men et verktøy for å redusere usikkerhet og forbedre beslutningsgrunnlaget. Hyndman og Athanasopoulos (2021) beskriver prognostisering som en systematisk prosess der historiske data brukes til å danne best mulig anslag for framtiden. Dette innebærer at prognosearbeid i utgangspunktet bygger på antagelsen om at tidligere mønstre inneholder informasjon som er relevant for fremtidige hendelser.
+Prognostisering er et sentralt element i logistikk og operasjonsstyring fordi beslutninger om ressursbruk, vedlikehold, kontrakter og kapasitetsplanlegging ofte må tas før utfallet av framtidige hendelser er kjent. I en slik sammenheng er prognoser ikke bare estimater av framtidige verdier, men verktøy for å redusere usikkerhet og forbedre beslutningsgrunnlaget. For denne studien er dette viktig fordi formålet er prediksjon av offhire-hendelser, ikke kausal forklaring av hvorfor de oppstår. Modellenes verdi vurderes dermed ut fra hvor godt de kan støtte framtidsrettede beslutninger på grunnlag av historiske data (Carbonneau et al., 2008; Fildes et al., 2022).
 
-Samtidig må prognostisering forstås i lys av at operative omgivelser sjeldent er stabile. Fildes et al. (2022) viser at nyere forskning i større grad enn tidligere er opptatt av hvordan modeller håndterer forstyrrelser, strukturelle brudd og raske endringer i markedet. Dette betyr at verdien av en prognose ikke bare ligger i presisjon under stabile forhold, men også i modellens evne til å fungere under usikkerhet. For denne studien er dette sentralt fordi prediksjon av offhire i offshoresegmentet ofte består av flere usikre momenter, slik som tekniske, operative og markedsmessig forhold som kan endre seg raskt på kort tid.
+## Tidsserier og sentrale komponenter
 
-**Tradisjonelle tidsseriemodeller**
+En tidsserie er en sekvens av observasjoner ordnet i tid. Når data analyseres som tidsserier, er rekkefølgen meningsbærende fordi observasjoner som ligger nær hverandre i tid ofte er mer like enn observasjoner som ligger lenger fra hverandre. Klassiske tidsseriemodeller bygger derfor på at det finnes strukturer i dataene som kan utnyttes i prognoser.
 
-Tradisjonelle tidsseriemodeller bygger på ideen om at framtidige observasjoner kan estimeres ved å analysere strukturen i historiske data. To av de mest sentrale modellfamiliene i denne tradisjonen er eksponentiell glatting og ARIMA modeller (Hyndman & Athanasopoulos, 2021). Eksponentiell glatting vektlegger nyere observasjoner sterkere enn eldre og er særlig nyttig når formålet er å identifisere nivå, trend og sesongvariasjon på en relativt enkel og praktisk måte (Hyndman & Athanasopoulos, 2021). ARIMA modeller brukes på sin side for å beskrive avhengighetsstruktur og systematiske mønstre i tidsserier gjennom regressive og glidende gjennomsnittskomponenter (Hyndman & Athanasopoulos, 2021). En sentral styrke ved tradisjonelle tidsseriemodeller er at de er metodisk veletablerte og forholdvis transparente. Det gjør dem ofte lettere å forklare og anvende i beslutningsmiljøer der brukerne må forstå hvordan prognosen er dannet. Samtidig er slike modeller vanligvis best egnet når dataseriene er relativt stabile og når de viktigste mønstrene kan fanges opp gjennom trend, sesong og korrelasjon. Dersom prognoseproblemet påvirkes av flere forklaringsvariabler samtidige eller av ikke lineære sammenhenger kan denne modellfamilien bli mer begrenset (Hyndman & Athanasopoulos, 2021).
+Sentrale komponenter i en tidsserie er nivå, trend, sesong og støy. Nivå beskriver seriens typiske størrelse, trend beskriver utvikling over tid, sesong beskriver regelmessige mønstre som gjentar seg med faste intervaller, og støy representerer variasjon modellen ikke fanger opp systematisk. For offhire-data er dette relevant fordi variasjonen kan komme både som rolige perioder, episodiske topper og eventuelle kalendermønstre. En sentral del av prognosearbeidet er derfor å vurdere om slike mønstre er sterke nok og stabile nok til å kunne utnyttes i modelleringen (Gardner, 1985; Hyndman & Khandakar, 2008).
 
-**Maskinlæring som prognosetilnærming**
+## Klassiske tidsseriemodeller
 
-Maskinlæringsmodeller representerer en annen teoretisk tilnærming til prgnostisering. I stedet for å basere seg på tydelig spesifisert statistisk struktur, søker ofte disse modellene etter å lære mønstre direkte fra data. Dette gjør dem særlig relevante i situasjoner hvor datastrukturen er kompleks, hvor det finnes mange forklaringsvariabler eller hvor sammenhengen mellom variablene ikke er lineære. Douaioui et al. (2024) viser at maskinlæring og dyp læring i nyere logistikk forskning ofte fremheves nettopp fordi disse modellene kan håndtere slike komplekse relasjoner bedre enn mange tradisjonelle metoder. Khedr og Rani (2024) peker på en tilsvarende utvikling på tvers av hele supply chain management feltet. Teoretisk innebærer dette at maskinlærng ikke er først og fremst er en bestemt modell, men en bred modellfamilie med høy fleksibilitet. Eksempler er trebaserte metoder som random forest og XGBoost, samt ulike nevrale nettverk. Den sentrale forskjellen fra tradisjonelle tidsseriemodeller er maskinlæringsmodeller i større grad kan kombinere informasjon fra flere typer variabler og oppdage mer komplekse mønstre uten at disse må spesifiseres på forhånd. Samtidig peker litteraturen på at økt fleksibilitet ofte kommer med krav om større datamengder, bedre datakvalitet og mer omfattende modelltilpasning (Douaioui et al., 2024).
+Klassiske tidsseriemodeller bygger på ideen om at framtidige observasjoner kan estimeres ved å analysere strukturen i historiske data. To sentrale modellfamilier i denne oppgaven er `SARIMA` og `eksponentiell glatting`. Felles for dem er at de primært bruker informasjon fra seriens egen historikk, og at de er relativt transparente sammenlignet med mer komplekse maskinlæringsmodeller.
 
-**Prediksjonsnøyaktighet og modellvalg**
+En styrke ved klassiske modeller er at de gjør det mulig å beskrive hvordan prognosen dannes gjennom et begrenset antall parametere og tydelige antagelser. Samtidig er de som regel best egnet når dataseriene har en viss regelmessighet, og når de viktigste mønstrene kan beskrives gjennom trend, sesong og autokorrelasjon. I mer uregelmessige problemer, eller når flere forklaringsvariabler er relevante, kan slike modeller bli mer begrenset (Gardner, 1985; Hyndman et al., 2002; Hyndman & Khandakar, 2008).
 
-Et sentralt spørsmål i prognoseteori er hvordan kvaliteten på en modell skal vurderes. Makridakis et al. (2020) viser gjennom M5- konkurransen at modellvalg kan ha stor betydning for prognoseytelsen i komplekse datasett. Konkurransen illustrerer at ulike modeller har ulike styrker avhengig av datamateriale og evalueringskriterier. Dette understøtter et viktig teoretisk poeng: det finnes ikke nødvendigvis en universelt beste prognosemodell. Denne forståelsen støttes av Kolassa (2022), som argumenterer for at høyere modellkompleksitet ikke automatisk innebærer høyere praktisk verdi. Selv om mer avanserte modeller ofte kan oppnå bedre prediksjonsytelse i enkelte sammenhenger, må dette vurderes opp mot modellens tolkbarhet, implementeringskrav og praktisk anvendbarhet. I teorien blir derfor modellvalg et spørsmål om tilpasning mellom modell og problemstruktur, heller enn et spørsmål om å velge den mest teknologisk avanserte løsningen.
+## SARIMA
 
-**Robusthet, usikkerhet og tolkbarhet**
+`SARIMA` står for seasonal autoregressive integrated moving average og er en utvidelse av `ARIMA`-rammeverket for tidsserier med sesongmønster. Modellen kombinerer autoregressive ledd, differensiering og glidende gjennomsnittsledd på både ordinært og sesongmessig nivå. Formålet med differensiering er å gjøre serien mer stabil over tid, mens de autoregressive og glidende gjennomsnittsleddene brukes til å beskrive avhengighetsstruktur i serien.
 
-I nyere prognoseforskning brukes begrepet robusthet ofte om hvor godt en modell opprettholder ytelsen under varierende eller ustabile forhold. Det innebærer at en modell ikke bare vurderes ut fra gjennomsnittlig nøyaktighet, men også ut fra hvor sensitiv den er for støy, strukturelle endringer og variasjon i datagrunnlaget. Fildes et al. (2022) viser at slike hensyn har fått større betydning i nyere forskning, særlig etter perioder med høy markedsmessig usikkerhet. Et annet tema er forholdet mellom tolkbarhet og prediksjonsstyrke. Tradisjonelle modeller oppfattes ofte som lettere å forstå og kommunisere, mens mer avanserte maskinlæringsmodeller ofte blir beskrevet som mindre transparente. Douaioui et al. (2024) fremhever tolkbarhet som en vedvarende utfordring i KI baserte prognosemodeller, men Kolassa (2022) viser at debatten etter M5- konkurransen nettopp dreier seg om hvorvidt økt kompleksitet alltid gir tilstrekkelig merverdi i praksis. Denne spenningen utgjør en reell faglig uenighet: noen forskere legger størst vekt på høyest mulig prediksjonsytelse, mens andre mener at modellens praktiske verdi også må vurderes ut fra hvor forståelig og anvendbar den er.
+Teoretisk er `SARIMA` særlig relevant når dataene kan forstås som en tidsserie med gjentakende mønstre og når det er rimelig å modellere framtiden som en videreføring av strukturer i historikken. Et sentralt premiss er at serien etter eventuell differensiering kan behandles som tilnærmet stasjonær, slik at modellen beskriver en relativt stabil dynamikk over tid. Modellen er derfor godt egnet når nivå, trend og sesong kan identifiseres på aggregert nivå. Samtidig blir den mer sårbar dersom serien er svært kort, svært nulltung eller dominert av uregelmessige sprang. I slike tilfeller kan antagelsen om en relativt stabil tidsseriedynamikk være vanskeligere å forsvare (Hyndman & Khandakar, 2008).
 
-**Maritim sammenheng**
+## Eksponentiell glatting
 
-I maritim forskning har KI de siste årene i stor grad vært brukt innen prediktivt vedlikehold og operasjonell effektivitet. Kalafatelis et al. (2025) viser at maritim prediktivt vedlikeholds forskning hovedsakelig handler om å forutsi tekniske feil og redusere uplanlagt nedetid gjennom datadrevet modeller. Dette viser at KI allerede har fått en tydelig rolle i maritim beslutningstøtte, emn også at anvendelse i stor grad er teknisk orientert. I offshore og PSV segmentet er forskningen mindre omfattende. Kjeldsberg og Munim (2024) viser at AutoML kan brukes til å prognostisere PSV fraktrater i et marked med flere samtidig og ikke lineære drivere. Selv om denne studien handler om fraktrater og ikke om offhire hendelser, viser den at avanserte prognosemodeller er relevante i akkurat dette segmentet. Teoretisk sett peker dette mot at offshore operasjoner kan forstås som et komplekst prognosemiljø der både tradisjonelle og KI baserte modeller har potensielle styrker og svakheter.
+Eksponentiell glatting bygger på et annet prinsipp enn `SARIMA`, men er også en klassisk prognosemetode. Hovedideen er at nyere observasjoner får større vekt enn eldre observasjoner, slik at modellen raskere kan tilpasse seg endringer i nivå og eventuelt trend eller sesong. Gardner (1985) beskriver eksponentiell glatting som en pragmatisk og anvendbar modellfamilie for prognoser, og Hyndman et al. (2002) viser hvordan metodene kan forstås innenfor et mer generelt state-space-rammeverk.
 
-**Problemstillingens plassering i teorien**
+Metoden er særlig relevant når målet er en robust og relativt enkel baseline med få parametere og høy grad av fortolkbarhet. Samtidig bygger også denne modellfamilien på at historikken inneholder nok struktur til at nyere observasjoner faktisk er informative for framtidige verdier. For serier som er korte, ujevne og preget av mange nuller, kan eksponentiell glatting derfor være nyttig som en transparent sammenligningsmodell selv om den ikke nødvendigvis fanger all kompleksitet i datasettet (Gardner, 1985; Hyndman et al., 2002).
 
-På bakgrunn av dette teorigrunnlaget kan problemstillingen i denne studien plassers i skjæringspunktet mellom tre faglige diskusjoner: prognostisering som beslutningsstøtte, modellvalg under usikkerhet og anvendelsen av KI i maritime og offshore operasjoner. Tidligere forskning har i stor grad belyst generelle prognosemodeller i logistikk, teknisk prediksjon i maritim sektor og markedsprognoser i PSV segmentet. Det problemstillingen i denne studien belyser, er i større grad hvordan ulike modellfamilier håndterer prediksjon av operasjonelle offhire hendelser på fartøynivå. Teoridelen danner derfor grunnlaget for metodevalget i oppgaven. Dersom tradisjonelle tidsseriemodeller og KI baserte modeller representerer ulike teoretiske tilnærminger til samme prognoseproblem, blir det metodisk relevant å sammenligne dem direkte. På den måten fungerer teorigrunnlaget som en bro mellom problemstillingen og analyse designet i studien.
+## Maskinlæring og dyp læring i prognostisering
+
+Maskinlæringsmodeller representerer en annen teoretisk tilnærming til prognostisering enn klassiske tidsseriemodeller. I stedet for å basere seg på en eksplisitt statistisk struktur i selve tidsserien, søker disse modellene å lære mønstre direkte fra data. Dette gjør dem særlig relevante når datastrukturen er kompleks, når det finnes flere forklaringsvariabler, eller når sammenhengene er ikke-lineære.
+
+I prognosesammenheng er det særlig nyttig å skille mellom feature-baserte modeller og sekvensbaserte modeller. Feature-baserte modeller, som `XGBoost`, arbeider med et eksplisitt sett av forklaringsvariabler og laggede verdier. Sekvensbaserte modeller, som `LSTM`, forsøker i større grad å lære tidsavhengigheter direkte fra sekvenser av observasjoner. Felles for dem er at de tilbyr høy fleksibilitet, men ofte også høyere krav til datamengde, datakvalitet og modelltilpasning enn klassiske tidsseriemodeller (Carbonneau et al., 2008; Douaioui et al., 2024).
+
+## XGBoost
+
+`XGBoost` er en trebasert maskinlæringsmodell bygd på gradient boosting. Modellen konstruerer en sekvens av beslutningstrær der hvert nytt tre forsøker å korrigere feilene fra de foregående trærne. Chen og Guestrin (2016) viser at denne modellen kombinerer høy prediksjonsstyrke med effektiv håndtering av store og ufullstendige datasett, blant annet gjennom regularisering og sparsity-aware optimering.
+
+I denne oppgavens kontekst er `XGBoost` teoretisk relevant fordi modellen kan håndtere flere samtidige forklaringsvariabler, kalendereffekter og laggede trekk i samme rammeverk. Den er også godt egnet til å fange ikke-lineære sammenhenger og interaksjoner som er vanskeligere å spesifisere eksplisitt i klassiske tidsseriemodeller. Samtidig er modellen mindre transparent enn `SARIMA` og `eksponentiell glatting`, og den krever at tidsproblemet først omformes til et feature-basert prediksjonsproblem (Chen & Guestrin, 2016).
+
+## LSTM
+
+`LSTM` er en sekvensbasert nevral nettverksmodell utviklet for å lære avhengigheter over lengre tidshorisonter. Hochreiter og Schmidhuber (1995) introduserte modellen for å håndtere problemet med at vanlige rekurrente nettverk har vansker med å bevare informasjon over lange sekvenser. Ved hjelp av interne minneceller og porter kan modellen i teorien beholde, oppdatere og forkaste informasjon over tid.
+
+For prognoser betyr dette at `LSTM` kan være relevant når historiske observasjoner inngår i mer komplekse sekvensmønstre enn det som lett kan beskrives gjennom eksplisitte lagg eller enkle parametermodeller. Modellen er derfor teoretisk interessant i sammenligninger mot både klassiske tidsseriemodeller og trebaserte maskinlæringsmodeller. Samtidig har `LSTM` høyere krav til datamengde, modelloppsett og trening, og den er gjennomgående mindre tolkbar enn de mer tradisjonelle modellfamiliene.
+
+## Modellvalg og sammenligningskriterier
+
+Et sentralt spørsmål i prognoseteori er hvordan kvaliteten på en modell skal vurderes. Makridakis et al. (2022) viser gjennom M5-konkurransen at modellvalg har stor betydning for prognoseytelsen i komplekse datasett, men også at ulike modeller har ulike styrker avhengig av problemtype og evalueringskriterier. Kolassa (2022) understreker samtidig at høyere modellkompleksitet ikke automatisk innebærer høyere praktisk verdi.
+
+I denne oppgaven er derfor ikke modellvalg bare et spørsmål om lavest mulig feil, men også om robusthet, datakrav og tolkbarhet. Prediksjonsnøyaktighet er viktig fordi modellene sammenlignes empirisk, men robusthet er også relevant fordi offhire-data kan være ujevne og preget av topper og nullperioder. Tolkbarhet er viktig fordi klassiske modeller i større grad gjør det mulig å forstå hvordan prognosen dannes, mens datakrav er viktig fordi de mest fleksible modellene ofte er mest krevende å trene på en faglig forsvarlig måte (Kolassa, 2022; Schmid et al., 2025).
+
+## Teoretisk forankring av modellvalget
+
+På bakgrunn av dette teorigrunnlaget kan modellvalget i studien forstås som en sammenligning mellom to hovedfamilier av prognosemodeller. `SARIMA` og `eksponentiell glatting` representerer den klassiske tidsserietradisjonen, der prognosen i hovedsak bygger på strukturer i seriens egen historikk. `XGBoost` og `LSTM` representerer mer fleksible KI-baserte tilnærminger som i større grad kan håndtere ikke-lineariteter, komplekse mønstre og flere typer input.
+
+Denne sammenligningen er teoretisk relevant fordi offhire-data kan inneholde både tidsseriepregede mønstre og mer uregelmessige, komplekse strukturer. Oppgaven sammenligner derfor ikke bare fire enkeltmodeller, men fire ulike måter å forstå og modellere det samme prognoseproblemet på. Teorikapitlet danner dermed grunnlaget for metodekapitlet og gjør det faglig begrunnet å teste disse modellene direkte mot hverandre.
 
 # Casebeskrivelse
 
@@ -507,5 +561,35 @@ Hva er det viktigste dere har funnet?
 - I konklusjonen blir det ofte litt gjentagelse fra diskusjon/resultat men det er helt greit. Her skal dere dra frem de viktigste funnene og hvilken betydning det har for deres case.
 
 # Bibliografi
+
+Carbonneau, R., Laframboise, K., & Vahidov, R. (2008). Application of machine learning techniques for supply chain demand forecasting. *European Journal of Operational Research, 184*(3), 1140-1154. https://doi.org/10.1016/j.ejor.2006.12.004
+
+Chen, T., & Guestrin, C. (2016). XGBoost: A scalable tree boosting system. In *Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining* (pp. 785-794). Association for Computing Machinery. https://doi.org/10.1145/2939672.2939785
+
+Chu, Z., Yan, R., & Wang, S. (2024). Vessel turnaround time prediction: A machine learning approach. *Ocean & Coastal Management, 249*, 107021. https://doi.org/10.1016/j.ocecoaman.2024.107021
+
+Douaioui, K., Oucheikh, R., Benmoussa, O., & Mabrouki, C. (2024). Machine learning and deep learning models for demand forecasting in supply chain management: A critical review. *Applied System Innovation, 7*(5), 93. https://doi.org/10.3390/asi7050093
+
+Fildes, R., Kolassa, S., & Ma, S. (2022). Post-script: Retail forecasting: Research and practice. *International Journal of Forecasting, 38*(4), 1319-1324. https://doi.org/10.1016/j.ijforecast.2021.09.012
+
+Gardner, E. S., Jr. (1985). Exponential smoothing: The state of the art. *Journal of Forecasting, 4*(1), 1-28. https://doi.org/10.1002/for.3980040103
+
+Hochreiter, S., & Schmidhuber, J. (1995). *Long short-term memory* (Technical Report FKI-207-95). Technische Universitat Munchen.
+
+Hyndman, R. J., & Khandakar, Y. (2008). Automatic time series forecasting: The forecast package for R. *Journal of Statistical Software, 27*(3), 1-22. https://doi.org/10.18637/jss.v027.i03
+
+Hyndman, R. J., Koehler, A. B., Snyder, R. D., & Grose, S. (2002). A state space framework for automatic forecasting using exponential smoothing methods. *International Journal of Forecasting, 18*(3), 439-454. https://doi.org/10.1016/S0169-2070(01)00110-8
+
+Kalafatelis, A. S., Nomikos, N., Giannopoulos, A., Alexandridis, G., Karditsa, A., & Trakadas, P. (2025). Towards predictive maintenance in the maritime industry: A component-based overview. *Journal of Marine Science and Engineering, 13*(3), 425. https://doi.org/10.3390/jmse13030425
+
+Kjeldsberg, F., & Munim, Z. H. (2024). Automated machine learning driven model for predicting platform supply vessel freight market. *Computers & Industrial Engineering, 191*, 110153. https://doi.org/10.1016/j.cie.2024.110153
+
+Kolassa, S. (2022). Commentary on the M5 forecasting competition. *International Journal of Forecasting, 38*(4), 1562-1568. https://doi.org/10.1016/j.ijforecast.2021.08.006
+
+Makridakis, S., Spiliotis, E., & Assimakopoulos, V. (2022). M5 accuracy competition: Results, findings, and conclusions. *International Journal of Forecasting, 38*(4), 1346-1364. https://doi.org/10.1016/j.ijforecast.2021.11.013
+
+Menon Economics. (2026). *Maritim verdiskapingsrapport 2026* [Report].
+
+Schmid, L., Roidl, M., Kirchheim, A., & Pauly, M. (2025). Comparing statistical and machine learning methods for time series forecasting in data-driven logistics: A simulation study. *Entropy, 27*(1), 25. https://doi.org/10.3390/e27010025
 
 # Vedlegg
