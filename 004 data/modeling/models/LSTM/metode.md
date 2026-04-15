@@ -11,20 +11,22 @@ Sekvensdata bygget fra historiske observasjoner per fartøy.
 
 ## Steg 2. Sekvensanalyse
 
-Historikken ble omsatt til sekvenser med tre tidligere tidssteg, der både nivå, månedssyklus og spesialkrav inngår som input.
+Historikken ble omsatt til sekvenser med tolv tidligere tidssteg, der både nivå, månedssyklus og spesialkrav inngår som input.
 
 ## Steg 3. Modellspesifikasjon
 
-LSTM-modellen ble definert med én LSTM-lag, et tett skjult lag og standardisering av både input og målvariabel.
+LSTM-modellen ble definert med ett LSTM-lag, ett tett lag og standardisering av både input og målvariabel basert på treningsdata.
 
 ## Steg 4. Modellestimering
 
-Modellen ble trent på train-sekvenser med tidlig stopping når validering var tilgjengelig.
+Modellen ble re-trent måned for måned i en ekspanderende 1-stegs evaluering.
 
 ## Steg 5. Modellvalidering
 
-Holdout-evaluering på testsekvenser ga `MAE=7.7696` og `RMSE=17.1056`.
+Holdout-evaluering på testsekvenser ga `MAE=7.5722`, `RMSE=17.4062` og `sMAPE=178.7664`.
 
-## Steg 6. Prognose
+## Repo-artefakter
 
-Prognosen for april og mai 2026 ble generert sekvensielt ved å bruke siste observerte eller predikerte verdier som ny input.
+- `training_history.md`
+- `training_history.png`
+- `representativ_testplot.png`

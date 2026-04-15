@@ -384,55 +384,140 @@ Heatmapet viser at offhire i liten grad er jevnt fordelt mellom fartøyene. Enke
 
 # Modellering
 
-I modelleringsoppsettet skilles det mellom historisk evaluering og endelig prognose. Under evaluering trenes modellene på treningssettet fra april 2021 til desember 2024 og testes deretter på perioden januar 2025 til mars 2026. Etter at modellens ytelse er evaluert på denne splitten, brukes hele datasettet fram til mars 2026 som grunnlag for å lage prognoser for april og mai 2026. Dette gjør at evalueringen og den endelige forecasten holdes metodisk adskilt.
+I denne delen bygges, testes og verifiseres modellene kun på historiske data. Selve framtidsprognosene behandles i en egen senere seksjon og inngår derfor ikke i modellbeskrivelsen nedenfor. For å gjøre modellene sammenlignbare er alle testet på samme historiske periode med samme evalueringslogikk: ekspanderende `1`-stegs prognoser måned for måned.
 
-For å strukturere modelleringsarbeidet brukes en stegvis tilnærming inspirert av forelesningens gjennomgang av Box-Jenkins-metoden. De samme hovedstegene brukes som ramme for alle modellene, men innholdet i stegene er tilpasset den enkelte modelltypen. Detaljerte figurer, diagnostiske plott og tekniske artefakter er lagret i repoet under `004 data/modeling/models/`, mens hovedteksten nedenfor oppsummerer de viktigste metodiske valgene.
+Den felles teststrukturen er oppsummert i tabell 3. `Fartøy 16` inngår ikke i hovedsammenligningen fordi fartøyet ikke har tilstrekkelig treningshistorikk før testperioden. Dermed bygger hovedsammenligningen på `15` fartøy og `225` fartøy-måneder i testsettet.
+
+| Tabell 3. Felles evalueringsoppsett | Verdi |
+| --- | --- |
+| Målvariabel | Månedlig `offhire_days` per fartøy |
+| Treningsperiode | `2021-04` til `2024-12` |
+| Testperiode | `2025-01` til `2026-03` |
+| Prognosehorisont i test | `1` måned per steg |
+| Evalueringslogikk | Ekspanderende `1`-stegs prognose |
+| Sammenligningsnivå | Fartøynivå |
+| Hovedmål | `MAE` |
+| Støttemål | `RMSE` og `sMAPE` |
+| Datagrunnlag i hovedtest | `15` fartøy og `225` prediksjoner |
 
 ## SARIMA
 
-`SARIMA` er den modellen som ligger nærmest den klassiske Box-Jenkins-tilnærmingen og behandles derfor mest eksplisitt gjennom de seks stegene. Analysen gjennomføres på flåtenivå ved å aggregere månedlig offhire på tvers av fartøyene. Dette er gjort fordi en samlet serie gir et mer stabilt grunnlag for klassisk tidsserieanalyse enn de enkelte fartøyseriene, som ofte er korte og svært nulltunge.
+`SARIMA` er modellen som ligger nærmest forelesernes Box-Jenkins-oppsett, men her brukes modellen per fartøy i stedet for på aggregert flåtenivå. For hvert fartøy ble det først kontrollert at tidsserien hadde tilstrekkelig historikk og variasjon. Deretter ble `ADF` brukt som støtte for differensieringsvalg, før et begrenset parameterrom for `ARIMA/SARIMA`-modeller ble estimert og rangert med `AIC`, `BIC` og parsimoni. Sesongledd med periode `12` ble tillatt der det ga mening, men ikke tvunget frem kun fordi dataene er månedlige.
 
-1. Datainnsamling: Det bygges en aggregert månedlig flåteserie fra treningsperioden april 2021 til desember 2024.
-2. Stasjonaritet: Serien testes for stasjonaritet, og differensiering vurderes før endelig modellvalg.
-3. ACF- og PACF-analyse: Autokorrelasjonsstruktur brukes til å identifisere kandidatmodeller.
-4. Modellestimering: Flere SARIMA-kandidater estimeres, og endelig modell velges på bakgrunn av informasjonskriterier og faglig rimelighet.
-5. Modellvalidering: Residualdiagnostikk kombineres med evaluering på testperioden januar 2025 til mars 2026.
-6. Prognose: Den valgte modellen refittes på hele historikken før prognoser for april og mai 2026 genereres.
+`Fartøy 13` hadde en konstant nullserie i treningsperioden og ble derfor håndtert som en eksplisitt konstant-baseline innen samme evalueringsramme. De øvrige `14` fartøyene fikk estimerte `ARIMA/SARIMA`-modeller. For et representativt fartøy med høy historisk offhire, `Fartøy 2`, viser tabell 4 de beste kandidatmodellene. Den valgte modellen for dette fartøyet ble `SARIMA(2,0,0)(1,0,0,12)`.
+
+| Tabell 4. Beste kandidatmodeller for representativt fartøy (`Fartøy 2`) | AIC | BIC |
+| --- | ---: | ---: |
+| `SARIMA(2,0,0)(1,0,0,12)` | 291.43 | 297.16 |
+| `SARIMA(2,0,1)(1,0,0,12)` | 293.40 | 300.57 |
+| `SARIMA(2,0,2)(1,0,0,12)` | 295.17 | 303.77 |
+| `SARIMA(1,0,0)(1,0,0,12)` | 297.89 | 302.29 |
+| `SARIMA(1,0,1)(1,0,0,12)` | 299.85 | 305.71 |
+
+Figur 6 og 7 viser `ACF` og `PACF` for det representative fartøyet etter valgt transformasjon. Figur 8 viser residualene for samme eksempel. I tillegg viser residualtabellen i artefaktene at alle estimerte `ARIMA/SARIMA`-modeller hadde `Ljung-Box`-p-verdier over `0.05`, noe som taler for at det ikke gjenstår tydelig autokorrelasjon i residualene.
+
+![Figur 6. ACF for representativ ARIMA/SARIMA-serie.](<../004 data/modeling/models/SARIMA/acf.png>)
+
+*Figur 6. ACF for representativt fartøy (`Fartøy 2`) brukt som støtte i modellidentifikasjonen.*
+
+![Figur 7. PACF for representativ ARIMA/SARIMA-serie.](<../004 data/modeling/models/SARIMA/pacf.png>)
+
+*Figur 7. PACF for representativt fartøy (`Fartøy 2`) brukt som støtte i modellidentifikasjonen.*
+
+![Figur 8. Residualdiagnostikk for representativ ARIMA/SARIMA-modell.](<../004 data/modeling/models/SARIMA/residualdiagnostikk.png>)
+
+*Figur 8. Residualdiagnostikk for valgt `ARIMA/SARIMA`-modell på `Fartøy 2`. Figuren viser både residualforløp og residualfordeling.*
+
+Figur 9 viser hvordan den valgte modellen treffer i testperioden for det representative fartøyet. Figuren brukes ikke som hovedbevis for modellytelsen, men som en konkret verifikasjon av at modellen faktisk følger de viktigste bevegelsene i testvinduet.
+
+![Figur 9. Representativ testprognose for ARIMA/SARIMA.](<../004 data/modeling/models/SARIMA/representativ_testplot.png>)
+
+*Figur 9. Historiske testprediksjoner for `ARIMA/SARIMA` på `Fartøy 2`. Grå linje viser treningsdata, blå linje faktisk testforløp og oransje linje modellens prediksjoner.*
 
 ## Eksponentiell glatting
 
-Eksponentiell glatting brukes som en tradisjonell og relativt transparent baseline på fartøynivå. Modellen er særlig relevant fordi den kan håndtere nivå og eventuell trend uten at det kreves like omfattende identifikasjonssteg som i en SARIMA-modell.
+Eksponentiell glatting ble brukt som den mest konservative klassiske benchmarken. Også denne modellen ble estimert per fartøy. I stedet for å tvinge én spesifikasjon på alle serier ble et lite og bevisst begrenset sett av additive `ETS`-varianter vurdert: nivåmodell (`ANN`), nivå med trend (`AAN`) og nivå med trend og sesong (`AAA`). For konstante serier ble det brukt en eksplisitt konstant-baseline.
 
-1. Datainnsamling: Det bygges separate månedlige tidsserier for hvert fartøy.
-2. Mønsteranalyse: Seriene vurderes som korte, ujevne og dominert av mange nullperioder.
-3. Modellspesifikasjon: Det velges en ikke-sesongbasert glattemodell per fartøy, mens additiv trend bare aktiveres når historikken er lang nok og ikke konstant.
-4. Modellestimering: Hver fartøysserie estimeres på treningsperioden.
-5. Modellvalidering: Modellen testes på holdout-perioden med én-stegs prediksjoner gjennom testvinduet.
-6. Prognose: Etter evaluering brukes full historikk til å lage prognoser for april og mai 2026.
+Tabell 5 oppsummerer hvilke spesifikasjoner som faktisk ble valgt. Resultatet viser at datasettet i liten grad støtter kompliserte glattemodeller: `13` fartøy endte med `ANN`, `1` fartøy med `AAA`, og `1` fartøy med konstant-baseline. Det ble ikke valgt noen `AAN`-modeller i siste kjøring.
+
+| Tabell 5. Valgt ETS-spesifikasjon i siste kjøring | Antall fartøy |
+| --- | ---: |
+| `ANN` | 13 |
+| `AAA` | 1 |
+| `CONST` | 1 |
+
+Residualdiagnostikken viser at `ETS` fungerer rimelig godt for mange fartøy, men svakere enn `ARIMA/SARIMA` på enkelte serier. Særlig `Fartøy 2` og `Fartøy 7` fikk `Ljung-Box`-p-verdier under `0.05`, noe som indikerer at restautokorrelasjon ikke var like godt håndtert i alle tilfeller. Figur 10 viser testforløpet for det representative fartøyet.
+
+![Figur 10. Representativ testprognose for eksponentiell glatting.](<../004 data/modeling/models/Eksponentiell glatting/representativ_testplot.png>)
+
+*Figur 10. Historiske testprediksjoner for eksponentiell glatting på `Fartøy 2`. Figuren viser at modellen fanger nivået i serien, men håndterer topper svakere enn den beste `ARIMA/SARIMA`-modellen.*
 
 ## XGBoost
 
-`XGBoost` representerer den trebaserte maskinlæringstilnærmingen i studien. I motsetning til de klassiske tidsseriemodellene bygger denne modellen på et eksplisitt feature-set, der historikk og kalendereffekter omformes til forklaringsvariabler.
+`XGBoost` ble satt opp som én global modell på fartøy-måned-paneldata. Modellen fikk et eksplisitt feature-set som bare brukte informasjon tilgjengelig før hver testmåned. Dermed følger også denne modellen samme ekspanderende `1`-stegs logikk som de klassiske modellene.
 
-1. Datainnsamling: Rådataene omformes til paneldata med én observasjon per fartøy og måned.
-2. Featureanalyse: Tidligere offhire-verdier, rullerende statistikk, månedssyklus, fartøy-ID og spesielle behov brukes som inputvariabler.
-3. Modellspesifikasjon: Modellen settes opp med et fast utvalg hyperparametre og samme feature-set for hele datasettet.
-4. Modellestimering: XGBoost trenes på treningssettet etter feature engineering.
-5. Modellvalidering: Prediksjonsfeil vurderes på testperioden med samme metrikker som de øvrige modellene.
-6. Prognose: Prognoser for april og mai 2026 genereres rekursivt ved at predikerte verdier brukes som nye lags.
+Feature-settet er oppsummert i tabell 6. Poenget var å gi modellen både kortsiktig historikk, glattet historikk og kalenderinformasjon, samtidig som fartøyspesifikke forskjeller kunne fanges gjennom `vessel` og `special_flag`.
+
+| Tabell 6. XGBoost-featuregrupper | Innhold |
+| --- | --- |
+| Historiske lags | `lag_1`, `lag_2`, `lag_3`, `lag_6`, `lag_12` |
+| Rullerende nivå | `rolling_mean_3`, `rolling_mean_6`, `rolling_mean_12` |
+| Rullerende variasjon | `rolling_std_3`, `rolling_std_6`, `rolling_std_12` |
+| Kalender | `month_num`, `quarter_num`, `year_num`, `time_idx`, `month_sin`, `month_cos` |
+| Kategoriske trekk | `vessel`, `special_flag` |
+
+Hyperparametrene ble holdt faste gjennom hele testoppsettet, som vist i tabell 7.
+
+| Tabell 7. XGBoost-hyperparametre | Verdi |
+| --- | ---: |
+| `n_estimators` | 200 |
+| `max_depth` | 4 |
+| `learning_rate` | 0.05 |
+| `subsample` | 0.90 |
+| `colsample_bytree` | 0.90 |
+
+Figur 11 viser at modellen i hovedsak bygger på kort og mellomlang historikk. `lag_1` er viktigst, men også `rolling_mean_12`, `rolling_mean_6`, `rolling_mean_3` og enkelte fartøyindikatorer bidrar mye. Dette er konsistent med at problemet både har tidsseriepreg og tydelig fartøyheterogenitet.
+
+![Figur 11. XGBoost feature importance.](<../004 data/modeling/models/XGBoost/feature_importance.png>)
+
+*Figur 11. Viktigste features i referansemodellen for `XGBoost` estimert på treningsperioden. Laggede verdier og rullerende gjennomsnitt dominerer.*
+
+Figur 12 viser den historiske testytelsen for det representative fartøyet. Sammenlignet med de klassiske modellene framstår `XGBoost` som mer fleksibel, men fortsatt sårbar i perioder med svært uregelmessige topper.
+
+![Figur 12. Representativ testprognose for XGBoost.](<../004 data/modeling/models/XGBoost/representativ_testplot.png>)
+
+*Figur 12. Historiske testprediksjoner for `XGBoost` på `Fartøy 2`. Figuren viser modellens evne til å følge nivåendringer uten eksplisitt tidsseriemodell.*
 
 ## LSTM
 
-`LSTM` representerer den sekvensbaserte dyp læringsmodellen i studien. Modellen er inkludert fordi den i teorien kan fange opp mer komplekse og ikke-lineære tidsavhengigheter enn både klassiske tidsseriemodeller og trebaserte metoder.
+`LSTM` ble bygget som én global sekvensmodell på fartøy-måned-data. Hver observasjon ble representert som en sekvens på `12` måneder, med fire inputfeatures per tidssteg: `offhire_days`, `month_sin`, `month_cos` og `special_flag`. All skalering ble estimert på treningsdata. Modellen ble deretter re-trent måned for måned i samme ekspanderende testoppsett som de øvrige modellene.
 
-1. Datainnsamling: Historikken per fartøy bygges om til sekvenser av tidligere observasjoner.
-2. Sekvensanalyse: Modellen bruker de tre siste tidsstegene sammen med månedssyklus og informasjon om spesielle behov som input.
-3. Modellspesifikasjon: Det velges en LSTM-arkitektur med ett tilbakekoblet lag og ett tett skjult lag, kombinert med skalering av input og målvariabel.
-4. Modellestimering: Nettverket trenes på treningssekvensene med tidlig stopping når valideringssplit er tilgjengelig.
-5. Modellvalidering: Ytelsen måles på testperioden med samme evalueringsmål som for de øvrige modellene.
-6. Prognose: Etter evaluering brukes full historikk til å generere sekvensielle prognoser for april og mai 2026.
+Det konkrete oppsettet er vist i tabell 8.
 
-Denne stegdelingen gjør at alle modellene kan presenteres innenfor en felles metodisk ramme, samtidig som de viktige forskjellene mellom klassisk tidsserieanalyse, glattemodeller, trebasert maskinlæring og sekvensbasert dyp læring kommer tydelig fram. I hovedteksten er formålet å gi en konsis modellbeskrivelse, mens detaljerte diagnostiske resultater og modellartefakter legges i repoet og kan brukes som vedleggsmateriale i den endelige oppgaven.
+| Tabell 8. LSTM-oppsett i siste kjøring | Verdi |
+| --- | --- |
+| Sekvenslengde | `12` måneder |
+| Inputformat | `samples x timesteps x features` |
+| Inputfeatures | `offhire_days`, `month_sin`, `month_cos`, `special_flag` |
+| LSTM-enheter | `32` |
+| Dense-enheter | `16` |
+| Batch size | `8` |
+| Maks antall epoker | `100` |
+| Tidlig stopping | Ja, med gjenoppretting av beste vekter |
+
+Figur 13 viser treningshistorikken fra referansekjøringen på treningsperioden. Valideringstapet flater tidlig ut og begynner deretter å stige, noe som understøtter at tidlig stopping er nødvendig for å unngå overtilpasning.
+
+![Figur 13. Treningshistorikk for LSTM.](<../004 data/modeling/models/LSTM/training_history.png>)
+
+*Figur 13. Trenings- og valideringstap for `LSTM` estimert på treningsperioden. Figuren viser at modellen lærer raskt, men at valideringstapet ikke forbedres videre etter de første epokene.*
+
+Figur 14 viser testforløpet for det representative fartøyet. Som for `XGBoost` er modellen fleksibel, men den store fordelen over de beste klassiske modellene er ikke tydelig i dette datasettet.
+
+![Figur 14. Representativ testprognose for LSTM.](<../004 data/modeling/models/LSTM/representativ_testplot.png>)
+
+*Figur 14. Historiske testprediksjoner for `LSTM` på `Fartøy 2`. Figuren viser at modellen følger nivåendringer relativt godt, men ikke tydelig bedre enn de sterkeste alternativene.*
+
+Samlet viser modelleringskapitlet at alle fire modellfamiliene nå er bygget og testet innenfor samme historiske evalueringsramme. Forskjellen mellom modellene ligger derfor ikke lenger i oppsettet, men i hvordan de håndterer samme datastruktur under samme betingelser.
 
 # Analyse
 
@@ -478,29 +563,36 @@ Figuren viser at selv de mest aktive fartøyene ikke følger et jevnt eller stab
 
 # Resultat
 
-Den kanskje viktigste delen når du skal skrive en bacheloroppgave, er resultatdelen. Her beskriver du alle funnene som er gjort i analyser og studier.
+Resultatdelen presenterer her kun utfallet av den historiske modelltesten. Alle modeller er evaluert på de samme `225` fartøy-månedene i testperioden fra januar 2025 til mars 2026. `MAE` brukes som hovedmål, mens `RMSE` og `sMAPE` brukes som støttemål. Siden datasettet er svært nulltungt, må `sMAPE` tolkes med forsiktighet; metrikken blir høy når både faktiske og predikerte verdier ligger nær null.
 
-Det er viktig at du presenterer resultatene på en klar og tydelig måte -- gjerne ved bruk av tabeller og figurer.
+Tabell 9 viser det samlede testresultatet. `ARIMA/SARIMA` oppnår lavest `MAE` og lavest `RMSE` i siste kjøring, mens `XGBoost` og `LSTM` ligger svært nær hverandre. Eksponentiell glatting er svakest av de fire når alle sammenlignes på samme fartøynivå og samme evalueringslogikk.
 
-Noen viktige punkter:
+| Tabell 9. Samlet testresultat for modellene | Antall prediksjoner | MAE | RMSE | sMAPE |
+| --- | ---: | ---: | ---: | ---: |
+| `ARIMA/SARIMA` | 225 | 6.15 | 16.78 | 100.44 |
+| `XGBoost` | 225 | 7.35 | 17.40 | 182.98 |
+| `LSTM` | 225 | 7.57 | 17.41 | 178.77 |
+| `Eksponentiell glatting` | 225 | 8.37 | 17.95 | 168.62 |
 
-- Dersom dette er et eget kapittel så skal dere her kun presentere resultatene i form av tabeller og/eller figurer.
+Figur 15 visualiserer de samme `MAE`-resultatene som en samlet sammenligning. Figuren tydeliggjør at forskjellen mellom de tre beste modellene er relativt liten, men at `ARIMA/SARIMA` likevel kommer best ut i siste kjøring.
 
-- Tabeller: Oppsummerte resultater
+![Figur 15. MAE per modell i testperioden.](<../004 data/modeling/results/figures/mae_per_model.png>)
 
-- Resultatene er direkte linket til forskningsspørsmålet!
+*Figur 15. Samlet `MAE` for de fire modellene i testperioden. Lavere verdi indikerer bedre prediksjonsnøyaktighet.*
 
-  - Dersom det ikke er det så er det to alternativer:
+Figur 16 viser hvordan `MAE` varierer mellom testmånedene. Ingen modell dominerer alle måneder fullstendig, men `ARIMA/SARIMA` er gjennomgående sterk og særlig stabil i flere av månedene med mer moderate nivåer. Samtidig viser figuren at alle modellene får høyere feil i måneder der offhire-nivået er preget av store hopp og episoder.
 
-    - Kjør analysene på nytt i henhold til forskningsspørsmålet
+![Figur 16. MAE per testmåned og modell.](<../004 data/modeling/results/figures/mae_by_month.png>)
 
-    - Endre forskningsspørsmålet slik at det er samsvar med analysene
+*Figur 16. `MAE` per måned i testperioden for de fire modellene. Figuren viser hvordan modellytelsen varierer over tid, ikke bare samlet.*
 
-- NB: En forklarende tekst for hver tabell og hver figur!
+Figur 17 viser `MAE` per fartøy og modell som heatmap. Figuren tydeliggjør at de største feilene er konsentrert rundt noen få fartøy, særlig `Fartøy 10`, `Fartøy 9` og `Fartøy 8`, mens flere fartøy med lav eller null offhire er enklere å predikere for alle modellene. Dette betyr at samlet modellrangering i stor grad påvirkes av hvor godt modellene håndterer de mest krevende fartøyene.
 
-  - Som regel kommer teksten før tabellen/figuren, men noen ganger etter og noen ganger litt tekst først og litt etter tabellen/figuren.
+![Figur 17. Heatmap for MAE per fartøy og modell.](<../004 data/modeling/results/figures/mae_heatmap_by_vessel.png>)
 
-  - Dere vil synes at det er overflødig med forklarende tekst, men det må gjøres og kun det som dere ser: en objektiv presentasjon.
+*Figur 17. Heatmap som viser `MAE` per fartøy og modell i testperioden. Mørkere felt indikerer høyere prediksjonsfeil.*
+
+Resultatene samlet peker mot tre hovedobservasjoner. For det første fungerer klassiske tidsseriemodeller fortsatt svært godt i dette datasettet, særlig når `ARIMA/SARIMA` får modelleres per fartøy og verifiseres med residualdiagnostikk. For det andre presterer `XGBoost` og `LSTM` konkurransedyktig, men uten å gi en tydelig gevinst over den beste klassiske modellen. For det tredje er forskjellene mellom modellene mindre enn forskjellene mellom fartøyene, noe som understreker at problemet er like mye et spørsmål om datakarakter som om modellvalg.
 
 # Diskusjon
 

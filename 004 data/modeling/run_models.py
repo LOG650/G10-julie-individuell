@@ -25,7 +25,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.stats.diagnostic import acorr_ljungbox
-from statsmodels.tools.sm_exceptions import ConvergenceWarning
+from statsmodels.tools.sm_exceptions import ConvergenceWarning, ValueWarning
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from statsmodels.tsa.stattools import adfuller
@@ -41,7 +41,12 @@ warnings.filterwarnings(
 warnings.filterwarnings(
     "ignore",
     category=ConvergenceWarning,
-    module=r"statsmodels\.tsa\.holtwinters\.model",
+    module=r"statsmodels\..*",
+)
+warnings.filterwarnings(
+    "ignore",
+    category=ValueWarning,
+    module=r"statsmodels\..*",
 )
 
 
@@ -55,6 +60,7 @@ MODEL_ARTIFACTS_DIR = Path(__file__).resolve().parent / "models"
 COMPARISON_LOG_PATH = MODEL_LOG_DIR / "Modellsammenligning.md"
 TRAIN_END_DATE = pd.Timestamp(year=2024, month=12, day=1)
 TEST_START_DATE = pd.Timestamp(year=2025, month=1, day=1)
+MAX_OFFHIRE_VALUE = 100.0
 
 MONTH_ORDER = {
     "Januar": 1,
@@ -93,6 +99,7 @@ MODEL_METADATA = {
     },
 }
 ACTIVE_MODELS = ["sarima", "exponential_smoothing", "xgboost", "lstm"]
+GENERATE_FUTURE_FORECASTS = False
 
 
 @dataclass
@@ -101,6 +108,7 @@ class ModelResult:
     status: str
     mae: float | None = None
     rmse: float | None = None
+    smape: float | None = None
     details: dict[str, Any] | None = None
 
 
@@ -112,10 +120,21 @@ def rmse(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     return float(np.sqrt(mean_squared_error(y_true, y_pred)))
 
 
+def smape(y_true: np.ndarray, y_pred: np.ndarray) -> float:
+    denominator = np.abs(y_true) + np.abs(y_pred)
+    safe_ratio = np.where(
+        denominator == 0.0,
+        0.0,
+        (200.0 * np.abs(y_pred - y_true)) / denominator,
+    )
+    return float(np.mean(safe_ratio))
+
+
 def ensure_results_dir() -> None:
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
     MODEL_LOG_DIR.mkdir(parents=True, exist_ok=True)
     MODEL_ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
+    (RESULTS_DIR / "figures").mkdir(parents=True, exist_ok=True)
 
 
 def format_period(panel_df: pd.DataFrame) -> str:
@@ -127,15 +146,12 @@ def format_period(panel_df: pd.DataFrame) -> str:
 def build_split_metadata(
     train_panel: pd.DataFrame,
     test_panel: pd.DataFrame,
-    forecast_panel: pd.DataFrame,
 ) -> dict[str, Any]:
     return {
         "evaluation_train_period": format_period(train_panel),
         "evaluation_test_period": format_period(test_panel),
-        "forecast_training_period": format_period(forecast_panel),
         "train_observations": int(len(train_panel)),
         "test_observations": int(len(test_panel)),
-        "forecast_observations": int(len(forecast_panel)),
     }
 
 
@@ -153,6 +169,12 @@ def format_markdown_value(value: Any) -> str:
     if isinstance(value, (float, np.floating)):
         return f"{float(value):.4f}"
     return str(value).replace("|", "\\|")
+
+
+def normalize_optional_string(value: Any) -> str | None:
+    if pd.isna(value):
+        return None
+    return str(value)
 
 
 def dataframe_to_markdown(
@@ -205,9 +227,42 @@ def model_extra_artifact_paths(model_name: str) -> list[Path]:
                 model_artifact_path(model_name, "stasjonaritet.md"),
                 model_artifact_path(model_name, "kandidatmodeller.csv"),
                 model_artifact_path(model_name, "kandidatmodeller.md"),
+                model_artifact_path(model_name, "modellvalg_per_fartoy.csv"),
+                model_artifact_path(model_name, "modellvalg_per_fartoy.md"),
+                model_artifact_path(model_name, "residualdiagnostikk.csv"),
+                model_artifact_path(model_name, "residualdiagnostikk.md"),
                 model_artifact_path(model_name, "acf.png"),
                 model_artifact_path(model_name, "pacf.png"),
                 model_artifact_path(model_name, "residualdiagnostikk.png"),
+                model_artifact_path(model_name, "representativ_testplot.png"),
+            ]
+        )
+    elif model_name == "exponential_smoothing":
+        paths.extend(
+            [
+                model_artifact_path(model_name, "modellvalg_per_fartoy.csv"),
+                model_artifact_path(model_name, "modellvalg_per_fartoy.md"),
+                model_artifact_path(model_name, "residualdiagnostikk.csv"),
+                model_artifact_path(model_name, "residualdiagnostikk.md"),
+                model_artifact_path(model_name, "representativ_testplot.png"),
+            ]
+        )
+    elif model_name == "xgboost":
+        paths.extend(
+            [
+                model_artifact_path(model_name, "feature_importance.csv"),
+                model_artifact_path(model_name, "feature_importance.md"),
+                model_artifact_path(model_name, "feature_importance.png"),
+                model_artifact_path(model_name, "representativ_testplot.png"),
+            ]
+        )
+    elif model_name == "lstm":
+        paths.extend(
+            [
+                model_artifact_path(model_name, "training_history.csv"),
+                model_artifact_path(model_name, "training_history.md"),
+                model_artifact_path(model_name, "training_history.png"),
+                model_artifact_path(model_name, "representativ_testplot.png"),
             ]
         )
     return paths
@@ -274,55 +329,50 @@ def write_model_method_log(result: ModelResult) -> None:
             "## Steg 1. Datagrunnlag",
             "",
             (
-                "Aggregert månedlig flåteserie bygget fra train-settet. "
-                f"Train-serien dekker `{details.get('evaluation_train_period', 'ukjent')}`."
+                "Månedlige tidsserier ble bygget per fartøy fra train-settet. "
+                f"Train-seriene dekker `{details.get('evaluation_train_period', 'ukjent')}`."
             ),
             "",
             "## Steg 2. Stasjonaritet",
             "",
             (
-                "Stasjonaritet ble vurdert med ADF-test på originalserie og differensierte serier. "
-                f"Valgt differensiering: `d={details.get('selected_d', 'ukjent')}`, "
-                f"`D={details.get('selected_D', 'ukjent')}`."
+                "ADF-test ble brukt som støtte for differensieringsvalg per fartøy. "
+                "Endelig modellvalg ble deretter gjort gjennom et begrenset ARIMA/SARIMA-søk."
             ),
             "",
             "## Steg 3. ACF- og PACF-analyse",
             "",
             (
-                "ACF og PACF ble brukt på den valgte stasjonære serien for å identifisere "
-                "kandidatmodeller. Se `acf.png`, `pacf.png` og `kandidatmodeller.md`."
+                "ACF og PACF ble lagret for et representativt fartøy som diagnostisk støtte. "
+                "Se `acf.png`, `pacf.png` og `kandidatmodeller.md`."
             ),
             "",
             "## Steg 4. Modellestimering",
             "",
             (
-                "Kandidatmodeller ble estimert og rangert med AIC. "
-                f"Valgt modell: `{format_order_tuple(tuple(selected_order.values()))}` x "
-                f"`{format_order_tuple(tuple(seasonal_order.values()) + (12,))}`."
+                "Kandidatmodeller ble estimert per fartøy og rangert med AIC, BIC og parsimoni. "
+                "Valgte spesifikasjoner er oppsummert i `modellvalg_per_fartoy.md`."
             ),
             "",
             "## Steg 5. Modellvalidering",
             "",
             (
-                "Residualdiagnostikk ble gjennomført med residualplott og Ljung-Box-test, "
-                f"og modellen ble deretter evaluert på holdout-perioden med "
-                f"`MAE={format_metric(result.mae)}` og `RMSE={format_metric(result.rmse)}`."
-            ),
-            "",
-            "## Steg 6. Prognose",
-            "",
-            (
-                "Endelig prognose for april og mai 2026 ble laget ved å refitte valgt modell "
-                "på full historikk til og med mars 2026."
+                "Residualdiagnostikk ble gjennomført per fartøy med Ljung-Box-test, "
+                "og modellene ble evaluert med ekspanderende 1-stegs prognoser på testperioden. "
+                f"Samlet resultat: `MAE={format_metric(result.mae)}`, "
+                f"`RMSE={format_metric(result.rmse)}` og `sMAPE={format_metric(result.smape)}`."
             ),
             "",
             "## Repo-artefakter",
             "",
             "- `stasjonaritet.md`",
             "- `kandidatmodeller.md`",
+            "- `modellvalg_per_fartoy.md`",
+            "- `residualdiagnostikk.md`",
             "- `acf.png`",
             "- `pacf.png`",
             "- `residualdiagnostikk.png`",
+            "- `representativ_testplot.png`",
         ]
     elif result.model == "exponential_smoothing":
         step_lines = [
@@ -340,25 +390,27 @@ def write_model_method_log(result: ModelResult) -> None:
             "## Steg 3. Modellspesifikasjon",
             "",
             (
-                "Det ble brukt ikke-sesongbasert eksponentiell glatting per fartøy. "
-                "Additiv trend ble bare aktivert når train-serien hadde minst 5 observasjoner "
-                "og mer enn én unik verdi."
+                "Det ble sammenlignet et begrenset sett av additive ETS-varianter per fartøy. "
+                "Valgt spesifikasjon per fartøy er lagret i `modellvalg_per_fartoy.md`."
             ),
             "",
             "## Steg 4. Modellestimering",
             "",
-            "Hver fartøysserie ble estimert separat på train-settet.",
+            "Hver fartøysserie ble estimert separat på train-settet, og beste ETS-variant ble beholdt.",
             "",
             "## Steg 5. Modellvalidering",
             "",
             (
                 "Modellen ble evaluert med ekspanderende 1-stegs prognoser gjennom testperioden. "
-                f"Resultat: `MAE={format_metric(result.mae)}` og `RMSE={format_metric(result.rmse)}`."
+                f"Resultat: `MAE={format_metric(result.mae)}`, `RMSE={format_metric(result.rmse)}` "
+                f"og `sMAPE={format_metric(result.smape)}`."
             ),
             "",
-            "## Steg 6. Prognose",
+            "## Repo-artefakter",
             "",
-            "Prognose for april og mai 2026 ble laget per fartøy på full historikk til og med mars 2026.",
+            "- `modellvalg_per_fartoy.md`",
+            "- `residualdiagnostikk.md`",
+            "- `representativ_testplot.png`",
         ]
     elif result.model == "xgboost":
         step_lines = [
@@ -369,8 +421,8 @@ def write_model_method_log(result: ModelResult) -> None:
             "## Steg 2. Featureanalyse",
             "",
             (
-                "Modellen bruker laggede offhire-verdier, rullerende gjennomsnitt og standardavvik, "
-                "måned som sykliske variabler, fartøy-ID og flagg for spesielle behov."
+                "Modellen bruker laggede offhire-verdier, rullerende statistikk, kalendervariabler, "
+                "fartøy-ID og flagg for spesielle behov."
             ),
             "",
             "## Steg 3. Modellspesifikasjon",
@@ -382,18 +434,20 @@ def write_model_method_log(result: ModelResult) -> None:
             "",
             "## Steg 4. Modellestimering",
             "",
-            "Modellen ble trent på train-rader etter feature engineering.",
+            "Modellen ble re-trent måned for måned i en ekspanderende 1-stegs evaluering.",
             "",
             "## Steg 5. Modellvalidering",
             "",
             (
-                f"Modellen ble evaluert på holdout-perioden med `MAE={format_metric(result.mae)}` "
-                f"og `RMSE={format_metric(result.rmse)}`."
+                f"Modellen ble evaluert på testperioden med `MAE={format_metric(result.mae)}`, "
+                f"`RMSE={format_metric(result.rmse)}` og `sMAPE={format_metric(result.smape)}`."
             ),
             "",
-            "## Steg 6. Prognose",
+            "## Repo-artefakter",
             "",
-            "Prognosen for april og mai 2026 ble generert rekursivt ved å føre prediksjoner tilbake som nye lags.",
+            "- `feature_importance.md`",
+            "- `feature_importance.png`",
+            "- `representativ_testplot.png`",
         ]
     else:
         step_lines = [
@@ -404,31 +458,33 @@ def write_model_method_log(result: ModelResult) -> None:
             "## Steg 2. Sekvensanalyse",
             "",
             (
-                "Historikken ble omsatt til sekvenser med tre tidligere tidssteg, der både nivå, "
+                "Historikken ble omsatt til sekvenser med tolv tidligere tidssteg, der både nivå, "
                 "månedssyklus og spesialkrav inngår som input."
             ),
             "",
             "## Steg 3. Modellspesifikasjon",
             "",
             (
-                "LSTM-modellen ble definert med én LSTM-lag, et tett skjult lag og standardisering "
-                "av både input og målvariabel."
+                "LSTM-modellen ble definert med ett LSTM-lag, ett tett lag og standardisering "
+                "av både input og målvariabel basert på treningsdata."
             ),
             "",
             "## Steg 4. Modellestimering",
             "",
-            "Modellen ble trent på train-sekvenser med tidlig stopping når validering var tilgjengelig.",
+            "Modellen ble re-trent måned for måned i en ekspanderende 1-stegs evaluering.",
             "",
             "## Steg 5. Modellvalidering",
             "",
             (
-                f"Holdout-evaluering på testsekvenser ga `MAE={format_metric(result.mae)}` "
-                f"og `RMSE={format_metric(result.rmse)}`."
+                f"Holdout-evaluering på testsekvenser ga `MAE={format_metric(result.mae)}`, "
+                f"`RMSE={format_metric(result.rmse)}` og `sMAPE={format_metric(result.smape)}`."
             ),
             "",
-            "## Steg 6. Prognose",
+            "## Repo-artefakter",
             "",
-            "Prognosen for april og mai 2026 ble generert sekvensielt ved å bruke siste observerte eller predikerte verdier som ny input.",
+            "- `training_history.md`",
+            "- `training_history.png`",
+            "- `representativ_testplot.png`",
         ]
 
     file_path.write_text("\n".join(header_lines + step_lines) + "\n", encoding="utf-8")
@@ -471,6 +527,11 @@ def write_model_result_log(
             if result.rmse is not None
             else "- RMSE: `ikke tilgjengelig`"
         ),
+        (
+            f"- sMAPE: `{result.smape:.4f}`"
+            if result.smape is not None
+            else "- sMAPE: `ikke tilgjengelig`"
+        ),
     ]
     if "evaluation_train_period" in details and "evaluation_test_period" in details:
         content_lines.extend(
@@ -478,10 +539,6 @@ def write_model_result_log(
                 f"- Evaluering train: `{details['evaluation_train_period']}`",
                 f"- Evaluering test: `{details['evaluation_test_period']}`",
             ]
-        )
-    if "forecast_training_period" in details:
-        content_lines.append(
-            f"- Fremtidsprognoser trener på full historikk: `{details['forecast_training_period']}`"
         )
     content_lines.extend(
         [
@@ -492,29 +549,34 @@ def write_model_result_log(
             details_json,
             "```",
             "",
-            "## Prediksjoner",
+            "## Testprediksjoner",
             "",
             predictions_preview,
-            "",
-            "## Fremtidsprognoser",
-            "",
-            future_preview,
         ]
     )
     if not pred_df.empty and len(pred_df) > 10:
         content_lines.extend(
             [
                 "",
-                f"Viser de første 10 av totalt {len(pred_df)} prediksjonsrader.",
+                f"Viser de første 10 av totalt {len(pred_df)} testprediksjoner.",
             ]
         )
-    if not future_df.empty and len(future_df) > 10:
+    if not future_df.empty:
         content_lines.extend(
             [
                 "",
-                f"Viser de første 10 av totalt {len(future_df)} fremtidsprognoser.",
+                "## Fremtidsprognoser",
+                "",
+                future_preview,
             ]
         )
+        if len(future_df) > 10:
+            content_lines.extend(
+                [
+                    "",
+                    f"Viser de første 10 av totalt {len(future_df)} fremtidsprognoser.",
+                ]
+            )
     file_path.write_text("\n".join(content_lines) + "\n", encoding="utf-8")
 
 
@@ -533,19 +595,15 @@ def summarize_result_details(result: ModelResult) -> str:
         return f"Fartøy brukt: {details['vessels_used']}"
     if result.model == "xgboost":
         return (
-            f"Train/Test-rader: {details.get('train_rows', 'ukjent')}/"
-            f"{details.get('test_rows', 'ukjent')}"
+            f"Walk-forward måneder: {details.get('walk_forward_steps', 'ukjent')}"
         )
     if result.model == "lstm":
         return (
-            f"Train/Test-sekvenser: {details.get('train_sequences', 'ukjent')}/"
-            f"{details.get('test_sequences', 'ukjent')}"
+            f"Sekvenslengde: {details.get('sequence_length', 'ukjent')}"
         )
-    if result.model == "sarima" and "selected_order" in details:
+    if result.model == "sarima":
         return (
-            "Flåtenivå | "
-            f"({details['selected_order']['p']}, {details['selected_order']['d']}, {details['selected_order']['q']}) x "
-            f"({details['selected_seasonal_order']['P']}, {details['selected_seasonal_order']['D']}, {details['selected_seasonal_order']['Q']}, 12)"
+            f"Modellerte fartøy: {details.get('modeled_vessels', 'ukjent')}"
         )
     return ""
 
@@ -573,6 +631,266 @@ def build_dataset_notes(panel_df: pd.DataFrame) -> list[str]:
     return notes
 
 
+def select_representative_vessel(panel_df: pd.DataFrame) -> str | None:
+    if panel_df.empty:
+        return None
+    vessel_means = (
+        panel_df.groupby("vessel", as_index=False)["offhire_days"]
+        .mean()
+        .sort_values(["offhire_days", "vessel"], ascending=[False, True])
+    )
+    if vessel_means.empty:
+        return None
+    return str(vessel_means.iloc[0]["vessel"])
+
+
+def add_error_columns(pred_df: pd.DataFrame) -> pd.DataFrame:
+    if pred_df.empty:
+        return pred_df.copy()
+
+    df = pred_df.copy()
+    df["error"] = df["prediction"] - df["actual"]
+    df["abs_error"] = df["error"].abs()
+    df["squared_error"] = df["error"] ** 2
+    denominator = df["actual"].abs() + df["prediction"].abs()
+    df["smape_component"] = np.where(
+        denominator == 0.0,
+        0.0,
+        (200.0 * df["abs_error"]) / denominator,
+    )
+    return df
+
+
+def summarize_prediction_frame(pred_df: pd.DataFrame) -> tuple[float, float, float]:
+    enriched = add_error_columns(pred_df)
+    return (
+        float(enriched["abs_error"].mean()),
+        float(np.sqrt(enriched["squared_error"].mean())),
+        float(enriched["smape_component"].mean()),
+    )
+
+
+def build_metrics_table(
+    pred_df: pd.DataFrame,
+    group_columns: list[str],
+) -> pd.DataFrame:
+    enriched = add_error_columns(pred_df)
+    if enriched.empty:
+        return pd.DataFrame()
+
+    grouped = (
+        enriched.groupby(group_columns, as_index=False)
+        .agg(
+            n_predictions=("actual", "size"),
+            mae=("abs_error", "mean"),
+            rmse=("squared_error", lambda values: float(np.sqrt(np.mean(values)))),
+            smape=("smape_component", "mean"),
+        )
+        .sort_values(group_columns)
+        .reset_index(drop=True)
+    )
+    return grouped
+
+
+def save_representative_prediction_plot(
+    model_name: str,
+    representative_vessel: str | None,
+    train_panel: pd.DataFrame,
+    test_panel: pd.DataFrame,
+    pred_df: pd.DataFrame,
+    title: str,
+) -> None:
+    if representative_vessel is None or pred_df.empty:
+        return
+
+    train_series = (
+        train_panel[train_panel["vessel"] == representative_vessel]
+        .sort_values("date")
+        .copy()
+    )
+    test_series = (
+        test_panel[test_panel["vessel"] == representative_vessel]
+        .sort_values("date")
+        .copy()
+    )
+    pred_series = (
+        pred_df[pred_df["vessel"] == representative_vessel]
+        .sort_values("date")
+        .copy()
+    )
+    if train_series.empty or test_series.empty or pred_series.empty:
+        return
+
+    pred_series["date"] = pd.to_datetime(pred_series["date"])
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.plot(
+        train_series["date"],
+        train_series["offhire_days"],
+        color="#6B7280",
+        linewidth=1.8,
+        label="Train faktisk",
+    )
+    ax.plot(
+        test_series["date"],
+        test_series["offhire_days"],
+        color="#0F4C5C",
+        linewidth=2.0,
+        marker="o",
+        label="Test faktisk",
+    )
+    ax.plot(
+        pred_series["date"],
+        pred_series["prediction"],
+        color="#D97706",
+        linewidth=2.0,
+        marker="o",
+        label="Predikert",
+    )
+    ax.set_title(title)
+    ax.set_xlabel("Dato")
+    ax.set_ylabel("Offhire (%)")
+    ax.legend()
+    fig.tight_layout()
+    fig.savefig(model_artifact_path(model_name, "representativ_testplot.png"), dpi=200)
+    plt.close(fig)
+
+
+def save_feature_importance_artifacts(
+    pipeline: Pipeline,
+    top_n: int = 15,
+) -> None:
+    preprocessor = pipeline.named_steps["preprocessor"]
+    model = pipeline.named_steps["model"]
+    feature_names = preprocessor.get_feature_names_out()
+    importance_df = (
+        pd.DataFrame(
+            {
+                "feature": feature_names,
+                "importance": model.feature_importances_,
+            }
+        )
+        .sort_values("importance", ascending=False)
+        .reset_index(drop=True)
+    )
+    write_dataframe_artifacts(
+        importance_df,
+        model_artifact_path("xgboost", "feature_importance.csv"),
+        "XGBoost feature importance",
+    )
+
+    top_df = importance_df.head(top_n).iloc[::-1]
+    fig, ax = plt.subplots(figsize=(9, 5.5))
+    ax.barh(top_df["feature"], top_df["importance"], color="#2C7A7B")
+    ax.set_title("XGBoost feature importance")
+    ax.set_xlabel("Importance")
+    fig.tight_layout()
+    fig.savefig(model_artifact_path("xgboost", "feature_importance.png"), dpi=200)
+    plt.close(fig)
+
+
+def save_lstm_training_history(history_df: pd.DataFrame) -> None:
+    if history_df.empty:
+        return
+    write_dataframe_artifacts(
+        history_df,
+        model_artifact_path("lstm", "training_history.csv"),
+        "LSTM training history",
+    )
+    fig, ax = plt.subplots(figsize=(9, 5))
+    ax.plot(history_df["epoch"], history_df["loss"], label="Train loss", color="#0F4C5C")
+    if "val_loss" in history_df.columns and history_df["val_loss"].notna().any():
+        ax.plot(
+            history_df["epoch"],
+            history_df["val_loss"],
+            label="Val loss",
+            color="#D97706",
+        )
+    ax.set_title("LSTM training history")
+    ax.set_xlabel("Epoch")
+    ax.set_ylabel("Loss")
+    ax.legend()
+    fig.tight_layout()
+    fig.savefig(model_artifact_path("lstm", "training_history.png"), dpi=200)
+    plt.close(fig)
+
+
+def save_summary_artifacts(prediction_frames: dict[str, pd.DataFrame]) -> None:
+    non_empty_frames = [frame for frame in prediction_frames.values() if not frame.empty]
+    if not non_empty_frames:
+        return
+
+    combined = pd.concat(non_empty_frames, ignore_index=True)
+    overall = build_metrics_table(combined, ["model"])
+    by_vessel = build_metrics_table(combined, ["model", "vessel"])
+    by_month = build_metrics_table(combined, ["model", "date"])
+
+    write_dataframe_artifacts(
+        overall,
+        RESULTS_DIR / "model_comparison_summary.csv",
+        "Samlet modelltest",
+    )
+    write_dataframe_artifacts(
+        by_vessel,
+        RESULTS_DIR / "metrics_by_vessel.csv",
+        "Testmetrikker per fartøy",
+    )
+    write_dataframe_artifacts(
+        by_month,
+        RESULTS_DIR / "metrics_by_month.csv",
+        "Testmetrikker per måned",
+    )
+
+    display_map = {key: value["display_name"] for key, value in MODEL_METADATA.items()}
+    overall["display_name"] = overall["model"].map(display_map)
+    fig, ax = plt.subplots(figsize=(8, 4.8))
+    ordered = overall.sort_values("mae")
+    ax.bar(ordered["display_name"], ordered["mae"], color="#2C7A7B")
+    ax.set_title("MAE per modell i testperioden")
+    ax.set_ylabel("MAE")
+    ax.set_xlabel("Modell")
+    fig.tight_layout()
+    fig.savefig(RESULTS_DIR / "figures" / "mae_per_model.png", dpi=200)
+    plt.close(fig)
+
+    if not by_month.empty:
+        by_month["date"] = pd.to_datetime(by_month["date"])
+        fig, ax = plt.subplots(figsize=(10, 5))
+        for model_name, month_df in by_month.groupby("model"):
+            ax.plot(
+                month_df["date"],
+                month_df["mae"],
+                marker="o",
+                linewidth=1.8,
+                label=display_map.get(model_name, model_name),
+            )
+        ax.set_title("MAE per testmåned")
+        ax.set_xlabel("Dato")
+        ax.set_ylabel("MAE")
+        ax.legend()
+        fig.tight_layout()
+        fig.savefig(RESULTS_DIR / "figures" / "mae_by_month.png", dpi=200)
+        plt.close(fig)
+
+    if not by_vessel.empty:
+        heatmap_df = (
+            by_vessel.copy()
+            .assign(display_name=lambda df: df["model"].map(display_map))
+            .pivot(index="vessel", columns="display_name", values="mae")
+            .sort_index()
+        )
+        fig, ax = plt.subplots(figsize=(7.5, 7))
+        image = ax.imshow(heatmap_df.to_numpy(), aspect="auto", cmap="YlOrRd")
+        ax.set_title("MAE per fartøy og modell")
+        ax.set_xticks(np.arange(len(heatmap_df.columns)))
+        ax.set_xticklabels(heatmap_df.columns, rotation=30, ha="right")
+        ax.set_yticks(np.arange(len(heatmap_df.index)))
+        ax.set_yticklabels(heatmap_df.index)
+        fig.colorbar(image, ax=ax, label="MAE")
+        fig.tight_layout()
+        fig.savefig(RESULTS_DIR / "figures" / "mae_heatmap_by_vessel.png", dpi=200)
+        plt.close(fig)
+
+
 def future_dates_from_panel(panel_df: pd.DataFrame, horizon: int = 2) -> list[pd.Timestamp]:
     if panel_df.empty:
         raise DataTooShortError("Datasettet er tomt, så fremtidsdatoer kan ikke bygges.")
@@ -585,7 +903,6 @@ def write_model_comparison_log(
     results: list[ModelResult],
     generated_at: str,
     panel_df: pd.DataFrame,
-    future_prediction_frames: dict[str, pd.DataFrame],
     active_models: list[str],
 ) -> None:
     sorted_results = sorted(
@@ -626,7 +943,6 @@ def write_model_comparison_log(
             [
                 f"- Evaluering train: `{reference_details['evaluation_train_period']}`",
                 f"- Evaluering test: `{reference_details['evaluation_test_period']}`",
-                f"- Fremtidsprognoser trener på full historikk: `{reference_details['forecast_training_period']}`",
             ]
         )
     content_lines.extend(
@@ -634,8 +950,8 @@ def write_model_comparison_log(
             "",
             "## Samlet oversikt",
             "",
-            "| Modell | Status | MAE | RMSE | Kommentar |",
-            "| --- | --- | --- | --- | --- |",
+            "| Modell | Status | MAE | RMSE | sMAPE | Kommentar |",
+            "| --- | --- | --- | --- | --- | --- |",
         ]
     )
 
@@ -650,6 +966,7 @@ def write_model_comparison_log(
                     result.status,
                     format_metric(result.mae),
                     format_metric(result.rmse),
+                    format_metric(result.smape),
                     detail_summary,
                 ]
             )
@@ -714,24 +1031,6 @@ def write_model_comparison_log(
             reason = (result.details or {}).get("reason", "Ingen detalj oppgitt.")
             content_lines.append(f"- `{display_name}` ble {result.status} i siste kjøring: {reason}")
 
-    future_frames = [frame for frame in future_prediction_frames.values() if not frame.empty]
-    if future_frames:
-        combined_future = pd.concat(future_frames, ignore_index=True)
-        unique_future_dates = sorted(pd.to_datetime(combined_future["date"]).dt.strftime("%Y-%m-%d").unique())
-        content_lines.extend(
-            [
-                "",
-                "## Fremtidsprognoser",
-                "",
-                (
-                    "- Prognoser for neste måneder er lagret i "
-                    "`004 data/modeling/results/future_predictions.csv` for datoene "
-                    + ", ".join(f"`{date}`" for date in unique_future_dates)
-                    + "."
-                ),
-            ]
-        )
-
     content_lines.extend(
         [
             *build_dataset_notes(panel_df),
@@ -784,6 +1083,7 @@ def save_model_specific_outputs(
             "status": result.status,
             "mae": result.mae,
             "rmse": result.rmse,
+            "smape": result.smape,
             "details": result.details or {},
         }
         metrics_path.write_text(
@@ -807,7 +1107,6 @@ def save_model_specific_outputs(
         results,
         generated_at,
         panel_df,
-        future_prediction_frames,
         active_models,
     )
 
@@ -969,25 +1268,52 @@ def build_fleet_series(panel_df: pd.DataFrame) -> pd.Series:
     return fleet_series.asfreq("MS")
 
 
-def build_panel_features(panel_df: pd.DataFrame, lags: int = 3) -> pd.DataFrame:
+def build_vessel_series(panel_df: pd.DataFrame, vessel: str) -> pd.Series:
+    vessel_series = (
+        panel_df[panel_df["vessel"] == vessel]
+        .sort_values("date")
+        .set_index("date")["offhire_days"]
+        .astype(float)
+    )
+    vessel_series.index = pd.DatetimeIndex(vessel_series.index)
+    return vessel_series.asfreq("MS")
+
+
+def build_panel_features(
+    panel_df: pd.DataFrame,
+    lags: tuple[int, ...] = (1, 2, 3, 6, 12),
+    rolling_windows: tuple[int, ...] = (3, 6, 12),
+) -> pd.DataFrame:
     df = panel_df.copy()
     df["special_flag"] = df["Spesielle behov/krav"].fillna("").str.strip().ne("")
+    df["quarter_num"] = ((df["month_num"] - 1) // 3) + 1
+    df["year_num"] = df["date"].dt.year
+    df["time_idx"] = (
+        (df["date"].dt.year - df["date"].dt.year.min()) * 12
+        + df["date"].dt.month
+        - df["date"].dt.month.min()
+    )
 
-    for lag in range(1, lags + 1):
+    for lag in lags:
         df[f"lag_{lag}"] = df.groupby("vessel")["offhire_days"].shift(lag)
 
-    df["rolling_mean_3"] = df.groupby("vessel")["offhire_days"].transform(
-        lambda series: series.shift(1).rolling(window=3, min_periods=1).mean()
-    )
-    df["rolling_std_3"] = (
-        df.groupby("vessel")["offhire_days"].transform(
-            lambda series: series.shift(1).rolling(window=3, min_periods=1).std()
+    for window in rolling_windows:
+        df[f"rolling_mean_{window}"] = df.groupby("vessel")["offhire_days"].transform(
+            lambda series, selected_window=window: series.shift(1)
+            .rolling(window=selected_window, min_periods=1)
+            .mean()
         )
-    ).fillna(0.0)
+        df[f"rolling_std_{window}"] = (
+            df.groupby("vessel")["offhire_days"].transform(
+                lambda series, selected_window=window: series.shift(1)
+                .rolling(window=selected_window, min_periods=1)
+                .std()
+            )
+        ).fillna(0.0)
     df["month_sin"] = np.sin(2 * np.pi * df["month_num"] / 12.0)
     df["month_cos"] = np.cos(2 * np.pi * df["month_num"] / 12.0)
 
-    df = df.dropna(subset=[f"lag_{lags}"]).reset_index(drop=True)
+    df = df.dropna(subset=[f"lag_{max(lags)}"]).reset_index(drop=True)
     return df
 
 
@@ -1001,29 +1327,96 @@ def split_features_for_evaluation(
     return train_df, test_df
 
 
-def fit_or_fallback_exponential_forecast(
-    train_series: pd.Series, steps: int
-) -> np.ndarray:
-    trend = "add" if train_series.nunique() > 1 and len(train_series) >= 5 else None
+def fit_ets_model(
+    train_series: pd.Series,
+    trend: str | None,
+    seasonal: str | None,
+    seasonal_periods: int | None = None,
+) -> Any:
+    model = ExponentialSmoothing(
+        train_series,
+        trend=trend,
+        seasonal=seasonal,
+        seasonal_periods=seasonal_periods,
+        initialization_method="estimated",
+    )
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", category=ConvergenceWarning)
+        warnings.simplefilter("ignore", category=RuntimeWarning)
+        return model.fit(optimized=True, use_brute=True)
 
+
+def fit_or_fallback_exponential_forecast(
+    train_series: pd.Series,
+    steps: int,
+    trend: str | None,
+    seasonal: str | None,
+    seasonal_periods: int | None = None,
+) -> np.ndarray:
     try:
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", category=ConvergenceWarning)
-            warnings.simplefilter("ignore", category=RuntimeWarning)
-            model = ExponentialSmoothing(
-                train_series,
-                trend=trend,
-                seasonal=None,
-                initialization_method="estimated",
-            )
-            fit = model.fit(optimized=True, use_brute=True)
+        fit = fit_ets_model(
+            train_series,
+            trend=trend,
+            seasonal=seasonal,
+            seasonal_periods=seasonal_periods,
+        )
         forecast = np.asarray(fit.forecast(steps), dtype=float)
         if not np.isfinite(forecast).all():
             raise ValueError("Forecast contains non-finite values.")
     except Exception:
         forecast = np.repeat(float(train_series.iloc[-1]), steps)
 
-    return np.clip(forecast, 0.0, None)
+    return np.clip(forecast, 0.0, MAX_OFFHIRE_VALUE)
+
+
+def fit_ets_candidates(train_series: pd.Series) -> pd.DataFrame:
+    candidate_specs = [
+        {
+            "spec": "ANN",
+            "trend": None,
+            "seasonal": None,
+            "seasonal_periods": None,
+        },
+        {
+            "spec": "AAN",
+            "trend": "add",
+            "seasonal": None,
+            "seasonal_periods": None,
+        },
+    ]
+    if len(train_series) >= 24 and train_series.nunique() > 1:
+        candidate_specs.append(
+            {
+                "spec": "AAA",
+                "trend": "add",
+                "seasonal": "add",
+                "seasonal_periods": 12,
+            }
+        )
+
+    rows: list[dict[str, Any]] = []
+    for spec in candidate_specs:
+        try:
+            fit = fit_ets_model(
+                train_series,
+                trend=spec["trend"],
+                seasonal=spec["seasonal"],
+                seasonal_periods=spec["seasonal_periods"],
+            )
+            rows.append(
+                {
+                    **spec,
+                    "aic": float(fit.aic),
+                    "bic": float(fit.bic),
+                }
+            )
+        except Exception:
+            continue
+
+    if not rows:
+        raise DataTooShortError("Ingen ETS-kandidater kunne estimeres.")
+
+    return pd.DataFrame(rows).sort_values(["aic", "bic"]).reset_index(drop=True)
 
 
 def fit_or_fallback_sarima_forecast(
@@ -1042,12 +1435,12 @@ def fit_or_fallback_sarima_forecast(
         )
         fit = model.fit(disp=False)
         forecast = np.asarray(fit.forecast(steps=steps), dtype=float)
-        if not np.isfinite(forecast).all():
+        if not np.isfinite(forecast).all() or float(np.nanmax(np.abs(forecast))) > 1000.0:
             raise ValueError("Forecast contains non-finite values.")
     except Exception:
         forecast = np.repeat(float(train_series.iloc[-1]), steps)
 
-    return np.clip(forecast, 0.0, None)
+    return np.clip(forecast, 0.0, MAX_OFFHIRE_VALUE)
 
 
 def run_adf_test(series: pd.Series, label: str, d: int, D: int) -> dict[str, Any]:
@@ -1139,41 +1532,54 @@ def fit_sarima_candidates(
     candidate_rows: list[dict[str, Any]] = []
     for p in range(0, 3):
         for q in range(0, 3):
-            for P in range(0, 2):
-                for Q in range(0, 2):
-                    try:
-                        model = SARIMAX(
-                            train_series,
-                            order=(p, d, q),
-                            seasonal_order=(P, D, Q, seasonal_period),
-                            enforce_stationarity=False,
-                            enforce_invertibility=False,
-                        )
-                        fit = model.fit(disp=False)
-                        candidate_rows.append(
-                            {
-                                "p": p,
-                                "d": d,
-                                "q": q,
-                                "P": P,
-                                "D": D,
-                                "Q": Q,
-                                "s": seasonal_period,
-                                "aic": float(fit.aic),
-                                "bic": float(fit.bic),
-                            }
-                        )
-                    except Exception:
-                        continue
+            for seasonal_order in [(0, 0, 0, 0), *(
+                [
+                    (P, D, Q, seasonal_period)
+                    for P in range(0, 2)
+                    for Q in range(0, 2)
+                    if not (P == 0 and Q == 0 and D == 0)
+                ]
+                if len(train_series) >= 36
+                else []
+            )]:
+                try:
+                    model = SARIMAX(
+                        train_series,
+                        order=(p, d, q),
+                        seasonal_order=seasonal_order,
+                        enforce_stationarity=False,
+                        enforce_invertibility=False,
+                    )
+                    fit = model.fit(disp=False)
+                    candidate_rows.append(
+                        {
+                            "p": p,
+                            "d": d,
+                            "q": q,
+                            "P": seasonal_order[0],
+                            "D": seasonal_order[1],
+                            "Q": seasonal_order[2],
+                            "s": seasonal_order[3],
+                            "aic": float(fit.aic),
+                            "bic": float(fit.bic),
+                            "complexity": p + q + seasonal_order[0] + seasonal_order[2] + d + seasonal_order[1],
+                        }
+                    )
+                except Exception:
+                    continue
 
     if not candidate_rows:
         raise DataTooShortError("Ingen SARIMA-kandidatmodeller kunne estimeres.")
 
-    return pd.DataFrame(candidate_rows).sort_values(["aic", "bic"]).reset_index(drop=True)
+    return (
+        pd.DataFrame(candidate_rows)
+        .sort_values(["aic", "bic", "complexity"])
+        .reset_index(drop=True)
+    )
 
 
 def save_sarima_diagnostic_plots(
-    train_series: pd.Series,
+    representative_vessel: str,
     transformed_series: pd.Series,
     residuals: pd.Series,
 ) -> None:
@@ -1184,7 +1590,7 @@ def save_sarima_diagnostic_plots(
 
     fig, ax = plt.subplots(figsize=(9, 4.5))
     plot_acf(transformed_series.dropna(), ax=ax, lags=min(24, max(len(transformed_series.dropna()) - 1, 1)))
-    ax.set_title("SARIMA ACF")
+    ax.set_title(f"ARIMA/SARIMA ACF for {representative_vessel}")
     fig.tight_layout()
     fig.savefig(acf_path, dpi=200)
     plt.close(fig)
@@ -1196,7 +1602,7 @@ def save_sarima_diagnostic_plots(
         lags=min(24, max(len(transformed_series.dropna()) // 2 - 1, 1)),
         method="ywm",
     )
-    ax.set_title("SARIMA PACF")
+    ax.set_title(f"ARIMA/SARIMA PACF for {representative_vessel}")
     fig.tight_layout()
     fig.savefig(pacf_path, dpi=200)
     plt.close(fig)
@@ -1204,10 +1610,10 @@ def save_sarima_diagnostic_plots(
     fig, axes = plt.subplots(2, 1, figsize=(10, 7))
     axes[0].plot(residuals.index, residuals.values, color="#0F4C5C", linewidth=1.8)
     axes[0].axhline(0, color="#D97706", linestyle="--", linewidth=1)
-    axes[0].set_title("SARIMA residualer over tid")
+    axes[0].set_title(f"ARIMA/SARIMA residualer over tid for {representative_vessel}")
     axes[0].set_ylabel("Residual")
     axes[1].hist(residuals.values, bins=12, color="#2C7A7B", alpha=0.85, edgecolor="white")
-    axes[1].set_title("Fordeling av SARIMA-residualer")
+    axes[1].set_title(f"Fordeling av residualer for {representative_vessel}")
     axes[1].set_xlabel("Residual")
     axes[1].set_ylabel("Frekvens")
     fig.tight_layout()
@@ -1221,31 +1627,106 @@ def run_exponential_smoothing(
     split_metadata: dict[str, Any],
 ) -> tuple[ModelResult, pd.DataFrame]:
     predictions: list[dict[str, Any]] = []
+    model_selection_rows: list[dict[str, Any]] = []
+    residual_rows: list[dict[str, Any]] = []
+    representative_vessel = select_representative_vessel(train_panel)
+
     for vessel, test_vessel_df in test_panel.groupby("vessel"):
-        train_vessel_df = (
-            train_panel[train_panel["vessel"] == vessel]
-            .sort_values("date")
-            .reset_index(drop=True)
-        )
-        test_vessel_df = test_vessel_df.sort_values("date").reset_index(drop=True)
-        if len(train_vessel_df) < 4 or test_vessel_df.empty:
+        train_series = build_vessel_series(train_panel, vessel).dropna()
+        test_series = build_vessel_series(test_panel, vessel).dropna()
+        if len(train_series) < 12 or test_series.empty:
             continue
 
-        history_values = train_vessel_df["offhire_days"].astype(float).tolist()
+        if train_series.nunique() <= 1:
+            constant_value = float(train_series.iloc[-1])
+            model_selection_rows.append(
+                {
+                    "vessel": vessel,
+                    "spec": "CONST",
+                    "aic": np.nan,
+                    "bic": np.nan,
+                    "train_observations": int(len(train_series)),
+                }
+            )
+            residual_rows.append(
+                {
+                    "vessel": vessel,
+                    "ljung_box_lag": np.nan,
+                    "ljung_box_pvalue": np.nan,
+                }
+            )
+            for date_value, actual in test_series.items():
+                predictions.append(
+                    {
+                        "model": "exponential_smoothing",
+                        "vessel": vessel,
+                        "date": pd.Timestamp(date_value).strftime("%Y-%m-%d"),
+                        "actual": float(actual),
+                        "prediction": constant_value,
+                    }
+                )
+            continue
 
-        for _, test_row in test_vessel_df.iterrows():
-            train_series = pd.Series(history_values, dtype=float)
-            pred = float(fit_or_fallback_exponential_forecast(train_series, 1)[0])
+        candidate_df = fit_ets_candidates(train_series)
+        best_candidate = candidate_df.iloc[0]
+        fit = fit_ets_model(
+            train_series,
+            trend=normalize_optional_string(best_candidate["trend"]),
+            seasonal=normalize_optional_string(best_candidate["seasonal"]),
+            seasonal_periods=(
+                int(best_candidate["seasonal_periods"])
+                if pd.notna(best_candidate["seasonal_periods"])
+                else None
+            ),
+        )
+        residuals = pd.Series(fit.resid, index=train_series.index).dropna()
+        ljung_lag = min(12, max(len(residuals) // 2, 1))
+        ljung_box = acorr_ljungbox(residuals, lags=[ljung_lag], return_df=True)
+
+        model_selection_rows.append(
+            {
+                "vessel": vessel,
+                "spec": best_candidate["spec"],
+                "aic": float(best_candidate["aic"]),
+                "bic": float(best_candidate["bic"]),
+                "train_observations": int(len(train_series)),
+            }
+        )
+        residual_rows.append(
+            {
+                "vessel": vessel,
+                "ljung_box_lag": int(ljung_lag),
+                "ljung_box_pvalue": float(ljung_box["lb_pvalue"].iloc[0]),
+            }
+        )
+
+        history = train_series.copy()
+        for date_value, actual in test_series.items():
+            pred = float(
+                fit_or_fallback_exponential_forecast(
+                    history,
+                    1,
+                    trend=normalize_optional_string(best_candidate["trend"]),
+                    seasonal=normalize_optional_string(best_candidate["seasonal"]),
+                    seasonal_periods=(
+                        int(best_candidate["seasonal_periods"])
+                        if pd.notna(best_candidate["seasonal_periods"])
+                        else None
+                    ),
+                )[0]
+            )
             predictions.append(
                 {
                     "model": "exponential_smoothing",
                     "vessel": vessel,
-                    "date": test_row["date"].strftime("%Y-%m-%d"),
-                    "actual": float(test_row["offhire_days"]),
+                    "date": pd.Timestamp(date_value).strftime("%Y-%m-%d"),
+                    "actual": float(actual),
                     "prediction": pred,
                 }
             )
-            history_values.append(float(test_row["offhire_days"]))
+            history = pd.concat(
+                [history, pd.Series([float(actual)], index=pd.DatetimeIndex([date_value]))]
+            )
 
     if not predictions:
         return (
@@ -1261,19 +1742,40 @@ def run_exponential_smoothing(
         )
 
     pred_df = pd.DataFrame(predictions)
+    write_dataframe_artifacts(
+        pd.DataFrame(model_selection_rows),
+        model_artifact_path("exponential_smoothing", "modellvalg_per_fartoy.csv"),
+        "Eksponentiell glatting modellvalg per fartøy",
+    )
+    write_dataframe_artifacts(
+        pd.DataFrame(residual_rows),
+        model_artifact_path("exponential_smoothing", "residualdiagnostikk.csv"),
+        "Eksponentiell glatting residualdiagnostikk",
+    )
+    save_representative_prediction_plot(
+        "exponential_smoothing",
+        representative_vessel,
+        train_panel,
+        test_panel,
+        pred_df,
+        "Eksponentiell glatting: representativt testforløp",
+    )
+    mae_value, rmse_value, smape_value = summarize_prediction_frame(pred_df)
     metrics = ModelResult(
         model="exponential_smoothing",
         status="ok",
-        mae=float(mean_absolute_error(pred_df["actual"], pred_df["prediction"])),
-        rmse=rmse(pred_df["actual"].to_numpy(), pred_df["prediction"].to_numpy()),
+        mae=mae_value,
+        rmse=rmse_value,
+        smape=smape_value,
         details={
             **split_metadata,
             "vessels_used": int(pred_df["vessel"].nunique()),
             "test_rows": int(len(pred_df)),
             "evaluation_method": "ekspanderende 1-stegs prognose gjennom testperioden",
             "evaluation_level": "fartøynivå",
-            "step_2_summary": "Seriene er korte, nulltunge og ujevne, så sesongkomponent ble ikke brukt.",
-            "step_3_summary": "Ikke-sesongbasert eksponentiell glatting per fartøy; additiv trend brukes bare når train-serien er lang nok og ikke konstant.",
+            "representative_vessel": representative_vessel,
+            "selection_table": "modellvalg_per_fartoy.md",
+            "residual_table": "residualdiagnostikk.md",
         },
     )
     return metrics, pred_df
@@ -1285,11 +1787,34 @@ def forecast_exponential_smoothing(panel_df: pd.DataFrame, horizon: int = 2) -> 
 
     for vessel, vessel_df in panel_df.groupby("vessel"):
         vessel_df = vessel_df.sort_values("date").reset_index(drop=True)
-        if len(vessel_df) < 4:
+        if len(vessel_df) < 12:
             continue
 
+        if vessel_df["offhire_days"].nunique() <= 1:
+            forecast = np.repeat(float(vessel_df["offhire_days"].iloc[-1]), horizon)
+            for date_value, pred in zip(future_dates, forecast):
+                predictions.append(
+                    {
+                        "model": "exponential_smoothing",
+                        "vessel": vessel,
+                        "date": date_value.strftime("%Y-%m-%d"),
+                        "prediction": float(pred),
+                    }
+                )
+            continue
+
+        candidate_df = fit_ets_candidates(vessel_df["offhire_days"].astype(float))
+        best_candidate = candidate_df.iloc[0]
         forecast = fit_or_fallback_exponential_forecast(
-            vessel_df["offhire_days"].astype(float), horizon
+            vessel_df["offhire_days"].astype(float),
+            horizon,
+            trend=normalize_optional_string(best_candidate["trend"]),
+            seasonal=normalize_optional_string(best_candidate["seasonal"]),
+            seasonal_periods=(
+                int(best_candidate["seasonal_periods"])
+                if pd.notna(best_candidate["seasonal_periods"])
+                else None
+            ),
         )
         for date_value, pred in zip(future_dates, forecast):
             predictions.append(
@@ -1312,127 +1837,227 @@ def run_sarima(
     test_panel: pd.DataFrame,
     split_metadata: dict[str, Any],
 ) -> tuple[ModelResult, pd.DataFrame]:
-    train_series = build_fleet_series(train_panel)
-    test_series = build_fleet_series(test_panel)
-    if len(train_series) < 24:
+    prediction_rows: list[dict[str, Any]] = []
+    stationarity_rows: list[dict[str, Any]] = []
+    model_rows: list[dict[str, Any]] = []
+    residual_rows: list[dict[str, Any]] = []
+    representative_vessel = select_representative_vessel(train_panel)
+    representative_candidates = pd.DataFrame()
+    representative_transformed: pd.Series | None = None
+    representative_residuals: pd.Series | None = None
+    fallback_representative: str | None = None
+
+    train_vessels = sorted(set(train_panel["vessel"]).intersection(test_panel["vessel"]))
+    for vessel in train_vessels:
+        train_series = build_vessel_series(train_panel, vessel).dropna()
+        test_series = build_vessel_series(test_panel, vessel).dropna()
+        if len(train_series) < 24 or test_series.empty:
+            continue
+
+        if train_series.nunique() <= 1:
+            constant_value = float(train_series.iloc[-1])
+            model_rows.append(
+                {
+                    "vessel": vessel,
+                    "p": np.nan,
+                    "d": np.nan,
+                    "q": np.nan,
+                    "P": np.nan,
+                    "D": np.nan,
+                    "Q": np.nan,
+                    "s": 0,
+                    "aic": np.nan,
+                    "bic": np.nan,
+                    "train_observations": int(len(train_series)),
+                }
+            )
+            residual_rows.append(
+                {
+                    "vessel": vessel,
+                    "ljung_box_lag": np.nan,
+                    "ljung_box_pvalue": np.nan,
+                }
+            )
+            for date_value, actual in test_series.items():
+                prediction_rows.append(
+                    {
+                        "model": "sarima",
+                        "vessel": vessel,
+                        "date": pd.Timestamp(date_value).strftime("%Y-%m-%d"),
+                        "actual": float(actual),
+                        "prediction": constant_value,
+                    }
+                )
+            continue
+
+        selected_d, selected_D, transformed_series, stationarity_results = select_sarima_differencing(
+            train_series
+        )
+        stationarity_rows.extend(
+            {"vessel": vessel, **row} for row in stationarity_results
+        )
+        candidate_df = fit_sarima_candidates(train_series, d=selected_d, D=selected_D)
+        best_candidate = candidate_df.iloc[0]
+        selected_order = (
+            int(best_candidate["p"]),
+            int(best_candidate["d"]),
+            int(best_candidate["q"]),
+        )
+        selected_seasonal_order = (
+            int(best_candidate["P"]),
+            int(best_candidate["D"]),
+            int(best_candidate["Q"]),
+            int(best_candidate["s"]),
+        )
+
+        final_model = SARIMAX(
+            train_series,
+            order=selected_order,
+            seasonal_order=selected_seasonal_order,
+            enforce_stationarity=False,
+            enforce_invertibility=False,
+        )
+        final_fit = final_model.fit(disp=False)
+        residuals = pd.Series(final_fit.resid, index=train_series.index).dropna()
+        ljung_lag = min(12, max(len(residuals) // 2, 1))
+        ljung_box = acorr_ljungbox(residuals, lags=[ljung_lag], return_df=True)
+
+        model_rows.append(
+            {
+                "vessel": vessel,
+                "p": selected_order[0],
+                "d": selected_order[1],
+                "q": selected_order[2],
+                "P": selected_seasonal_order[0],
+                "D": selected_seasonal_order[1],
+                "Q": selected_seasonal_order[2],
+                "s": selected_seasonal_order[3],
+                "aic": float(best_candidate["aic"]),
+                "bic": float(best_candidate["bic"]),
+                "train_observations": int(len(train_series)),
+            }
+        )
+        residual_rows.append(
+            {
+                "vessel": vessel,
+                "ljung_box_lag": int(ljung_lag),
+                "ljung_box_pvalue": float(ljung_box["lb_pvalue"].iloc[0]),
+            }
+        )
+
+        history = train_series.copy()
+        for date_value, actual in test_series.items():
+            prediction = float(
+                fit_or_fallback_sarima_forecast(
+                    history,
+                    1,
+                    order=selected_order,
+                    seasonal_order=selected_seasonal_order,
+                )[0]
+            )
+            prediction_rows.append(
+                {
+                    "model": "sarima",
+                    "vessel": vessel,
+                    "date": pd.Timestamp(date_value).strftime("%Y-%m-%d"),
+                    "actual": float(actual),
+                    "prediction": prediction,
+                }
+            )
+            history = pd.concat(
+                [history, pd.Series([float(actual)], index=pd.DatetimeIndex([date_value]))]
+            )
+
+        if fallback_representative is None:
+            fallback_representative = vessel
+        if representative_vessel == vessel or (
+            representative_vessel not in train_vessels and fallback_representative == vessel
+        ):
+            representative_candidates = candidate_df.head(10).copy()
+            representative_transformed = transformed_series
+            representative_residuals = residuals
+            representative_vessel = vessel
+
+    if representative_candidates.empty and fallback_representative is not None:
+        representative_vessel = fallback_representative
+
+    if not prediction_rows:
         return (
             ModelResult(
                 model="sarima",
                 status="skipped",
                 details={
                     **split_metadata,
-                    "reason": (
-                        "SARIMA ble ikke kjørt fordi dataserien er for kort for en forsvarlig "
-                        "månedlig sesongmodell. Minst 24 observasjoner anbefales."
-                    ),
-                    "observations": int(len(train_series)),
+                    "reason": "Ingen fartøy hadde tilstrekkelig historikk og variasjon til ARIMA/SARIMA.",
                 },
             ),
             pd.DataFrame(),
         )
 
-    selected_d, selected_D, transformed_series, stationarity_results = select_sarima_differencing(
-        train_series
-    )
-    candidate_df = fit_sarima_candidates(train_series, d=selected_d, D=selected_D)
-    best_candidate = candidate_df.iloc[0]
-    selected_order = (
-        int(best_candidate["p"]),
-        int(best_candidate["d"]),
-        int(best_candidate["q"]),
-    )
-    selected_seasonal_order = (
-        int(best_candidate["P"]),
-        int(best_candidate["D"]),
-        int(best_candidate["Q"]),
-        int(best_candidate["s"]),
-    )
-
-    final_model = SARIMAX(
-        train_series,
-        order=selected_order,
-        seasonal_order=selected_seasonal_order,
-        enforce_stationarity=False,
-        enforce_invertibility=False,
-    )
-    final_fit = final_model.fit(disp=False)
-    residuals = pd.Series(final_fit.resid, index=train_series.index).dropna()
-    ljung_lag = min(12, max(len(residuals) // 2, 1))
-    ljung_box = acorr_ljungbox(residuals, lags=[ljung_lag], return_df=True)
-    save_sarima_diagnostic_plots(train_series, transformed_series, residuals)
+    pred_df = pd.DataFrame(prediction_rows)
     write_dataframe_artifacts(
-        pd.DataFrame(stationarity_results),
+        pd.DataFrame(stationarity_rows),
         model_artifact_path("sarima", "stasjonaritet.csv"),
-        "SARIMA stasjonaritet",
+        "ARIMA/SARIMA stasjonaritet per fartøy",
     )
     write_dataframe_artifacts(
-        candidate_df.head(10),
+        representative_candidates,
         model_artifact_path("sarima", "kandidatmodeller.csv"),
-        "SARIMA kandidatmodeller",
+        "ARIMA/SARIMA kandidatmodeller for representativt fartøy",
+    )
+    write_dataframe_artifacts(
+        pd.DataFrame(model_rows),
+        model_artifact_path("sarima", "modellvalg_per_fartoy.csv"),
+        "ARIMA/SARIMA modellvalg per fartøy",
+    )
+    write_dataframe_artifacts(
+        pd.DataFrame(residual_rows),
+        model_artifact_path("sarima", "residualdiagnostikk.csv"),
+        "ARIMA/SARIMA residualdiagnostikk per fartøy",
+    )
+    if (
+        representative_vessel is not None
+        and representative_transformed is not None
+        and representative_residuals is not None
+    ):
+        save_sarima_diagnostic_plots(
+            representative_vessel,
+            representative_transformed,
+            representative_residuals,
+        )
+    save_representative_prediction_plot(
+        "sarima",
+        representative_vessel,
+        train_panel,
+        test_panel,
+        pred_df,
+        "ARIMA/SARIMA: representativt testforløp",
     )
 
-    history = train_series.copy()
-    prediction_rows: list[dict[str, Any]] = []
-    for date_value, actual in test_series.items():
-        prediction = float(
-            fit_or_fallback_sarima_forecast(
-                history,
-                1,
-                order=selected_order,
-                seasonal_order=selected_seasonal_order,
-            )[0]
-        )
-        prediction_rows.append(
-            {
-                "model": "sarima",
-                "vessel": "fleet_total",
-                "date": pd.Timestamp(date_value).strftime("%Y-%m-%d"),
-                "actual": float(actual),
-                "prediction": prediction,
-            }
-        )
-        history = pd.concat(
-            [history, pd.Series([float(actual)], index=pd.DatetimeIndex([date_value]))]
-        )
-
-    pred_df = pd.DataFrame(
-        prediction_rows
-    )
+    mae_value, rmse_value, smape_value = summarize_prediction_frame(pred_df)
     metrics = ModelResult(
         model="sarima",
         status="ok",
-        mae=float(mean_absolute_error(pred_df["actual"], pred_df["prediction"])),
-        rmse=rmse(pred_df["actual"].to_numpy(), pred_df["prediction"].to_numpy()),
+        mae=mae_value,
+        rmse=rmse_value,
+        smape=smape_value,
         details={
             **split_metadata,
-            "series_type": "fleet_total",
+            "series_type": "per_vessel",
             "test_rows": int(len(pred_df)),
-            "evaluation_method": "ekspanderende 1-stegs prognose på aggregert flåteserie",
-            "evaluation_level": "flåtenivå",
-            "selected_d": selected_d,
-            "selected_D": selected_D,
-            "selected_order": {
-                "p": selected_order[0],
-                "d": selected_order[1],
-                "q": selected_order[2],
-            },
-            "selected_seasonal_order": {
-                "P": selected_seasonal_order[0],
-                "D": selected_seasonal_order[1],
-                "Q": selected_seasonal_order[2],
-            },
-            "selected_aic": float(best_candidate["aic"]),
-            "selected_bic": float(best_candidate["bic"]),
-            "ljung_box_lag": int(ljung_lag),
-            "ljung_box_pvalue": float(ljung_box["lb_pvalue"].iloc[0]),
-            "stationarity_results": stationarity_results,
-            "candidate_models": candidate_df.head(10).to_dict(orient="records"),
+            "evaluation_method": "ekspanderende 1-stegs prognose per fartøy",
+            "evaluation_level": "fartøynivå",
+            "modeled_vessels": int(pred_df["vessel"].nunique()),
+            "representative_vessel": representative_vessel,
             "artifact_files": {
                 "stasjonaritet": "stasjonaritet.md",
                 "kandidatmodeller": "kandidatmodeller.md",
+                "modellvalg_per_fartoy": "modellvalg_per_fartoy.md",
+                "residualdiagnostikk_tabell": "residualdiagnostikk.md",
                 "acf": "acf.png",
                 "pacf": "pacf.png",
-                "residualdiagnostikk": "residualdiagnostikk.png",
+                "residualdiagnostikk_figur": "residualdiagnostikk.png",
+                "representativ_testplot": "representativ_testplot.png",
             },
         },
     )
@@ -1444,44 +2069,60 @@ def forecast_sarima(
     sarima_details: dict[str, Any] | None = None,
     horizon: int = 2,
 ) -> pd.DataFrame:
-    fleet_series = build_fleet_series(panel_df)
-    if len(fleet_series) < 24:
-        return pd.DataFrame()
+    future_dates = future_dates_from_panel(panel_df, horizon)
+    predictions: list[dict[str, Any]] = []
+    for vessel in sorted(panel_df["vessel"].unique()):
+        vessel_series = build_vessel_series(panel_df, vessel).dropna()
+        if len(vessel_series) < 24:
+            continue
 
-    if sarima_details and "selected_order" in sarima_details:
+        if vessel_series.nunique() <= 1:
+            forecast = np.repeat(float(vessel_series.iloc[-1]), horizon)
+            for date_value, pred in zip(future_dates, forecast):
+                predictions.append(
+                    {
+                        "model": "sarima",
+                        "vessel": vessel,
+                        "date": date_value.strftime("%Y-%m-%d"),
+                        "prediction": float(pred),
+                    }
+                )
+            continue
+
+        selected_d, selected_D, _, _ = select_sarima_differencing(vessel_series)
+        candidate_df = fit_sarima_candidates(vessel_series, d=selected_d, D=selected_D)
+        best_candidate = candidate_df.iloc[0]
         selected_order = (
-            int(sarima_details["selected_order"]["p"]),
-            int(sarima_details["selected_order"]["d"]),
-            int(sarima_details["selected_order"]["q"]),
+            int(best_candidate["p"]),
+            int(best_candidate["d"]),
+            int(best_candidate["q"]),
         )
         selected_seasonal_order = (
-            int(sarima_details["selected_seasonal_order"]["P"]),
-            int(sarima_details["selected_seasonal_order"]["D"]),
-            int(sarima_details["selected_seasonal_order"]["Q"]),
-            12,
+            int(best_candidate["P"]),
+            int(best_candidate["D"]),
+            int(best_candidate["Q"]),
+            int(best_candidate["s"]),
         )
-    else:
-        selected_order = (1, 0, 1)
-        selected_seasonal_order = (1, 0, 0, 12)
+        forecast = fit_or_fallback_sarima_forecast(
+            vessel_series,
+            horizon,
+            order=selected_order,
+            seasonal_order=selected_seasonal_order,
+        )
+        for date_value, pred in zip(future_dates, forecast):
+            predictions.append(
+                {
+                    "model": "sarima",
+                    "vessel": vessel,
+                    "date": date_value.strftime("%Y-%m-%d"),
+                    "prediction": float(pred),
+                }
+            )
 
-    future_dates = future_dates_from_panel(panel_df, horizon)
-    model = SARIMAX(
-        fleet_series,
-        order=selected_order,
-        seasonal_order=selected_seasonal_order,
-        enforce_stationarity=False,
-        enforce_invertibility=False,
-    )
-    fit = model.fit(disp=False)
-    forecast = np.clip(np.asarray(fit.forecast(steps=horizon), dtype=float), 0.0, None)
-    return pd.DataFrame(
-        {
-            "model": "sarima",
-            "vessel": "fleet_total",
-            "date": [date_value.strftime("%Y-%m-%d") for date_value in future_dates],
-            "prediction": forecast,
-        }
-    )
+    if not predictions:
+        return pd.DataFrame()
+
+    return pd.DataFrame(predictions).sort_values(["vessel", "date"]).reset_index(drop=True)
 
 
 def build_xgboost_pipeline() -> tuple[Pipeline, list[str]]:
@@ -1489,11 +2130,20 @@ def build_xgboost_pipeline() -> tuple[Pipeline, list[str]]:
 
     numeric_features = [
         "month_num",
+        "quarter_num",
+        "year_num",
+        "time_idx",
         "lag_1",
         "lag_2",
         "lag_3",
+        "lag_6",
+        "lag_12",
         "rolling_mean_3",
+        "rolling_mean_6",
+        "rolling_mean_12",
         "rolling_std_3",
+        "rolling_std_6",
+        "rolling_std_12",
         "month_sin",
         "month_cos",
     ]
@@ -1529,34 +2179,139 @@ def build_xgboost_pipeline() -> tuple[Pipeline, list[str]]:
     return pipeline, numeric_features + categorical_features
 
 
+def build_xgboost_feature_rows(
+    history_panel: pd.DataFrame,
+    target_month_df: pd.DataFrame,
+) -> pd.DataFrame:
+    rows: list[dict[str, Any]] = []
+    history_panel = history_panel.sort_values(["vessel", "date"]).reset_index(drop=True)
+    start_date = history_panel["date"].min()
+
+    for _, row in target_month_df.iterrows():
+        vessel = row["vessel"]
+        vessel_history = (
+            history_panel[history_panel["vessel"] == vessel]
+            .sort_values("date")
+            .reset_index(drop=True)
+        )
+        if len(vessel_history) < 12:
+            continue
+
+        history_values = vessel_history["offhire_days"].astype(float).tolist()
+        target_date = pd.Timestamp(row["date"])
+        special_flag = bool(
+            vessel_history["Spesielle behov/krav"].fillna("").astype(str).str.strip().iloc[-1]
+        )
+        recent_3 = np.asarray(history_values[-3:], dtype=float)
+        recent_6 = np.asarray(history_values[-6:], dtype=float)
+        recent_12 = np.asarray(history_values[-12:], dtype=float)
+        rows.append(
+            {
+                "month_num": target_date.month,
+                "quarter_num": ((target_date.month - 1) // 3) + 1,
+                "year_num": target_date.year,
+                "time_idx": (target_date.year - start_date.year) * 12 + target_date.month - start_date.month,
+                "lag_1": float(history_values[-1]),
+                "lag_2": float(history_values[-2]),
+                "lag_3": float(history_values[-3]),
+                "lag_6": float(history_values[-6]),
+                "lag_12": float(history_values[-12]),
+                "rolling_mean_3": float(np.mean(recent_3)),
+                "rolling_mean_6": float(np.mean(recent_6)),
+                "rolling_mean_12": float(np.mean(recent_12)),
+                "rolling_std_3": float(np.std(recent_3, ddof=1)) if len(recent_3) > 1 else 0.0,
+                "rolling_std_6": float(np.std(recent_6, ddof=1)) if len(recent_6) > 1 else 0.0,
+                "rolling_std_12": float(np.std(recent_12, ddof=1)) if len(recent_12) > 1 else 0.0,
+                "month_sin": float(np.sin(2 * np.pi * target_date.month / 12.0)),
+                "month_cos": float(np.cos(2 * np.pi * target_date.month / 12.0)),
+                "vessel": vessel,
+                "special_flag": special_flag,
+                "date": target_date,
+                "actual": float(row["offhire_days"]),
+            }
+        )
+
+    if not rows:
+        return pd.DataFrame()
+
+    return pd.DataFrame(rows)
+
+
 def run_xgboost(
-    features_df: pd.DataFrame,
+    panel_df: pd.DataFrame,
     split_metadata: dict[str, Any],
 ) -> tuple[ModelResult, pd.DataFrame]:
-    train_df, test_df = split_features_for_evaluation(features_df)
-    pipeline, feature_columns = build_xgboost_pipeline()
-    pipeline.fit(train_df[feature_columns], train_df["offhire_days"])
-    predictions = np.clip(pipeline.predict(test_df[feature_columns]), 0.0, None)
+    history_panel = panel_df[panel_df["date"] <= TRAIN_END_DATE].copy()
+    test_panel = panel_df[panel_df["date"] >= TEST_START_DATE].copy()
+    reference_train_df = build_panel_features(history_panel)
+    if reference_train_df.empty:
+        raise DataTooShortError("For få historiske observasjoner til å bygge XGBoost-features.")
 
-    pred_df = test_df[["vessel", "date", "offhire_days"]].copy()
-    pred_df["model"] = "xgboost"
-    pred_df["actual"] = pred_df["offhire_days"].astype(float)
-    pred_df["prediction"] = predictions.astype(float)
-    pred_df = pred_df.drop(columns=["offhire_days"])
-    pred_df["date"] = pred_df["date"].dt.strftime("%Y-%m-%d")
+    reference_pipeline, feature_columns = build_xgboost_pipeline()
+    reference_pipeline.fit(reference_train_df[feature_columns], reference_train_df["offhire_days"])
+    save_feature_importance_artifacts(reference_pipeline)
 
+    representative_vessel = select_representative_vessel(history_panel)
+    predictions: list[dict[str, Any]] = []
+    test_dates = sorted(test_panel["date"].unique())
+
+    for date_value in test_dates:
+        train_df = build_panel_features(history_panel)
+        if train_df.empty:
+            continue
+        target_month_df = test_panel[test_panel["date"] == date_value].copy()
+        feature_rows = build_xgboost_feature_rows(history_panel, target_month_df)
+        if feature_rows.empty:
+            history_panel = pd.concat([history_panel, target_month_df], ignore_index=True)
+            history_panel = history_panel.sort_values(["vessel", "date"]).reset_index(drop=True)
+            continue
+
+        pipeline, feature_columns = build_xgboost_pipeline()
+        pipeline.fit(train_df[feature_columns], train_df["offhire_days"])
+        step_predictions = np.clip(
+            pipeline.predict(feature_rows[feature_columns]),
+            0.0,
+            MAX_OFFHIRE_VALUE,
+        )
+        for _, row, prediction in zip(feature_rows.index, feature_rows.itertuples(index=False), step_predictions):
+            predictions.append(
+                {
+                    "model": "xgboost",
+                    "vessel": row.vessel,
+                    "date": pd.Timestamp(row.date).strftime("%Y-%m-%d"),
+                    "actual": float(row.actual),
+                    "prediction": float(prediction),
+                }
+            )
+
+        history_panel = pd.concat([history_panel, target_month_df], ignore_index=True)
+        history_panel = history_panel.sort_values(["vessel", "date"]).reset_index(drop=True)
+
+    pred_df = pd.DataFrame(predictions)
+    save_representative_prediction_plot(
+        "xgboost",
+        representative_vessel,
+        panel_df[panel_df["date"] <= TRAIN_END_DATE],
+        test_panel,
+        pred_df,
+        "XGBoost: representativt testforløp",
+    )
+    mae_value, rmse_value, smape_value = summarize_prediction_frame(pred_df)
     metrics = ModelResult(
         model="xgboost",
         status="ok",
-        mae=float(mean_absolute_error(pred_df["actual"], pred_df["prediction"])),
-        rmse=rmse(pred_df["actual"].to_numpy(), pred_df["prediction"].to_numpy()),
+        mae=mae_value,
+        rmse=rmse_value,
+        smape=smape_value,
         details={
             **split_metadata,
-            "train_rows": int(len(train_df)),
-            "test_rows": int(len(test_df)),
-            "evaluation_method": "fast holdout med historiske lags og testperiode 2025-01 til 2026-03",
+            "train_rows": int(len(reference_train_df)),
+            "test_rows": int(len(pred_df)),
+            "walk_forward_steps": int(len(test_dates)),
+            "evaluation_method": "ekspanderende 1-stegs prognose med månedlig re-trening",
             "evaluation_level": "fartøynivå",
             "feature_columns": feature_columns,
+            "representative_vessel": representative_vessel,
             "model_hyperparameters": {
                 "n_estimators": 200,
                 "max_depth": 4,
@@ -1584,29 +2339,37 @@ def forecast_xgboost(
 
     for vessel, vessel_df in panel_df.groupby("vessel"):
         vessel_df = vessel_df.sort_values("date").reset_index(drop=True)
-        if len(vessel_df) < 3:
+        if len(vessel_df) < 12:
             continue
 
         history_values = vessel_df["offhire_days"].astype(float).tolist()
         special_flag = bool(
             vessel_df["Spesielle behov/krav"].fillna("").astype(str).str.strip().iloc[-1]
         )
+        start_date = pd.Timestamp(panel_df["date"].min())
 
         for date_value in future_dates:
-            latest_values = np.asarray(history_values[-3:], dtype=float)
+            recent_3 = np.asarray(history_values[-3:], dtype=float)
+            recent_6 = np.asarray(history_values[-6:], dtype=float)
+            recent_12 = np.asarray(history_values[-12:], dtype=float)
             feature_row = pd.DataFrame(
                 [
                     {
                         "month_num": date_value.month,
-                        "lag_1": float(latest_values[-1]),
-                        "lag_2": float(latest_values[-2]),
-                        "lag_3": float(latest_values[-3]),
-                        "rolling_mean_3": float(latest_values.mean()),
-                        "rolling_std_3": (
-                            float(np.std(latest_values, ddof=1))
-                            if len(latest_values) > 1
-                            else 0.0
-                        ),
+                        "quarter_num": ((date_value.month - 1) // 3) + 1,
+                        "year_num": date_value.year,
+                        "time_idx": (date_value.year - start_date.year) * 12 + date_value.month - start_date.month,
+                        "lag_1": float(history_values[-1]),
+                        "lag_2": float(history_values[-2]),
+                        "lag_3": float(history_values[-3]),
+                        "lag_6": float(history_values[-6]),
+                        "lag_12": float(history_values[-12]),
+                        "rolling_mean_3": float(np.mean(recent_3)),
+                        "rolling_mean_6": float(np.mean(recent_6)),
+                        "rolling_mean_12": float(np.mean(recent_12)),
+                        "rolling_std_3": float(np.std(recent_3, ddof=1)) if len(recent_3) > 1 else 0.0,
+                        "rolling_std_6": float(np.std(recent_6, ddof=1)) if len(recent_6) > 1 else 0.0,
+                        "rolling_std_12": float(np.std(recent_12, ddof=1)) if len(recent_12) > 1 else 0.0,
                         "month_sin": float(np.sin(2 * np.pi * date_value.month / 12.0)),
                         "month_cos": float(np.cos(2 * np.pi * date_value.month / 12.0)),
                         "vessel": vessel,
@@ -1615,7 +2378,11 @@ def forecast_xgboost(
                 ]
             )
             prediction = float(
-                np.clip(pipeline.predict(feature_row[feature_columns])[0], 0.0, None)
+                np.clip(
+                    pipeline.predict(feature_row[feature_columns])[0],
+                    0.0,
+                    MAX_OFFHIRE_VALUE,
+                )
             )
             predictions.append(
                 {
@@ -1634,7 +2401,7 @@ def forecast_xgboost(
 
 
 def build_lstm_sequences(
-    panel_df: pd.DataFrame, window_size: int = 3
+    panel_df: pd.DataFrame, window_size: int = 12
 ) -> tuple[np.ndarray, np.ndarray, list[dict[str, Any]]]:
     sequences: list[np.ndarray] = []
     targets: list[float] = []
@@ -1680,7 +2447,7 @@ def build_lstm_sequences(
 def train_lstm_regressor(
     X_train: np.ndarray,
     y_train: np.ndarray,
-) -> tuple[Any, StandardScaler, StandardScaler]:
+) -> tuple[Any, StandardScaler, StandardScaler, pd.DataFrame]:
     os.environ.setdefault("TF_CPP_MIN_LOG_LEVEL", "2")
     import tensorflow as tf
     from tensorflow import keras
@@ -1720,8 +2487,8 @@ def train_lstm_regressor(
     fit_kwargs = {
         "x": X_train_scaled,
         "y": y_train_scaled,
-        "epochs": 200,
-        "batch_size": 4,
+        "epochs": 100,
+        "batch_size": 8,
         "verbose": 0,
         "shuffle": False,
     }
@@ -1729,64 +2496,117 @@ def train_lstm_regressor(
         fit_kwargs["validation_split"] = 0.2
         fit_kwargs["callbacks"] = [callback]
 
-    model.fit(**fit_kwargs)
-    return model, x_scaler, y_scaler
+    history = model.fit(**fit_kwargs)
+    history_df = pd.DataFrame(history.history)
+    history_df.insert(0, "epoch", np.arange(1, len(history_df) + 1))
+    return model, x_scaler, y_scaler, history_df
 
 
 def run_lstm(
     panel_df: pd.DataFrame,
     split_metadata: dict[str, Any],
 ) -> tuple[ModelResult, pd.DataFrame]:
-    X, y, metadata = build_lstm_sequences(panel_df, window_size=3)
-    dates = pd.to_datetime([item["date"] for item in metadata])
-    train_mask = np.array([date <= TRAIN_END_DATE for date in dates], dtype=bool)
-    test_mask = np.array([date >= TEST_START_DATE for date in dates], dtype=bool)
+    history_panel = panel_df[panel_df["date"] <= TRAIN_END_DATE].copy()
+    test_panel = panel_df[panel_df["date"] >= TEST_START_DATE].copy()
+    representative_vessel = select_representative_vessel(history_panel)
+    window_size = 12
 
-    if train_mask.sum() == 0 or test_mask.sum() == 0:
-        raise DataTooShortError("Train/test-splitt for LSTM ble tom.")
-
-    X_train, X_test = X[train_mask], X[test_mask]
-    y_test = y[test_mask]
-
-    model, x_scaler, y_scaler = train_lstm_regressor(X_train, y[train_mask])
-    X_test_scaled = x_scaler.transform(X_test.reshape(-1, X_test.shape[-1])).reshape(X_test.shape)
-    predictions_scaled = model.predict(X_test_scaled, verbose=0).reshape(-1, 1)
-    predictions = y_scaler.inverse_transform(predictions_scaled).reshape(-1)
-    predictions = np.clip(predictions, 0.0, None)
-    if not np.isfinite(predictions).all():
-        raise RuntimeError("LSTM produserte ikke-finite prediksjoner.")
+    X_reference, y_reference, _ = build_lstm_sequences(history_panel, window_size=window_size)
+    _, _, _, history_df = train_lstm_regressor(X_reference, y_reference)
+    save_lstm_training_history(history_df)
 
     pred_records: list[dict[str, Any]] = []
-    for idx, pred in zip(np.where(test_mask)[0], predictions):
-        pred_records.append(
-            {
-                "model": "lstm",
-                "vessel": metadata[idx]["vessel"],
-                "date": pd.Timestamp(metadata[idx]["date"]).strftime("%Y-%m-%d"),
-                "actual": float(y[idx]),
-                "prediction": float(pred),
-            }
-        )
+    test_dates = sorted(test_panel["date"].unique())
+
+    for date_value in test_dates:
+        X_train, y_train, _ = build_lstm_sequences(history_panel, window_size=window_size)
+        if len(X_train) == 0:
+            continue
+
+        model, x_scaler, y_scaler, _ = train_lstm_regressor(X_train, y_train)
+        month_df = test_panel[test_panel["date"] == date_value].copy()
+
+        for _, row in month_df.iterrows():
+            vessel_history = (
+                history_panel[history_panel["vessel"] == row["vessel"]]
+                .sort_values("date")
+                .reset_index(drop=True)
+            )
+            if len(vessel_history) < window_size:
+                continue
+
+            history_values = vessel_history["offhire_days"].to_numpy(dtype=np.float32)[-window_size:]
+            history_months = vessel_history["month_num"].to_numpy(dtype=np.float32)[-window_size:]
+            history_special = (
+                vessel_history["Spesielle behov/krav"]
+                .fillna("")
+                .str.strip()
+                .ne("")
+                .astype(np.float32)
+                .to_numpy()[-window_size:]
+            )
+            sequence = np.stack(
+                [
+                    history_values,
+                    np.sin(2 * np.pi * history_months / 12.0),
+                    np.cos(2 * np.pi * history_months / 12.0),
+                    history_special,
+                ],
+                axis=1,
+            )
+            sequence_scaled = x_scaler.transform(sequence).reshape(1, sequence.shape[0], sequence.shape[1])
+            prediction_scaled = model.predict(sequence_scaled, verbose=0).reshape(-1, 1)
+            prediction = float(
+                np.clip(
+                    y_scaler.inverse_transform(prediction_scaled).reshape(-1)[0],
+                    0.0,
+                    MAX_OFFHIRE_VALUE,
+                )
+            )
+            pred_records.append(
+                {
+                    "model": "lstm",
+                    "vessel": row["vessel"],
+                    "date": pd.Timestamp(row["date"]).strftime("%Y-%m-%d"),
+                    "actual": float(row["offhire_days"]),
+                    "prediction": prediction,
+                }
+            )
+
+        history_panel = pd.concat([history_panel, month_df], ignore_index=True)
+        history_panel = history_panel.sort_values(["vessel", "date"]).reset_index(drop=True)
 
     pred_df = pd.DataFrame(pred_records)
+    save_representative_prediction_plot(
+        "lstm",
+        representative_vessel,
+        panel_df[panel_df["date"] <= TRAIN_END_DATE],
+        test_panel,
+        pred_df,
+        "LSTM: representativt testforløp",
+    )
+    mae_value, rmse_value, smape_value = summarize_prediction_frame(pred_df)
     metrics = ModelResult(
         model="lstm",
         status="ok",
-        mae=float(mean_absolute_error(pred_df["actual"], pred_df["prediction"])),
-        rmse=rmse(pred_df["actual"].to_numpy(), pred_df["prediction"].to_numpy()),
+        mae=mae_value,
+        rmse=rmse_value,
+        smape=smape_value,
         details={
             **split_metadata,
-            "train_sequences": int(train_mask.sum()),
-            "test_sequences": int(test_mask.sum()),
-            "evaluation_method": "fast holdout med sekvenser og testperiode 2025-01 til 2026-03",
+            "train_sequences": int(len(X_reference)),
+            "test_sequences": int(len(pred_df)),
+            "evaluation_method": "ekspanderende 1-stegs prognose med månedlig re-trening",
             "evaluation_level": "fartøynivå",
-            "sequence_length": 3,
+            "walk_forward_steps": int(len(test_dates)),
+            "sequence_length": window_size,
             "input_features": ["offhire_days", "month_sin", "month_cos", "special_flag"],
+            "representative_vessel": representative_vessel,
             "architecture": {
                 "lstm_units": 32,
                 "dense_units": 16,
-                "batch_size": 4,
-                "max_epochs": 200,
+                "batch_size": 8,
+                "max_epochs": 100,
             },
         },
     )
@@ -1794,14 +2614,15 @@ def run_lstm(
 
 
 def forecast_lstm(panel_df: pd.DataFrame, horizon: int = 2) -> pd.DataFrame:
-    X, y, _ = build_lstm_sequences(panel_df, window_size=3)
-    model, x_scaler, y_scaler = train_lstm_regressor(X, y)
+    window_size = 12
+    X, y, _ = build_lstm_sequences(panel_df, window_size=window_size)
+    model, x_scaler, y_scaler, _ = train_lstm_regressor(X, y)
     future_dates = future_dates_from_panel(panel_df, horizon)
     predictions: list[dict[str, Any]] = []
 
     for vessel, vessel_df in panel_df.groupby("vessel"):
         vessel_df = vessel_df.sort_values("date").reset_index(drop=True)
-        if len(vessel_df) <= 3:
+        if len(vessel_df) <= window_size:
             continue
 
         history_values = vessel_df["offhire_days"].astype(float).tolist()
@@ -1820,17 +2641,21 @@ def forecast_lstm(panel_df: pd.DataFrame, horizon: int = 2) -> pd.DataFrame:
         for date_value in future_dates:
             sequence = np.stack(
                 [
-                    np.asarray(history_values[-3:], dtype=np.float32),
-                    np.sin(2 * np.pi * np.asarray(history_months[-3:], dtype=np.float32) / 12.0),
-                    np.cos(2 * np.pi * np.asarray(history_months[-3:], dtype=np.float32) / 12.0),
-                    np.asarray(history_special[-3:], dtype=np.float32),
+                    np.asarray(history_values[-window_size:], dtype=np.float32),
+                    np.sin(2 * np.pi * np.asarray(history_months[-window_size:], dtype=np.float32) / 12.0),
+                    np.cos(2 * np.pi * np.asarray(history_months[-window_size:], dtype=np.float32) / 12.0),
+                    np.asarray(history_special[-window_size:], dtype=np.float32),
                 ],
                 axis=1,
             )
             sequence_scaled = x_scaler.transform(sequence).reshape(1, sequence.shape[0], sequence.shape[1])
             prediction_scaled = model.predict(sequence_scaled, verbose=0).reshape(-1, 1)
             prediction = float(
-                np.clip(y_scaler.inverse_transform(prediction_scaled).reshape(-1)[0], 0.0, None)
+                np.clip(
+                    y_scaler.inverse_transform(prediction_scaled).reshape(-1)[0],
+                    0.0,
+                    MAX_OFFHIRE_VALUE,
+                )
             )
             predictions.append(
                 {
@@ -1863,6 +2688,7 @@ def save_outputs(
             "status": result.status,
             "mae": result.mae,
             "rmse": result.rmse,
+            "smape": result.smape,
             "details": result.details or {},
         }
         for result in results
@@ -1879,6 +2705,7 @@ def save_outputs(
         panel_df,
         active_models,
     )
+    save_summary_artifacts(prediction_frames)
 
     non_empty_frames = [frame for frame in prediction_frames.values() if not frame.empty]
     if non_empty_frames:
@@ -1914,17 +2741,16 @@ def main() -> None:
         .sort_values(["vessel", "date"])
         .reset_index(drop=True)
     )
-    split_metadata = build_split_metadata(train_panel, test_panel, full_panel)
+    split_metadata = build_split_metadata(train_panel, test_panel)
     active_models = ACTIVE_MODELS.copy()
     for model_name in active_models:
         cleanup_extra_artifacts(model_name)
 
     results: list[ModelResult] = []
     prediction_frames: dict[str, pd.DataFrame] = {}
-    future_prediction_frames: dict[str, pd.DataFrame] = {}
-
-    evaluation_features_df = build_panel_features(evaluation_panel, lags=3)
-    forecast_features_df = build_panel_features(full_panel, lags=3)
+    future_prediction_frames: dict[str, pd.DataFrame] = {
+        model_name: pd.DataFrame() for model_name in active_models
+    }
 
     model_runners = {
         "sarima": lambda: run_sarima(train_panel, test_panel, split_metadata),
@@ -1933,14 +2759,8 @@ def main() -> None:
             test_panel,
             split_metadata,
         ),
-        "xgboost": lambda: run_xgboost(evaluation_features_df, split_metadata),
+        "xgboost": lambda: run_xgboost(evaluation_panel, split_metadata),
         "lstm": lambda: run_lstm(evaluation_panel, split_metadata),
-    }
-    future_forecasters = {
-        "sarima": lambda details=None: forecast_sarima(full_panel, details),
-        "exponential_smoothing": lambda: forecast_exponential_smoothing(full_panel),
-        "xgboost": lambda: forecast_xgboost(full_panel, forecast_features_df),
-        "lstm": lambda: forecast_lstm(full_panel),
     }
 
     for model_name in active_models:
@@ -1968,23 +2788,32 @@ def main() -> None:
                 )
             )
 
-    for model_name in active_models:
-        forecaster = future_forecasters[model_name]
-        try:
-            if model_name == "sarima":
-                sarima_result = next(
-                    (result for result in results if result.model == "sarima"),
-                    None,
-                )
-                future_prediction_frames[model_name] = forecaster(
-                    sarima_result.details if sarima_result else None
-                )
-            else:
-                future_prediction_frames[model_name] = forecaster()
-        except DataTooShortError:
-            future_prediction_frames[model_name] = pd.DataFrame()
-        except Exception:
-            future_prediction_frames[model_name] = pd.DataFrame()
+    if GENERATE_FUTURE_FORECASTS:
+        forecast_features_df = build_panel_features(full_panel)
+        future_forecasters = {
+            "sarima": lambda details=None: forecast_sarima(full_panel, details),
+            "exponential_smoothing": lambda: forecast_exponential_smoothing(full_panel),
+            "xgboost": lambda: forecast_xgboost(full_panel, forecast_features_df),
+            "lstm": lambda: forecast_lstm(full_panel),
+        }
+
+        for model_name in active_models:
+            forecaster = future_forecasters[model_name]
+            try:
+                if model_name == "sarima":
+                    sarima_result = next(
+                        (result for result in results if result.model == "sarima"),
+                        None,
+                    )
+                    future_prediction_frames[model_name] = forecaster(
+                        sarima_result.details if sarima_result else None
+                    )
+                else:
+                    future_prediction_frames[model_name] = forecaster()
+            except DataTooShortError:
+                future_prediction_frames[model_name] = pd.DataFrame()
+            except Exception:
+                future_prediction_frames[model_name] = pd.DataFrame()
 
     save_outputs(
         results,
@@ -2007,21 +2836,6 @@ def main() -> None:
         else:
             reason = (result.details or {}).get("reason", "ingen detalj")
             print(f"- {result.model}: {result.status.upper()} | {reason}")
-
-    combined_future_rows = sum(len(frame) for frame in future_prediction_frames.values())
-    if combined_future_rows:
-        future_dates = sorted(
-            {
-                date_value
-                for frame in future_prediction_frames.values()
-                if not frame.empty
-                for date_value in frame["date"].tolist()
-            }
-        )
-        print(
-            "- fremtidsprognoser: "
-            f"{combined_future_rows} rader for {', '.join(future_dates)}"
-        )
 
 
 if __name__ == "__main__":

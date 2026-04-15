@@ -2,13 +2,13 @@
 
 Dette dokumentet genereres automatisk ved hver kjøring av `004 data/modeling/run_models.py`.
 
-- Sist generert: `2026-04-14T18:53:23`
+- Sist generert: `2026-04-15T15:14:12`
 - Status: `ok`
-- MAE: `7.7696`
-- RMSE: `17.1056`
+- MAE: `7.5722`
+- RMSE: `17.4062`
+- sMAPE: `178.7664`
 - Evaluering train: `2021-04 til 2024-12`
 - Evaluering test: `2025-01 til 2026-03`
-- Fremtidsprognoser trener på full historikk: `2021-04 til 2026-03`
 
 ## Detaljer
 
@@ -16,60 +16,43 @@ Dette dokumentet genereres automatisk ved hver kjøring av `004 data/modeling/ru
 {
   "evaluation_train_period": "2021-04 til 2024-12",
   "evaluation_test_period": "2025-01 til 2026-03",
-  "forecast_training_period": "2021-04 til 2026-03",
   "train_observations": 675,
   "test_observations": 227,
-  "forecast_observations": 902,
-  "train_sequences": 630,
+  "train_sequences": 495,
   "test_sequences": 225,
-  "evaluation_method": "fast holdout med sekvenser og testperiode 2025-01 til 2026-03",
+  "evaluation_method": "ekspanderende 1-stegs prognose med månedlig re-trening",
   "evaluation_level": "fartøynivå",
-  "sequence_length": 3,
+  "walk_forward_steps": 15,
+  "sequence_length": 12,
   "input_features": [
     "offhire_days",
     "month_sin",
     "month_cos",
     "special_flag"
   ],
+  "representative_vessel": "Fartøy 2",
   "architecture": {
     "lstm_units": 32,
     "dense_units": 16,
-    "batch_size": 4,
-    "max_epochs": 200
+    "batch_size": 8,
+    "max_epochs": 100
   }
 }
 ```
 
-## Prediksjoner
+## Testprediksjoner
 
 | model | vessel | date | actual | prediction |
 | --- | --- | --- | --- | --- |
-| lstm | Fartøy 1 | 2025-01-01 | 0.0000 | 0.6762 |
-| lstm | Fartøy 1 | 2025-02-01 | 0.0000 | 0.0310 |
-| lstm | Fartøy 1 | 2025-03-01 | 0.0000 | 0.0000 |
-| lstm | Fartøy 1 | 2025-04-01 | 0.0000 | 0.0000 |
-| lstm | Fartøy 1 | 2025-05-01 | 0.0000 | 0.0000 |
-| lstm | Fartøy 1 | 2025-06-01 | 0.0000 | 0.0000 |
-| lstm | Fartøy 1 | 2025-07-01 | 0.0000 | 0.0000 |
-| lstm | Fartøy 1 | 2025-08-01 | 0.0000 | 0.0000 |
-| lstm | Fartøy 1 | 2025-09-01 | 0.0000 | 0.1416 |
-| lstm | Fartøy 1 | 2025-10-01 | 0.0000 | 0.1329 |
+| lstm | Fartøy 1 | 2025-01-01 | 0.0000 | 0.0000 |
+| lstm | Fartøy 10 | 2025-01-01 | 0.0000 | 6.4530 |
+| lstm | Fartøy 11 | 2025-01-01 | 0.0000 | 9.6724 |
+| lstm | Fartøy 12 | 2025-01-01 | 0.0000 | 3.4918 |
+| lstm | Fartøy 13 | 2025-01-01 | 0.0000 | 3.3053 |
+| lstm | Fartøy 14 | 2025-01-01 | 0.0000 | 3.3053 |
+| lstm | Fartøy 15 | 2025-01-01 | 19.8900 | 3.3053 |
+| lstm | Fartøy 2 | 2025-01-01 | 0.0000 | 5.6822 |
+| lstm | Fartøy 3 | 2025-01-01 | 0.0000 | 6.6883 |
+| lstm | Fartøy 4 | 2025-01-01 | 0.0000 | 4.5207 |
 
-## Fremtidsprognoser
-
-| model | vessel | date | prediction |
-| --- | --- | --- | --- |
-| lstm | Fartøy 1 | 2026-04-01 | 1.9751 |
-| lstm | Fartøy 1 | 2026-05-01 | 1.5744 |
-| lstm | Fartøy 10 | 2026-04-01 | 5.7573 |
-| lstm | Fartøy 10 | 2026-05-01 | 3.6330 |
-| lstm | Fartøy 11 | 2026-04-01 | 14.2982 |
-| lstm | Fartøy 11 | 2026-05-01 | 9.9353 |
-| lstm | Fartøy 12 | 2026-04-01 | 1.5496 |
-| lstm | Fartøy 12 | 2026-05-01 | 2.1884 |
-| lstm | Fartøy 13 | 2026-04-01 | 1.5496 |
-| lstm | Fartøy 13 | 2026-05-01 | 2.1884 |
-
-Viser de første 10 av totalt 225 prediksjonsrader.
-
-Viser de første 10 av totalt 30 fremtidsprognoser.
+Viser de første 10 av totalt 225 testprediksjoner.

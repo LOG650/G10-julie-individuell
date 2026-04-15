@@ -2,19 +2,18 @@
 
 Dette dokumentet oppsummerer siste kjøring av alle modellene og er ment som arbeidsgrunnlag for metode-, analyse- og diskusjonsdelen i rapporten.
 
-- Sist generert: `2026-04-14T18:53:23`
+- Sist generert: `2026-04-15T15:14:12`
 - Evaluering train: `2021-04 til 2024-12`
 - Evaluering test: `2025-01 til 2026-03`
-- Fremtidsprognoser trener på full historikk: `2021-04 til 2026-03`
 
 ## Samlet oversikt
 
-| Modell | Status | MAE | RMSE | Kommentar |
-| --- | --- | --- | --- | --- |
-| Eksponentiell glatting | ok | 6.7212 | 17.5192 | Fartøy brukt: 15 |
-| LSTM | ok | 7.7696 | 17.1056 | Train/Test-sekvenser: 630/225 |
-| XGBoost | ok | 8.5433 | 18.3682 | Train/Test-rader: 630/225 |
-| SARIMA | ok | 47.7648 | 58.3014 | Flåtenivå | (2, 0, 0) x (1, 0, 0, 12) |
+| Modell | Status | MAE | RMSE | sMAPE | Kommentar |
+| --- | --- | --- | --- | --- | --- |
+| SARIMA | ok | 6.1521 | 16.7823 | 100.4363 | Modellerte fartøy: 15 |
+| XGBoost | ok | 7.3487 | 17.4010 | 182.9827 | Walk-forward måneder: 15 |
+| LSTM | ok | 7.5722 | 17.4062 | 178.7664 | Sekvenslengde: 12 |
+| Eksponentiell glatting | ok | 8.3676 | 17.9544 | 168.6203 | Fartøy brukt: 15 |
 
 ## Lenker til detaljfiler
 
@@ -25,19 +24,15 @@ Dette dokumentet oppsummerer siste kjøring av alle modellene og er ment som arb
 
 ## Rangering basert på MAE
 
-1. Eksponentiell glatting med MAE 6.7212 og RMSE 17.5192
-2. LSTM med MAE 7.7696 og RMSE 17.1056
-3. XGBoost med MAE 8.5433 og RMSE 18.3682
-4. SARIMA med MAE 47.7648 og RMSE 58.3014
+1. SARIMA med MAE 6.1521 og RMSE 16.7823
+2. XGBoost med MAE 7.3487 og RMSE 17.4010
+3. LSTM med MAE 7.5722 og RMSE 17.4062
+4. Eksponentiell glatting med MAE 8.3676 og RMSE 17.9544
 
 ## Hovedfunn
 
-- Lavest MAE i siste kjøring: `Eksponentiell glatting` (6.7212).
-- Lavest RMSE i siste kjøring: `LSTM` (17.1056).
-
-## Fremtidsprognoser
-
-- Prognoser for neste måneder er lagret i `004 data/modeling/results/future_predictions.csv` for datoene `2026-04-01`, `2026-05-01`.
+- Lavest MAE i siste kjøring: `SARIMA` (6.1521).
+- Lavest RMSE i siste kjøring: `SARIMA` (16.7823).
 - Datasettet dekker observasjoner fra `2021-04` til `2026-03` fordelt på 6 kalenderår.
 - Siste år i datasettet er foreløpig ufullstendig og går til `Mars 2026`.
 

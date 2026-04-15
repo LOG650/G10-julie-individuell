@@ -2,13 +2,13 @@
 
 Dette dokumentet genereres automatisk ved hver kjøring av `004 data/modeling/run_models.py`.
 
-- Sist generert: `2026-04-14T18:53:23`
+- Sist generert: `2026-04-15T15:14:12`
 - Status: `ok`
-- MAE: `8.5433`
-- RMSE: `18.3682`
+- MAE: `7.3487`
+- RMSE: `17.4010`
+- sMAPE: `182.9827`
 - Evaluering train: `2021-04 til 2024-12`
 - Evaluering test: `2025-01 til 2026-03`
-- Fremtidsprognoser trener på full historikk: `2021-04 til 2026-03`
 
 ## Detaljer
 
@@ -16,26 +16,35 @@ Dette dokumentet genereres automatisk ved hver kjøring av `004 data/modeling/ru
 {
   "evaluation_train_period": "2021-04 til 2024-12",
   "evaluation_test_period": "2025-01 til 2026-03",
-  "forecast_training_period": "2021-04 til 2026-03",
   "train_observations": 675,
   "test_observations": 227,
-  "forecast_observations": 902,
-  "train_rows": 630,
+  "train_rows": 495,
   "test_rows": 225,
-  "evaluation_method": "fast holdout med historiske lags og testperiode 2025-01 til 2026-03",
+  "walk_forward_steps": 15,
+  "evaluation_method": "ekspanderende 1-stegs prognose med månedlig re-trening",
   "evaluation_level": "fartøynivå",
   "feature_columns": [
     "month_num",
+    "quarter_num",
+    "year_num",
+    "time_idx",
     "lag_1",
     "lag_2",
     "lag_3",
+    "lag_6",
+    "lag_12",
     "rolling_mean_3",
+    "rolling_mean_6",
+    "rolling_mean_12",
     "rolling_std_3",
+    "rolling_std_6",
+    "rolling_std_12",
     "month_sin",
     "month_cos",
     "vessel",
     "special_flag"
   ],
+  "representative_vessel": "Fartøy 2",
   "model_hyperparameters": {
     "n_estimators": 200,
     "max_depth": 4,
@@ -46,36 +55,19 @@ Dette dokumentet genereres automatisk ved hver kjøring av `004 data/modeling/ru
 }
 ```
 
-## Prediksjoner
+## Testprediksjoner
 
-| vessel | date | model | actual | prediction |
+| model | vessel | date | actual | prediction |
 | --- | --- | --- | --- | --- |
-| Fartøy 1 | 2025-01-01 | xgboost | 0.0000 | 1.9192 |
-| Fartøy 1 | 2025-02-01 | xgboost | 0.0000 | 2.8913 |
-| Fartøy 1 | 2025-03-01 | xgboost | 0.0000 | 0.3129 |
-| Fartøy 1 | 2025-04-01 | xgboost | 0.0000 | 1.2894 |
-| Fartøy 1 | 2025-05-01 | xgboost | 0.0000 | 1.3276 |
-| Fartøy 1 | 2025-06-01 | xgboost | 0.0000 | 1.6664 |
-| Fartøy 1 | 2025-07-01 | xgboost | 0.0000 | 1.1279 |
-| Fartøy 1 | 2025-08-01 | xgboost | 0.0000 | 1.3505 |
-| Fartøy 1 | 2025-09-01 | xgboost | 0.0000 | 0.7133 |
-| Fartøy 1 | 2025-10-01 | xgboost | 0.0000 | 2.2131 |
+| xgboost | Fartøy 1 | 2025-01-01 | 0.0000 | 1.0546 |
+| xgboost | Fartøy 10 | 2025-01-01 | 0.0000 | 0.0000 |
+| xgboost | Fartøy 11 | 2025-01-01 | 0.0000 | 6.4019 |
+| xgboost | Fartøy 12 | 2025-01-01 | 0.0000 | 1.3956 |
+| xgboost | Fartøy 13 | 2025-01-01 | 0.0000 | 0.6748 |
+| xgboost | Fartøy 14 | 2025-01-01 | 0.0000 | 1.1317 |
+| xgboost | Fartøy 15 | 2025-01-01 | 19.8900 | 1.2228 |
+| xgboost | Fartøy 2 | 2025-01-01 | 0.0000 | 1.7476 |
+| xgboost | Fartøy 3 | 2025-01-01 | 0.0000 | 0.4061 |
+| xgboost | Fartøy 4 | 2025-01-01 | 0.0000 | 11.3168 |
 
-## Fremtidsprognoser
-
-| model | vessel | date | prediction |
-| --- | --- | --- | --- |
-| xgboost | Fartøy 1 | 2026-04-01 | 1.1217 |
-| xgboost | Fartøy 1 | 2026-05-01 | 43.0523 |
-| xgboost | Fartøy 10 | 2026-04-01 | 17.7994 |
-| xgboost | Fartøy 10 | 2026-05-01 | 19.3069 |
-| xgboost | Fartøy 11 | 2026-04-01 | 13.5653 |
-| xgboost | Fartøy 11 | 2026-05-01 | 20.1427 |
-| xgboost | Fartøy 12 | 2026-04-01 | 0.9918 |
-| xgboost | Fartøy 12 | 2026-05-01 | 0.5843 |
-| xgboost | Fartøy 13 | 2026-04-01 | 0.7515 |
-| xgboost | Fartøy 13 | 2026-05-01 | 0.3439 |
-
-Viser de første 10 av totalt 225 prediksjonsrader.
-
-Viser de første 10 av totalt 30 fremtidsprognoser.
+Viser de første 10 av totalt 225 testprediksjoner.

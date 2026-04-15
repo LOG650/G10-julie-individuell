@@ -11,7 +11,7 @@ Paneldata med én rad per fartøy og måned, bygget fra train/test-splittet.
 
 ## Steg 2. Featureanalyse
 
-Modellen bruker laggede offhire-verdier, rullerende gjennomsnitt og standardavvik, måned som sykliske variabler, fartøy-ID og flagg for spesielle behov.
+Modellen bruker laggede offhire-verdier, rullerende statistikk, kalendervariabler, fartøy-ID og flagg for spesielle behov.
 
 ## Steg 3. Modellspesifikasjon
 
@@ -19,12 +19,14 @@ XGBoost ble satt opp som en gradient boosted tree-modell med et fast feature-set
 
 ## Steg 4. Modellestimering
 
-Modellen ble trent på train-rader etter feature engineering.
+Modellen ble re-trent måned for måned i en ekspanderende 1-stegs evaluering.
 
 ## Steg 5. Modellvalidering
 
-Modellen ble evaluert på holdout-perioden med `MAE=8.5433` og `RMSE=18.3682`.
+Modellen ble evaluert på testperioden med `MAE=7.3487`, `RMSE=17.4010` og `sMAPE=182.9827`.
 
-## Steg 6. Prognose
+## Repo-artefakter
 
-Prognosen for april og mai 2026 ble generert rekursivt ved å føre prediksjoner tilbake som nye lags.
+- `feature_importance.md`
+- `feature_importance.png`
+- `representativ_testplot.png`

@@ -1,31 +1,32 @@
 {
   "model": "lstm",
   "status": "ok",
-  "mae": 7.769602948294746,
-  "rmse": 17.105645350525233,
+  "mae": 7.572219503063626,
+  "rmse": 17.406238905992605,
+  "smape": 178.76644891446256,
   "details": {
     "evaluation_train_period": "2021-04 til 2024-12",
     "evaluation_test_period": "2025-01 til 2026-03",
-    "forecast_training_period": "2021-04 til 2026-03",
     "train_observations": 675,
     "test_observations": 227,
-    "forecast_observations": 902,
-    "train_sequences": 630,
+    "train_sequences": 495,
     "test_sequences": 225,
-    "evaluation_method": "fast holdout med sekvenser og testperiode 2025-01 til 2026-03",
+    "evaluation_method": "ekspanderende 1-stegs prognose med månedlig re-trening",
     "evaluation_level": "fartøynivå",
-    "sequence_length": 3,
+    "walk_forward_steps": 15,
+    "sequence_length": 12,
     "input_features": [
       "offhire_days",
       "month_sin",
       "month_cos",
       "special_flag"
     ],
+    "representative_vessel": "Fartøy 2",
     "architecture": {
       "lstm_units": 32,
       "dense_units": 16,
-      "batch_size": 4,
-      "max_epochs": 200
+      "batch_size": 8,
+      "max_epochs": 100
     }
   }
 }

@@ -28,10 +28,8 @@ Det gir normalt inntil 60 tidssteg per fartøy, men med to praktiske begrensning
 - 2021 starter i april fordi dataserien dekker de siste fem årene
 - 2026 er foreløpig bare observert til og med mars
 
-Pipelinen brukes derfor til to ting:
-
-- historisk evaluering på `train.csv` og `test.csv`
-- prognoser for april og mai 2026 basert på hele historikken til og med mars 2026
+Standardkjøringen brukes nå kun til historisk modellbygging, testing og verifikasjon.
+Framtidsprognoser er flyttet ut av denne fasen og skal behandles i en egen senere seksjon.
 
 ## Oppsett
 
@@ -72,8 +70,8 @@ Standardskriptet kjører nå alle fire modellene:
 python '004 data/modeling/run_models.py'
 ```
 
-Skriptet skriver resultater til `004 data/modeling/results/`.
-I tillegg skriver det modellspesifikke filer til egne mapper under `004 data/modeling/models/`.
+Skriptet skriver testresultater, sammendrag og figurer til `004 data/modeling/results/`.
+I tillegg skriver det modellspesifikke metode-, resultat- og diagnosefiler til egne mapper under `004 data/modeling/models/`.
 Ved hver kjøring verifiserer og oppdaterer skriptet også `train.csv` og `test.csv` fra masterfilen.
 
 ## Versjonering
@@ -91,25 +89,74 @@ Dette gjør at både datagrunnlag, kode og siste kjørte modellresultater kan sp
 
 ## Utdata
 
-Skriptet lager:
+Skriptet lager som standard:
 
 - `004 data/modeling/results/metrics.json`
 - `004 data/modeling/results/predictions.csv`
-- `004 data/modeling/results/future_predictions.csv`
+- `004 data/modeling/results/model_comparison_summary.csv`
+- `004 data/modeling/results/model_comparison_summary.md`
+- `004 data/modeling/results/metrics_by_vessel.csv`
+- `004 data/modeling/results/metrics_by_vessel.md`
+- `004 data/modeling/results/metrics_by_month.csv`
+- `004 data/modeling/results/metrics_by_month.md`
+- `004 data/modeling/results/figures/mae_per_model.png`
+- `004 data/modeling/results/figures/mae_by_month.png`
+- `004 data/modeling/results/figures/mae_heatmap_by_vessel.png`
 - `004 data/modeling/models/<modell>/metrics.json`
 - `004 data/modeling/models/<modell>/predictions.csv`
-- `004 data/modeling/models/<modell>/future_predictions.csv`
 - `004 data/modeling/models/<modell>/metode.md`
 - `004 data/modeling/models/<modell>/kode.md`
 - `004 data/modeling/models/<modell>/resultater.md`
 - `004 data/modeling/model_logs/Modellsammenligning.md`
 
-For `SARIMA` genereres det i tillegg Box-Jenkins-artefakter:
+For `SARIMA` genereres det i tillegg Box-Jenkins-artefakter og diagnostikk:
 
 - `004 data/modeling/models/SARIMA/stasjonaritet.csv`
+- `004 data/modeling/models/SARIMA/stasjonaritet.md`
 - `004 data/modeling/models/SARIMA/kandidatmodeller.csv`
+- `004 data/modeling/models/SARIMA/kandidatmodeller.md`
+- `004 data/modeling/models/SARIMA/modellvalg_per_fartoy.csv`
+- `004 data/modeling/models/SARIMA/modellvalg_per_fartoy.md`
+- `004 data/modeling/models/SARIMA/residualdiagnostikk.csv`
+- `004 data/modeling/models/SARIMA/residualdiagnostikk.md`
 - `004 data/modeling/models/SARIMA/acf.png`
 - `004 data/modeling/models/SARIMA/pacf.png`
 - `004 data/modeling/models/SARIMA/residualdiagnostikk.png`
+- `004 data/modeling/models/SARIMA/representativ_testplot.png`
+
+For `Eksponentiell glatting` genereres det i tillegg:
+
+- `004 data/modeling/models/Eksponentiell glatting/modellvalg_per_fartoy.csv`
+- `004 data/modeling/models/Eksponentiell glatting/modellvalg_per_fartoy.md`
+- `004 data/modeling/models/Eksponentiell glatting/residualdiagnostikk.csv`
+- `004 data/modeling/models/Eksponentiell glatting/residualdiagnostikk.md`
+- `004 data/modeling/models/Eksponentiell glatting/representativ_testplot.png`
+
+For `XGBoost` genereres det i tillegg:
+
+- `004 data/modeling/models/XGBoost/feature_importance.csv`
+- `004 data/modeling/models/XGBoost/feature_importance.md`
+- `004 data/modeling/models/XGBoost/feature_importance.png`
+- `004 data/modeling/models/XGBoost/representativ_testplot.png`
+
+For `LSTM` genereres det i tillegg:
+
+- `004 data/modeling/models/LSTM/training_history.csv`
+- `004 data/modeling/models/LSTM/training_history.md`
+- `004 data/modeling/models/LSTM/training_history.png`
+- `004 data/modeling/models/LSTM/representativ_testplot.png`
 
 I tillegg skriver det en kort oppsummering til terminalen om hvilke modeller som ble kjørt, og hvilke som eventuelt ble hoppet over på grunn av datamengde.
+
+## Evalueringslogikk
+
+Alle fire modellene evalueres nå under samme hovedoppsett:
+
+- målnivå: månedlig `offhire_days` per fartøy
+- train: `2021-04` til `2024-12`
+- test: `2025-01` til `2026-03`
+- metode: ekspanderende `1-stegs` prognose gjennom testperioden
+- hovedmål: `MAE`
+- støttemål: `RMSE` og `sMAPE`
+
+Dette gjør at modellene kan sammenlignes direkte på samme fartøy-måned-observasjoner.

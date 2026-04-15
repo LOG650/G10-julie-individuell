@@ -1,0 +1,35 @@
+feature,importance
+num__lag_1,0.106451266
+cat__vessel_Fartøy 2,0.07530153
+num__rolling_mean_12,0.06390483
+num__rolling_mean_6,0.058308426
+num__rolling_mean_3,0.058131803
+num__time_idx,0.04956123
+num__lag_6,0.045023456
+num__rolling_std_6,0.043552786
+cat__vessel_Fartøy 5,0.040132184
+num__rolling_std_12,0.03946782
+cat__vessel_Fartøy 8,0.037684817
+num__rolling_std_3,0.036025003
+cat__vessel_Fartøy 4,0.03291856
+num__lag_2,0.032853138
+cat__vessel_Fartøy 1,0.030521046
+num__month_sin,0.030249186
+num__month_cos,0.027686872
+num__lag_3,0.026340805
+num__quarter_num,0.026194865
+num__month_num,0.02575312
+cat__vessel_Fartøy 11,0.02412766
+num__lag_12,0.021040715
+cat__vessel_Fartøy 10,0.020177146
+num__year_num,0.0081689805
+cat__vessel_Fartøy 12,0.008128357
+cat__vessel_Fartøy 3,0.0078843795
+cat__vessel_Fartøy 15,0.0069494215
+cat__vessel_Fartøy 9,0.0051941047
+cat__vessel_Fartøy 13,0.003966042
+cat__vessel_Fartøy 14,0.0037462849
+cat__vessel_Fartøy 7,0.0024135131
+cat__vessel_Fartøy 6,0.0021405811
+cat__special_flag_False,0.0
+cat__special_flag_True,0.0

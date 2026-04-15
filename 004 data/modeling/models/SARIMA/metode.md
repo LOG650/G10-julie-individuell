@@ -1,38 +1,37 @@
 # SARIMA metode
 
 - Modell: `sarima`
-- Evalueringsnivå: `flåtenivå`
+- Evalueringsnivå: `fartøynivå`
 - Train: `2021-04 til 2024-12`
 - Test: `2025-01 til 2026-03`
 
 ## Steg 1. Datagrunnlag
 
-Aggregert månedlig flåteserie bygget fra train-settet. Train-serien dekker `2021-04 til 2024-12`.
+Månedlige tidsserier ble bygget per fartøy fra train-settet. Train-seriene dekker `2021-04 til 2024-12`.
 
 ## Steg 2. Stasjonaritet
 
-Stasjonaritet ble vurdert med ADF-test på originalserie og differensierte serier. Valgt differensiering: `d=0`, `D=0`.
+ADF-test ble brukt som støtte for differensieringsvalg per fartøy. Endelig modellvalg ble deretter gjort gjennom et begrenset ARIMA/SARIMA-søk.
 
 ## Steg 3. ACF- og PACF-analyse
 
-ACF og PACF ble brukt på den valgte stasjonære serien for å identifisere kandidatmodeller. Se `acf.png`, `pacf.png` og `kandidatmodeller.md`.
+ACF og PACF ble lagret for et representativt fartøy som diagnostisk støtte. Se `acf.png`, `pacf.png` og `kandidatmodeller.md`.
 
 ## Steg 4. Modellestimering
 
-Kandidatmodeller ble estimert og rangert med AIC. Valgt modell: `(2, 0, 0)` x `(1, 0, 0, 12)`.
+Kandidatmodeller ble estimert per fartøy og rangert med AIC, BIC og parsimoni. Valgte spesifikasjoner er oppsummert i `modellvalg_per_fartoy.md`.
 
 ## Steg 5. Modellvalidering
 
-Residualdiagnostikk ble gjennomført med residualplott og Ljung-Box-test, og modellen ble deretter evaluert på holdout-perioden med `MAE=47.7648` og `RMSE=58.3014`.
-
-## Steg 6. Prognose
-
-Endelig prognose for april og mai 2026 ble laget ved å refitte valgt modell på full historikk til og med mars 2026.
+Residualdiagnostikk ble gjennomført per fartøy med Ljung-Box-test, og modellene ble evaluert med ekspanderende 1-stegs prognoser på testperioden. Samlet resultat: `MAE=6.1521`, `RMSE=16.7823` og `sMAPE=100.4363`.
 
 ## Repo-artefakter
 
 - `stasjonaritet.md`
 - `kandidatmodeller.md`
+- `modellvalg_per_fartoy.md`
+- `residualdiagnostikk.md`
 - `acf.png`
 - `pacf.png`
 - `residualdiagnostikk.png`
+- `representativ_testplot.png`

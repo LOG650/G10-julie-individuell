@@ -1,3 +1,0 @@
-model,vessel,date,prediction
-sarima,fleet_total,2026-04-01,71.49537989574355
-sarima,fleet_total,2026-05-01,71.72420699735252

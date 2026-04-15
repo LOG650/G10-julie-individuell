@@ -15,16 +15,18 @@ Seriene ble vurdert som korte, nulltunge og ujevne. Det ble derfor ikke brukt eg
 
 ## Steg 3. Modellspesifikasjon
 
-Det ble brukt ikke-sesongbasert eksponentiell glatting per fartøy. Additiv trend ble bare aktivert når train-serien hadde minst 5 observasjoner og mer enn én unik verdi.
+Det ble sammenlignet et begrenset sett av additive ETS-varianter per fartøy. Valgt spesifikasjon per fartøy er lagret i `modellvalg_per_fartoy.md`.
 
 ## Steg 4. Modellestimering
 
-Hver fartøysserie ble estimert separat på train-settet.
+Hver fartøysserie ble estimert separat på train-settet, og beste ETS-variant ble beholdt.
 
 ## Steg 5. Modellvalidering
 
-Modellen ble evaluert med ekspanderende 1-stegs prognoser gjennom testperioden. Resultat: `MAE=6.7212` og `RMSE=17.5192`.
+Modellen ble evaluert med ekspanderende 1-stegs prognoser gjennom testperioden. Resultat: `MAE=8.3676`, `RMSE=17.9544` og `sMAPE=168.6203`.
 
-## Steg 6. Prognose
+## Repo-artefakter
 
-Prognose for april og mai 2026 ble laget per fartøy på full historikk til og med mars 2026.
+- `modellvalg_per_fartoy.md`
+- `residualdiagnostikk.md`
+- `representativ_testplot.png`
