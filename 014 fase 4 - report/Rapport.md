@@ -142,7 +142,7 @@ Oppgaver som er unntatt offentlighet eller båndlagt vil ikke bli publisert.
 
 [4.0 Casebeskrivelse [10](#casebeskrivelse)](#casebeskrivelse)
 
-[5.0 Metode og data (kan splittes i to) [11](#metode-og-data-kan-splittes-i-to)](#metode-og-data-kan-splittes-i-to)
+[5.0 Metode og data [11](#metode-og-data)](#metode-og-data)
 
 [5.1 Metode [11](#metode)](#metode)
 
@@ -300,45 +300,21 @@ Studien er avgrenset til 16 fartøy som opererer innenfor samme segment i rederi
 
 Et viktig trekk ved caset er at offhire ikke nødvendigvis skyldes en enkelt faktor. Tvert imot kan fartøyets tekniske tilstand, driftsmønster, kontraktssituasjon og ytre markedsforhold virke sammen. Dette gjør caset særlig relevant for å sammenligne tradisjonelle tidsseriemodeller og KI baserte prognosemodeller. Tradisjonelle modeller vil i større grad bygge på mønstre i historiske tidsserier, mens maskinlæringsmodeller i større grad kan håndtere flere samtidige variabler og mer komplekse sammenhenger.
 
-# Metode og data (kan splittes i to)
-
-Litt avhengig av omfanget, kan det være lurt å vurdere om du skal splitte kapittelet i to eller ikke.
+# Metode og data
 
 ## Metode
 
-I oppgavens metodedel skal du beskrive valgt metode. Dette skal beskrives så nøyaktig at andre skal kunne klare å gjenta prosessen. Metodedelen gir leseren mulighet til å vurdere hvorvidt oppgaven kan inneholde feil i fremgangsmåten.
+Oppgaven bruker en kvantitativ, casebasert tilnærming der historiske offhire-data analyseres for å undersøke hvordan valg av prognosemodell påvirker prediksjonsnøyaktigheten for fartøy innenfor samme offshoresegment. Simon Møkster Shipping AS brukes som casekontekst, men fartøyene er anonymisert i analysen og omtales derfor gjennomgående som `Fartøy 1` til `Fartøy 16`. Formålet med metoden er ikke å forklare kausale sammenhenger, men å evaluere hvor godt ulike modeller kan predikere framtidige offhire-hendelser på grunnlag av historiske mønstre.
 
-Oppgi paradigme betraktninger, forskningsperspektiv, forskningsdesign, innsamlingsmetode for data, utvalgskriterier, utvalgsmetode, utvalgsstørrelse og analysemetoder.
+Studien bygger på kvantitative sekundærdata mottatt som et anonymisert virksomhetsuttrekk. Analyseenheten er ett fartøy i én bestemt måned, og målvariabelen er månedlig registrert offhire per fartøy. Dette gjør opplegget egnet for både tradisjonelle tidsseriemodeller og KI-baserte modeller, fordi samme datastruktur kan brukes til å sammenligne modellene på like vilkår.
 
-Du kan også ta opp eventuelle etiske spørsmål og potensielle feilkilder.
+Arbeidet er lagt opp som en etterprøvbar analyseprosess bestående av dataklargjøring, deskriptiv analyse, eksplisitt train/test-splitt, modellering, historisk validering og sammenligning av resultater. Datasettet renses først og omstruktureres til long-format, før det deles i et treningssett for perioden `2021-04` til `2024-12` og et testsett for perioden `2025-01` til `2026-03`. Deretter estimeres fire modeller, `SARIMA`, `Eksponentiell glatting`, `XGBoost` og `LSTM`, på treningsdataene og evalueres på usette observasjoner i testperioden. Sammenligningen bygger på samme ekspanderende `1`-stegs evalueringslogikk for alle modellene og vurderes ved hjelp av `MAE`, `RMSE` og `sMAPE`.
 
-Eksempel:
-
-- Hvilken forskningsmetode er valgt?
-
-  - For de fleste er det case-metode
-
-- Kvantitativ eller kvalitativ?
-
-  - Hva slags data (spørreskjema, intervju, fra ERP systemet)
-
-    - Teori rundt det å lage spørreskjema
-
-    - Teori rundt det med nøyaktigheten av data fra ERP system
-
-  - Metode for analyse, kvantitativ, kvalitativ
-
-    - Kort beskrivelse av den metoden som er valgt
-
-    - Statistisk metode? regresjon?
-
-    - Kort beskrivelse (bruk lærebøker)
-
-    - Dataverktøy for eksempel SPSS eller excel
+Denne metoden er valgt fordi den gir et transparent og sammenlignbart grunnlag for å vurdere modellvalg på samme problem og samme datagrunnlag. Ved å holde testperioden utenfor modelltreningen blir det mulig å evaluere modellenes generaliseringsevne, ikke bare deres tilpasning til historiske data. Samtidig har opplegget klare begrensninger. Datamaterialet består av sekundærdata som ikke kan verifiseres fullt ut eksternt, dataserien er relativt kort, og materialet er preget av mange nullperioder og betydelig variasjon mellom fartøyene. Anonymisering på fartøynivå er valgt for å ivareta konfidensialitet, men innebærer også at enkelte operative forhold ikke kan beskrives mer detaljert i rapporten. Funnene bør derfor tolkes som case-spesifikke for det aktuelle segmentet hos Simon Møkster Shipping AS, og ikke som direkte generaliserbare til hele offshoremarkedet.
 
 ## Data
 
-Datagrunnlaget i denne studien består av kvantitative sekundærdata mottatt som et anonymisert uttrekk fra virksomheten. Datasettet er lagret som en CSV-fil og inneholder månedlige registreringer av offhire uttrykt som prosentandel dager uten kontrakt for 16 fartøy som opererer innenfor samme segment i offshorenæringen. I tillegg inneholder datasettet en tekstkolonne for spesielle behov eller krav knyttet til de enkelte fartøyene. Siden datasettet er anonymisert, omtales fartøyene i oppgaven som `Fartøy 1` til `Fartøy 16`.
+Datagrunnlaget i denne studien består av kvantitative sekundærdata mottatt som et anonymisert uttrekk fra Simon Møkster Shipping AS. Datasettet er lagret som en CSV-fil og inneholder månedlige registreringer av offhire uttrykt som prosentandel dager uten kontrakt for 16 fartøy som opererer innenfor samme segment i offshorenæringen. I tillegg inneholder datasettet en tekstkolonne for spesielle behov eller krav knyttet til de enkelte fartøyene. Siden datasettet er anonymisert, omtales fartøyene i oppgaven som `Fartøy 1` til `Fartøy 16`.
 
 Tidsperioden i datasettet strekker seg fra april 2021 til mars 2026. Materialet er organisert i seks årsblokker, én for hvert år fra 2021 til 2026, og dekker totalt 16 fartøy. Råfilen består av 125 rader inkludert årsrader, kolonneoverskrifter og tomme skillerader. Etter rensing og omstrukturering til long-format, der hver rad representerer ett fartøy i én bestemt måned, består analysegrunnlaget av 902 observasjoner. Fordelingen over tid er 135 observasjoner i 2021, 180 observasjoner per år i 2022, 2023, 2024 og 2025, samt 47 observasjoner i 2026. At 2021 og 2026 har færre observasjoner skyldes at dataserien starter i april 2021 og foreløpig bare går til og med mars 2026.
 
