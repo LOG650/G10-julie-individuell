@@ -78,3 +78,19 @@ Next step:
 - Updated the modeling README and the report chapters so they match the revised workflow and explicitly use figures/tables as verification material for each model.
 - Ran the full pipeline after the refactor and confirmed the latest shared historical test ranking: `SARIMA` best, followed by `XGBoost`, `LSTM`, and `Eksponentiell glatting`.
 - Committed and pushed the main work in `d3186e6` (`rewrite theory and literature sections`) and `5ad242a` (`refine model testing and verification workflow`).
+
+## 16.04.2026
+- Extended the modeling pipeline so future forecasts are now generated systematically for `1`, `3`, `6`, and `12` months ahead from the latest observed month in the dataset.
+- Reintroduced future forecast outputs under `004 data/modeling/results` with combined forecast tables, horizon-specific tables, pivot tables, and updated forecast figures for use in the report.
+- Reworked the report structure from `Casebeskrivelse` through `Resultat` so the historical material is split more clearly between case context, data description, modeling, and results.
+- Moved the descriptive historical analysis into `Metode og data`, added clearer subsections for `Datagrunnlag` and `Deskriptiv analyse av datasettet`, and removed the previous standalone analysis chapter.
+- Revised `Litteratur` and `Teori` so the text is more technically balanced across `SARIMA`, `Eksponentiell glatting`, `XGBoost`, and `LSTM`, while keeping the report aligned with APA 7.
+- Moved the thesis-specific model selection rationale and comparison setup out of theory and into the methods section so the distinction between theory and method is clearer.
+- Wrote the discussion chapter as a full analytical section with subsections on model choice, data structure, future forecasts, methodological strengths and weaknesses, and practical implications for Simon Møkster Shipping AS.
+- Strengthened the case description and discussion with explicit context about offshore and oil-and-gas market volatility, while clarifying that external market drivers are not modeled directly in the empirical analysis.
+- Completed the conclusion section so it now answers the research question directly, summarizes the main empirical findings, and ends with a concise note on further research.
+- Added appendix sections with figure overview, table overview, and model-specific code appendices aligned with the four-model comparison in the main report.
+- Refactored `004 data/modeling/run_models.py` into a modular pipeline with shared helper modules and one Python file per model: `sarima.py`, `exponential_smoothing.py`, `xgboost_model.py`, and `lstm_model.py`.
+- Updated the automatic `kode.md` generation so each model folder now documents the active implementation from its own module instead of from the previous monolithic pipeline file.
+- Verified the refactored pipeline with both `py_compile` and a full end-to-end run; the latest historical ranking remained `SARIMA`, `XGBoost`, `LSTM`, and `Eksponentiell glatting`.
+- Committed and pushed the main implementation changes in `7ad8661` (`Finalize report and modularize modeling pipeline`).
