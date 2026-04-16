@@ -2,13 +2,14 @@
 
 Dette dokumentet genereres automatisk ved hver kjøring av `004 data/modeling/run_models.py`.
 
-- Sist generert: `2026-04-15T15:14:12`
+- Sist generert: `2026-04-16T12:31:13`
 - Status: `ok`
 - MAE: `8.3676`
 - RMSE: `17.9544`
 - sMAPE: `168.6203`
 - Evaluering train: `2021-04 til 2024-12`
 - Evaluering test: `2025-01 til 2026-03`
+- Fremtidsprognoser: `12` steg fra `2026-04` til `2027-03`
 
 ## Detaljer
 
@@ -44,3 +45,20 @@ Dette dokumentet genereres automatisk ved hver kjøring av `004 data/modeling/ru
 | exponential_smoothing | Fartøy 1 | 2025-10-01 | 0.0000 | 0.1962 |
 
 Viser de første 10 av totalt 225 testprediksjoner.
+
+## Fremtidsprognoser
+
+| model | vessel | forecast_step | date | prediction |
+| --- | --- | --- | --- | --- |
+| exponential_smoothing | Fartøy 1 | 1 | 2026-04-01 | 0.0651 |
+| exponential_smoothing | Fartøy 1 | 2 | 2026-05-01 | 0.0651 |
+| exponential_smoothing | Fartøy 1 | 3 | 2026-06-01 | 0.0651 |
+| exponential_smoothing | Fartøy 1 | 4 | 2026-07-01 | 0.0651 |
+| exponential_smoothing | Fartøy 1 | 5 | 2026-08-01 | 0.0651 |
+| exponential_smoothing | Fartøy 1 | 6 | 2026-09-01 | 0.0651 |
+| exponential_smoothing | Fartøy 1 | 7 | 2026-10-01 | 0.0651 |
+| exponential_smoothing | Fartøy 1 | 8 | 2026-11-01 | 0.0651 |
+| exponential_smoothing | Fartøy 1 | 9 | 2026-12-01 | 0.0651 |
+| exponential_smoothing | Fartøy 1 | 10 | 2027-01-01 | 0.0651 |
+
+Viser de første 10 av totalt 180 fremtidsprognoser.

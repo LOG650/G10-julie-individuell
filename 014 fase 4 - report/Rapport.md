@@ -158,9 +158,15 @@ Oppgaver som er unntatt offentlighet eller båndlagt vil ikke bli publisert.
 
 [6.4 LSTM [12](#lstm)](#lstm)
 
+[6.5 Oppsett for fremtidsprognoser [12](#oppsett-for-fremtidsprognoser)](#oppsett-for-fremtidsprognoser)
+
 [7.0 Analyse [12](#analyse)](#analyse)
 
 [8.0 Resultat [13](#resultat)](#resultat)
+
+[8.1 Resultater fra historisk modelltesting [13](#resultater-fra-historisk-modelltesting)](#resultater-fra-historisk-modelltesting)
+
+[8.2 Resultater fra fremtidsprognoser [13](#resultater-fra-fremtidsprognoser)](#resultater-fra-fremtidsprognoser)
 
 [9.0 Diskusjon [13](#diskusjon)](#diskusjon)
 
@@ -495,6 +501,14 @@ Figur 14 viser testforløpet for det representative fartøyet. Som for `XGBoost`
 
 Samlet viser modelleringskapitlet at alle fire modellfamiliene nå er bygget og testet innenfor samme historiske evalueringsramme. Forskjellen mellom modellene ligger derfor ikke lenger i oppsettet, men i hvordan de håndterer samme datastruktur under samme betingelser.
 
+## Oppsett for fremtidsprognoser
+
+Etter at modellene var evaluert på den historiske testperioden, ble fremtidsprognosene kjørt som en egen fase. I denne fasen ble hele datasettet til og med `2026-03` brukt som treningsgrunnlag, og første prognosemåned ble dermed `2026-04`. For alle fire modellene ble det generert prognoser `1`, `3`, `6` og `12` måneder fram i tid.
+
+For de klassiske modellene ble prognosene laget per fartøy med fler-stegsprognoser direkte fra den estimerte modellen. For `XGBoost` og `LSTM` ble prognosene generert iterativt måned for måned, slik at predikert verdi fra ett steg inngår som historisk input i neste steg. Dette gjør at alle modellene kan sammenlignes på samme framtidige datovindu, samtidig som de beholder sin opprinnelige modellstruktur.
+
+Fremtidsprognosene evalueres ikke med `MAE`, `RMSE` eller `sMAPE`, fordi faktiske observasjoner ikke finnes ennå. I stedet brukes de som modellbaserte scenariobeskrivelser. For å gjøre resultatene sporbare ble det lagret egne forecast-filer både samlet og per horisont, samt figurer som summerer forventet offhire per måned og modell.
+
 # Analyse
 
 Den deskriptive analysen av de historiske dataene brukes her for å identifisere mønstre i nivå, spredning og variasjon mellom fartøyene før selve modelleringen vurderes. Formålet i denne delen er derfor ikke å evaluere prognosemodeller, men å forstå hvilke trekk i datasettet som senere kan påvirke valg av modell og tolkning av prediksjonsresultater.
@@ -539,7 +553,11 @@ Figuren viser at selv de mest aktive fartøyene ikke følger et jevnt eller stab
 
 # Resultat
 
-Resultatdelen presenterer her kun utfallet av den historiske modelltesten. Alle modeller er evaluert på de samme `225` fartøy-månedene i testperioden fra januar 2025 til mars 2026. `MAE` brukes som hovedmål, mens `RMSE` og `sMAPE` brukes som støttemål. Siden datasettet er svært nulltungt, må `sMAPE` tolkes med forsiktighet; metrikken blir høy når både faktiske og predikerte verdier ligger nær null.
+Resultatdelen er delt i to. Først presenteres resultatene fra den historiske modelltesten, som viser hvordan modellene presterer på kjente holdout-data. Deretter presenteres fremtidsprognosene for `1`, `3`, `6` og `12` måneder fram i tid. Denne todelingen er viktig fordi historisk test kan evalueres med feilmetrikker, mens fremtidsprognoser bare kan tolkes som modellbaserte estimater.
+
+## Resultater fra historisk modelltesting
+
+Alle modeller er evaluert på de samme `225` fartøy-månedene i testperioden fra januar 2025 til mars 2026. `MAE` brukes som hovedmål, mens `RMSE` og `sMAPE` brukes som støttemål. Siden datasettet er svært nulltungt, må `sMAPE` tolkes med forsiktighet; metrikken blir høy når både faktiske og predikerte verdier ligger nær null.
 
 Tabell 9 viser det samlede testresultatet. `ARIMA/SARIMA` oppnår lavest `MAE` og lavest `RMSE` i siste kjøring, mens `XGBoost` og `LSTM` ligger svært nær hverandre. Eksponentiell glatting er svakest av de fire når alle sammenlignes på samme fartøynivå og samme evalueringslogikk.
 
@@ -568,7 +586,79 @@ Figur 17 viser `MAE` per fartøy og modell som heatmap. Figuren tydeliggjør at 
 
 *Figur 17. Heatmap som viser `MAE` per fartøy og modell i testperioden. Mørkere felt indikerer høyere prediksjonsfeil.*
 
-Resultatene samlet peker mot tre hovedobservasjoner. For det første fungerer klassiske tidsseriemodeller fortsatt svært godt i dette datasettet, særlig når `ARIMA/SARIMA` får modelleres per fartøy og verifiseres med residualdiagnostikk. For det andre presterer `XGBoost` og `LSTM` konkurransedyktig, men uten å gi en tydelig gevinst over den beste klassiske modellen. For det tredje er forskjellene mellom modellene mindre enn forskjellene mellom fartøyene, noe som understreker at problemet er like mye et spørsmål om datakarakter som om modellvalg.
+Resultatene fra den historiske modelltesten peker mot tre hovedobservasjoner. For det første fungerer klassiske tidsseriemodeller fortsatt svært godt i dette datasettet, særlig når `ARIMA/SARIMA` får modelleres per fartøy og verifiseres med residualdiagnostikk. For det andre presterer `XGBoost` og `LSTM` konkurransedyktig, men uten å gi en tydelig gevinst over den beste klassiske modellen. For det tredje er forskjellene mellom modellene mindre enn forskjellene mellom fartøyene, noe som understreker at problemet er like mye et spørsmål om datakarakter som om modellvalg.
+
+## Resultater fra fremtidsprognoser
+
+Etter at modellene var testet historisk, ble alle fire modellene kjørt på hele historikken til og med `2026-03`. Prognosevinduet dekker dermed perioden `2026-04` til `2027-03`. For å holde hovedteksten lesbar presenteres tabellene nedenfor som samlet prognostisert offhire per måned på tvers av de `15` fartøyene som fikk framtidsprognoser. De detaljerte fartøyvise forecast-tabellene er lagret som egne artefakter i `004 data/modeling/results/`.
+
+### Prognose 1 måned fram
+
+Tabell 10 viser énmånedersprognosen for april `2026`. Allerede på dette korte nivået er det tydelig at modellene ikke er helt samstemte. `XGBoost` gir høyest samlet prognose med `102.19`, mens eksponentiell glatting ligger lavest med `53.37`. På fartøynivå peker tre av fire modeller sterkest mot `Fartøy 10`, mens `ARIMA/SARIMA` har den høyeste enkeltprognosen på `Fartøy 9` med `42.93`.
+
+| Tabell 10. Samlet prognostisert offhire 1 måned fram | Eksponentiell glatting | LSTM | ARIMA/SARIMA | XGBoost |
+| --- | ---: | ---: | ---: | ---: |
+| `2026-04` | 53.37 | 91.60 | 76.35 | 102.19 |
+
+![Figur 18. Samlet prognostisert offhire 1 måned fram.](<../004 data/modeling/results/figures/future_total_offhire_1m.png>)
+
+*Figur 18. Samlet prognostisert offhire i april `2026` for de fire modellene.*
+
+### Prognose 3 måneder fram
+
+Tabell 11 viser at forskjellene øker raskt når horisonten forlenges til tre måneder. `Eksponentiell glatting` ligger nærmest flatt gjennom hele vinduet, mens `LSTM` beveger seg moderat nedover. `ARIMA/SARIMA` og særlig `XGBoost` estimerer langt høyere nivåer i mai og juni. Ved utgangen av juni `2026` er forskjellen mellom høyeste og laveste modell over `180` prognostiserte offhire-enheter.
+
+| Tabell 11. Samlet prognostisert offhire 3 måneder fram | Eksponentiell glatting | LSTM | ARIMA/SARIMA | XGBoost |
+| --- | ---: | ---: | ---: | ---: |
+| `2026-04` | 53.37 | 91.60 | 76.35 | 102.19 |
+| `2026-05` | 53.69 | 77.58 | 138.96 | 181.85 |
+| `2026-06` | 54.00 | 66.39 | 154.27 | 238.57 |
+
+![Figur 19. Samlet prognostisert offhire 3 måneder fram.](<../004 data/modeling/results/figures/future_total_offhire_3m.png>)
+
+*Figur 19. Samlet prognostisert offhire fra april til juni `2026` for de fire modellene.*
+
+### Prognose 6 måneder fram
+
+Tabell 12 viser seksmånedersprognosen fra april til september `2026`. Også her fremstår eksponentiell glatting som den mest konservative modellen, med et nesten uendret totalnivå fra måned til måned. `LSTM` faller tydelig utover sommeren, mens `ARIMA/SARIMA` varierer mer og beholder flere markerte topper. `XGBoost` ligger gjennomgående høyest og holder seg over `150` i alle måneder unntatt april.
+
+| Tabell 12. Samlet prognostisert offhire 6 måneder fram | Eksponentiell glatting | LSTM | ARIMA/SARIMA | XGBoost |
+| --- | ---: | ---: | ---: | ---: |
+| `2026-04` | 53.37 | 91.60 | 76.35 | 102.19 |
+| `2026-05` | 53.69 | 77.58 | 138.96 | 181.85 |
+| `2026-06` | 54.00 | 66.39 | 154.27 | 238.57 |
+| `2026-07` | 54.32 | 50.80 | 113.85 | 191.26 |
+| `2026-08` | 54.63 | 41.29 | 125.77 | 155.66 |
+| `2026-09` | 54.95 | 25.67 | 58.83 | 206.98 |
+
+![Figur 20. Samlet prognostisert offhire 6 måneder fram.](<../004 data/modeling/results/figures/future_total_offhire_6m.png>)
+
+*Figur 20. Samlet prognostisert offhire fra april til september `2026` for de fire modellene.*
+
+### Prognose 12 måneder fram
+
+Tabell 13 viser det fulle tolvmånedersvinduet fram til mars `2027`. Her blir modellforskjellene svært tydelige. `Eksponentiell glatting` holder seg nesten helt flatt mellom `53.37` og `56.84`, mens `LSTM` først faller og deretter stiger moderat igjen mot slutten av perioden. `ARIMA/SARIMA` beholder et mer bølgende og sesongpreget forløp med tydelige topper i mai-juni `2026` og januar-februar `2027`. `XGBoost` skiller seg klart ut som den mest aggressive modellen, med en topp på `547.73` i februar `2027`.
+
+| Tabell 13. Samlet prognostisert offhire 12 måneder fram | Eksponentiell glatting | LSTM | ARIMA/SARIMA | XGBoost |
+| --- | ---: | ---: | ---: | ---: |
+| `2026-04` | 53.37 | 91.60 | 76.35 | 102.19 |
+| `2026-05` | 53.69 | 77.58 | 138.96 | 181.85 |
+| `2026-06` | 54.00 | 66.39 | 154.27 | 238.57 |
+| `2026-07` | 54.32 | 50.80 | 113.85 | 191.26 |
+| `2026-08` | 54.63 | 41.29 | 125.77 | 155.66 |
+| `2026-09` | 54.95 | 25.67 | 58.83 | 206.98 |
+| `2026-10` | 55.26 | 24.81 | 16.84 | 310.44 |
+| `2026-11` | 55.58 | 39.80 | 27.08 | 363.72 |
+| `2026-12` | 55.89 | 54.01 | 14.65 | 416.52 |
+| `2027-01` | 56.21 | 66.39 | 121.88 | 522.01 |
+| `2027-02` | 56.52 | 67.61 | 149.42 | 547.73 |
+| `2027-03` | 56.84 | 64.86 | 127.60 | 353.12 |
+
+![Figur 21. Samlet prognostisert offhire 12 måneder fram.](<../004 data/modeling/results/figures/future_total_offhire_12m.png>)
+
+*Figur 21. Samlet prognostisert offhire fra april `2026` til mars `2027` for de fire modellene.*
+
+Samlet viser fremtidsprognosene at modellene gir ganske ulike framtidsbilder, spesielt når horisonten blir lengre. På kort sikt peker de alle mot at offhire fortsatt vil være konsentrert rundt noen få fartøy, men på lengre sikt varierer både nivå og utviklingsform betydelig. Dette betyr at de historiske testresultatene blir viktige som tolkningsramme: prognosene bør ikke leses isolert, men i lys av hvilken modell som faktisk presterte best på kjent historikk.
 
 # Diskusjon
 

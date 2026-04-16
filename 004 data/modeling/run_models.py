@@ -99,7 +99,9 @@ MODEL_METADATA = {
     },
 }
 ACTIVE_MODELS = ["sarima", "exponential_smoothing", "xgboost", "lstm"]
-GENERATE_FUTURE_FORECASTS = False
+GENERATE_FUTURE_FORECASTS = True
+FUTURE_FORECAST_HORIZONS = [1, 3, 6, 12]
+MAX_FUTURE_FORECAST_HORIZON = max(FUTURE_FORECAST_HORIZONS)
 
 
 @dataclass
@@ -141,6 +143,12 @@ def format_period(panel_df: pd.DataFrame) -> str:
     if panel_df.empty:
         return "ukjent"
     return f"{panel_df['date'].min():%Y-%m} til {panel_df['date'].max():%Y-%m}"
+
+
+def format_forecast_horizon(months: int) -> str:
+    if months == 1:
+        return "1 måned"
+    return f"{months} måneder"
 
 
 def build_split_metadata(
@@ -540,6 +548,16 @@ def write_model_result_log(
                 f"- Evaluering test: `{details['evaluation_test_period']}`",
             ]
         )
+    if not future_df.empty:
+        content_lines.extend(
+            [
+                (
+                    f"- Fremtidsprognoser: `{int(future_df['forecast_step'].max())}` steg "
+                    f"fra `{pd.to_datetime(future_df['date']).min():%Y-%m}` "
+                    f"til `{pd.to_datetime(future_df['date']).max():%Y-%m}`"
+                ),
+            ]
+        )
     content_lines.extend(
         [
             "",
@@ -668,6 +686,22 @@ def summarize_prediction_frame(pred_df: pd.DataFrame) -> tuple[float, float, flo
         float(np.sqrt(enriched["squared_error"].mean())),
         float(enriched["smape_component"].mean()),
     )
+
+
+def build_future_prediction_row(
+    model: str,
+    vessel: str,
+    date_value: pd.Timestamp,
+    prediction: float,
+    forecast_step: int,
+) -> dict[str, Any]:
+    return {
+        "model": model,
+        "vessel": vessel,
+        "forecast_step": forecast_step,
+        "date": date_value.strftime("%Y-%m-%d"),
+        "prediction": float(prediction),
+    }
 
 
 def build_metrics_table(
@@ -891,7 +925,152 @@ def save_summary_artifacts(prediction_frames: dict[str, pd.DataFrame]) -> None:
         plt.close(fig)
 
 
-def future_dates_from_panel(panel_df: pd.DataFrame, horizon: int = 2) -> list[pd.Timestamp]:
+def cleanup_future_output_artifacts() -> None:
+    future_output_paths = [
+        RESULTS_DIR / "future_predictions.csv",
+        RESULTS_DIR / "future_totals_by_model_and_date.csv",
+    ]
+    for horizon in FUTURE_FORECAST_HORIZONS:
+        future_output_paths.extend(
+            [
+                RESULTS_DIR / f"future_predictions_{horizon}m.csv",
+                RESULTS_DIR / f"future_predictions_{horizon}m_pivot.csv",
+                RESULTS_DIR / "figures" / f"future_total_offhire_{horizon}m.png",
+            ]
+        )
+
+    for path in future_output_paths:
+        path.unlink(missing_ok=True)
+        if path.suffix == ".csv":
+            path.with_suffix(".md").unlink(missing_ok=True)
+
+
+def expand_future_predictions_by_horizon(
+    future_df: pd.DataFrame,
+    horizons: list[int],
+) -> pd.DataFrame:
+    if future_df.empty:
+        return pd.DataFrame()
+
+    frames: list[pd.DataFrame] = []
+    for horizon in horizons:
+        subset = future_df[future_df["forecast_step"] <= horizon].copy()
+        if subset.empty:
+            continue
+        subset.insert(2, "forecast_horizon", horizon)
+        frames.append(subset)
+
+    if not frames:
+        return pd.DataFrame()
+
+    return (
+        pd.concat(frames, ignore_index=True)
+        .sort_values(["forecast_horizon", "model", "vessel", "forecast_step"])
+        .reset_index(drop=True)
+    )
+
+
+def save_future_forecast_artifacts(
+    future_prediction_frames: dict[str, pd.DataFrame],
+) -> None:
+    non_empty_future_frames = [
+        frame for frame in future_prediction_frames.values() if not frame.empty
+    ]
+    if not non_empty_future_frames:
+        cleanup_future_output_artifacts()
+        return
+
+    combined_future_base = pd.concat(non_empty_future_frames, ignore_index=True)
+    combined_future_base = combined_future_base.sort_values(
+        ["model", "vessel", "forecast_step"]
+    ).reset_index(drop=True)
+    combined_future = expand_future_predictions_by_horizon(
+        combined_future_base,
+        FUTURE_FORECAST_HORIZONS,
+    )
+
+    if combined_future.empty:
+        cleanup_future_output_artifacts()
+        return
+
+    display_map = {key: value["display_name"] for key, value in MODEL_METADATA.items()}
+    write_dataframe_artifacts(
+        combined_future,
+        RESULTS_DIR / "future_predictions.csv",
+        "Fremtidsprognoser for alle modeller og horisonter",
+    )
+
+    totals_df = (
+        combined_future.assign(display_name=lambda df: df["model"].map(display_map))
+        .groupby(["forecast_horizon", "date", "display_name"], as_index=False)
+        .agg(total_prediction=("prediction", "sum"))
+        .sort_values(["forecast_horizon", "date", "display_name"])
+        .reset_index(drop=True)
+    )
+    write_dataframe_artifacts(
+        totals_df,
+        RESULTS_DIR / "future_totals_by_model_and_date.csv",
+        "Samlet prognostisert offhire per dato og modell",
+    )
+
+    for horizon in FUTURE_FORECAST_HORIZONS:
+        horizon_df = combined_future[combined_future["forecast_horizon"] == horizon].copy()
+        if horizon_df.empty:
+            continue
+
+        write_dataframe_artifacts(
+            horizon_df,
+            RESULTS_DIR / f"future_predictions_{horizon}m.csv",
+            f"Fremtidsprognoser {format_forecast_horizon(horizon)} fram",
+        )
+
+        pivot_df = (
+            horizon_df.assign(display_name=lambda df: df["model"].map(display_map))
+            .pivot(index=["vessel", "date"], columns="display_name", values="prediction")
+            .reset_index()
+            .sort_values(["vessel", "date"])
+            .reset_index(drop=True)
+        )
+        pivot_df.columns.name = None
+        write_dataframe_artifacts(
+            pivot_df,
+            RESULTS_DIR / f"future_predictions_{horizon}m_pivot.csv",
+            f"Fremtidsprognoser {format_forecast_horizon(horizon)} fram per fartøy",
+        )
+
+        totals_horizon = totals_df[totals_df["forecast_horizon"] == horizon].copy()
+        totals_horizon["date"] = pd.to_datetime(totals_horizon["date"])
+        fig, ax = plt.subplots(figsize=(9, 4.8))
+        if totals_horizon["date"].nunique() == 1:
+            ordered = totals_horizon.sort_values("total_prediction", ascending=False)
+            ax.bar(
+                ordered["display_name"],
+                ordered["total_prediction"],
+                color="#2C7A7B",
+            )
+            ax.set_xlabel("Modell")
+        else:
+            for display_name, model_df in totals_horizon.groupby("display_name"):
+                ax.plot(
+                    model_df["date"],
+                    model_df["total_prediction"],
+                    marker="o",
+                    linewidth=1.8,
+                    label=display_name,
+                )
+            ax.legend()
+            ax.set_xlabel("Dato")
+        ax.set_title(f"Samlet prognostisert offhire {format_forecast_horizon(horizon)} fram")
+        ax.set_ylabel("Prognostisert offhire (%)")
+        fig.tight_layout()
+        fig.savefig(RESULTS_DIR / "figures" / f"future_total_offhire_{horizon}m.png", dpi=200)
+        plt.close(fig)
+
+
+def future_dates_from_panel(
+    panel_df: pd.DataFrame,
+    horizon: int = MAX_FUTURE_FORECAST_HORIZON,
+) -> list[pd.Timestamp]:
     if panel_df.empty:
         raise DataTooShortError("Datasettet er tomt, så fremtidsdatoer kan ikke bygges.")
 
@@ -943,6 +1122,18 @@ def write_model_comparison_log(
             [
                 f"- Evaluering train: `{reference_details['evaluation_train_period']}`",
                 f"- Evaluering test: `{reference_details['evaluation_test_period']}`",
+            ]
+        )
+    if GENERATE_FUTURE_FORECASTS and not panel_df.empty:
+        future_start = panel_df["date"].max() + pd.offsets.MonthBegin(1)
+        future_end = future_start + pd.offsets.MonthBegin(MAX_FUTURE_FORECAST_HORIZON - 1)
+        horizons_text = ", ".join(
+            format_forecast_horizon(horizon) for horizon in FUTURE_FORECAST_HORIZONS
+        )
+        content_lines.extend(
+            [
+                f"- Fremtidsprognoser: `{horizons_text}`",
+                f"- Prognosevindu: `{future_start:%Y-%m}` til `{future_end:%Y-%m}`",
             ]
         )
     content_lines.extend(
@@ -1781,7 +1972,10 @@ def run_exponential_smoothing(
     return metrics, pred_df
 
 
-def forecast_exponential_smoothing(panel_df: pd.DataFrame, horizon: int = 2) -> pd.DataFrame:
+def forecast_exponential_smoothing(
+    panel_df: pd.DataFrame,
+    horizon: int = MAX_FUTURE_FORECAST_HORIZON,
+) -> pd.DataFrame:
     future_dates = future_dates_from_panel(panel_df, horizon)
     predictions: list[dict[str, Any]] = []
 
@@ -1792,14 +1986,18 @@ def forecast_exponential_smoothing(panel_df: pd.DataFrame, horizon: int = 2) -> 
 
         if vessel_df["offhire_days"].nunique() <= 1:
             forecast = np.repeat(float(vessel_df["offhire_days"].iloc[-1]), horizon)
-            for date_value, pred in zip(future_dates, forecast):
+            for forecast_step, (date_value, pred) in enumerate(
+                zip(future_dates, forecast),
+                start=1,
+            ):
                 predictions.append(
-                    {
-                        "model": "exponential_smoothing",
-                        "vessel": vessel,
-                        "date": date_value.strftime("%Y-%m-%d"),
-                        "prediction": float(pred),
-                    }
+                    build_future_prediction_row(
+                        "exponential_smoothing",
+                        vessel,
+                        date_value,
+                        float(pred),
+                        forecast_step,
+                    )
                 )
             continue
 
@@ -1816,14 +2014,18 @@ def forecast_exponential_smoothing(panel_df: pd.DataFrame, horizon: int = 2) -> 
                 else None
             ),
         )
-        for date_value, pred in zip(future_dates, forecast):
+        for forecast_step, (date_value, pred) in enumerate(
+            zip(future_dates, forecast),
+            start=1,
+        ):
             predictions.append(
-                {
-                    "model": "exponential_smoothing",
-                    "vessel": vessel,
-                    "date": date_value.strftime("%Y-%m-%d"),
-                    "prediction": float(pred),
-                }
+                build_future_prediction_row(
+                    "exponential_smoothing",
+                    vessel,
+                    date_value,
+                    float(pred),
+                    forecast_step,
+                )
             )
 
     if not predictions:
@@ -2067,7 +2269,7 @@ def run_sarima(
 def forecast_sarima(
     panel_df: pd.DataFrame,
     sarima_details: dict[str, Any] | None = None,
-    horizon: int = 2,
+    horizon: int = MAX_FUTURE_FORECAST_HORIZON,
 ) -> pd.DataFrame:
     future_dates = future_dates_from_panel(panel_df, horizon)
     predictions: list[dict[str, Any]] = []
@@ -2078,14 +2280,18 @@ def forecast_sarima(
 
         if vessel_series.nunique() <= 1:
             forecast = np.repeat(float(vessel_series.iloc[-1]), horizon)
-            for date_value, pred in zip(future_dates, forecast):
+            for forecast_step, (date_value, pred) in enumerate(
+                zip(future_dates, forecast),
+                start=1,
+            ):
                 predictions.append(
-                    {
-                        "model": "sarima",
-                        "vessel": vessel,
-                        "date": date_value.strftime("%Y-%m-%d"),
-                        "prediction": float(pred),
-                    }
+                    build_future_prediction_row(
+                        "sarima",
+                        vessel,
+                        date_value,
+                        float(pred),
+                        forecast_step,
+                    )
                 )
             continue
 
@@ -2109,14 +2315,18 @@ def forecast_sarima(
             order=selected_order,
             seasonal_order=selected_seasonal_order,
         )
-        for date_value, pred in zip(future_dates, forecast):
+        for forecast_step, (date_value, pred) in enumerate(
+            zip(future_dates, forecast),
+            start=1,
+        ):
             predictions.append(
-                {
-                    "model": "sarima",
-                    "vessel": vessel,
-                    "date": date_value.strftime("%Y-%m-%d"),
-                    "prediction": float(pred),
-                }
+                build_future_prediction_row(
+                    "sarima",
+                    vessel,
+                    date_value,
+                    float(pred),
+                    forecast_step,
+                )
             )
 
     if not predictions:
@@ -2327,7 +2537,7 @@ def run_xgboost(
 def forecast_xgboost(
     panel_df: pd.DataFrame,
     features_df: pd.DataFrame,
-    horizon: int = 2,
+    horizon: int = MAX_FUTURE_FORECAST_HORIZON,
 ) -> pd.DataFrame:
     if features_df.empty:
         return pd.DataFrame()
@@ -2348,7 +2558,7 @@ def forecast_xgboost(
         )
         start_date = pd.Timestamp(panel_df["date"].min())
 
-        for date_value in future_dates:
+        for forecast_step, date_value in enumerate(future_dates, start=1):
             recent_3 = np.asarray(history_values[-3:], dtype=float)
             recent_6 = np.asarray(history_values[-6:], dtype=float)
             recent_12 = np.asarray(history_values[-12:], dtype=float)
@@ -2385,12 +2595,13 @@ def forecast_xgboost(
                 )
             )
             predictions.append(
-                {
-                    "model": "xgboost",
-                    "vessel": vessel,
-                    "date": date_value.strftime("%Y-%m-%d"),
-                    "prediction": prediction,
-                }
+                build_future_prediction_row(
+                    "xgboost",
+                    vessel,
+                    date_value,
+                    prediction,
+                    forecast_step,
+                )
             )
             history_values.append(prediction)
 
@@ -2613,7 +2824,10 @@ def run_lstm(
     return metrics, pred_df
 
 
-def forecast_lstm(panel_df: pd.DataFrame, horizon: int = 2) -> pd.DataFrame:
+def forecast_lstm(
+    panel_df: pd.DataFrame,
+    horizon: int = MAX_FUTURE_FORECAST_HORIZON,
+) -> pd.DataFrame:
     window_size = 12
     X, y, _ = build_lstm_sequences(panel_df, window_size=window_size)
     model, x_scaler, y_scaler, _ = train_lstm_regressor(X, y)
@@ -2638,7 +2852,7 @@ def forecast_lstm(panel_df: pd.DataFrame, horizon: int = 2) -> pd.DataFrame:
         )
         latest_special_flag = history_special[-1] if history_special else 0.0
 
-        for date_value in future_dates:
+        for forecast_step, date_value in enumerate(future_dates, start=1):
             sequence = np.stack(
                 [
                     np.asarray(history_values[-window_size:], dtype=np.float32),
@@ -2658,12 +2872,13 @@ def forecast_lstm(panel_df: pd.DataFrame, horizon: int = 2) -> pd.DataFrame:
                 )
             )
             predictions.append(
-                {
-                    "model": "lstm",
-                    "vessel": vessel,
-                    "date": date_value.strftime("%Y-%m-%d"),
-                    "prediction": prediction,
-                }
+                build_future_prediction_row(
+                    "lstm",
+                    vessel,
+                    date_value,
+                    prediction,
+                    forecast_step,
+                )
             )
             history_values.append(prediction)
             history_months.append(float(date_value.month))
@@ -2718,15 +2933,7 @@ def save_outputs(
     else:
         (RESULTS_DIR / "predictions.csv").unlink(missing_ok=True)
 
-    non_empty_future_frames = [
-        frame for frame in future_prediction_frames.values() if not frame.empty
-    ]
-    if non_empty_future_frames:
-        combined_future = pd.concat(non_empty_future_frames, ignore_index=True)
-        combined_future = combined_future.sort_values(["model", "vessel", "date"]).reset_index(drop=True)
-        combined_future.to_csv(RESULTS_DIR / "future_predictions.csv", index=False)
-    else:
-        (RESULTS_DIR / "future_predictions.csv").unlink(missing_ok=True)
+    save_future_forecast_artifacts(future_prediction_frames)
 
 
 def main() -> None:

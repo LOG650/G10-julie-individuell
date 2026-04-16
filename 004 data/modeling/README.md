@@ -28,8 +28,10 @@ Det gir normalt inntil 60 tidssteg per fartøy, men med to praktiske begrensning
 - 2021 starter i april fordi dataserien dekker de siste fem årene
 - 2026 er foreløpig bare observert til og med mars
 
-Standardkjøringen brukes nå kun til historisk modellbygging, testing og verifikasjon.
-Framtidsprognoser er flyttet ut av denne fasen og skal behandles i en egen senere seksjon.
+Standardkjøringen dekker nå to faser i samme pipeline:
+
+- historisk modellbygging, testing og verifikasjon
+- fremtidsprognoser på full historikk
 
 ## Oppsett
 
@@ -70,9 +72,16 @@ Standardskriptet kjører nå alle fire modellene:
 python '004 data/modeling/run_models.py'
 ```
 
-Skriptet skriver testresultater, sammendrag og figurer til `004 data/modeling/results/`.
+Skriptet skriver testresultater, sammendrag, fremtidsprognoser og figurer til `004 data/modeling/results/`.
 I tillegg skriver det modellspesifikke metode-, resultat- og diagnosefiler til egne mapper under `004 data/modeling/models/`.
 Ved hver kjøring verifiserer og oppdaterer skriptet også `train.csv` og `test.csv` fra masterfilen.
+
+Fremtidsprognosene bygges på hele datasettet til og med `2026-03` og lagres for fire horisonter:
+
+- `1` måned fram
+- `3` måneder fram
+- `6` måneder fram
+- `12` måneder fram
 
 ## Versjonering
 
@@ -99,11 +108,26 @@ Skriptet lager som standard:
 - `004 data/modeling/results/metrics_by_vessel.md`
 - `004 data/modeling/results/metrics_by_month.csv`
 - `004 data/modeling/results/metrics_by_month.md`
+- `004 data/modeling/results/future_predictions.csv`
+- `004 data/modeling/results/future_totals_by_model_and_date.csv`
+- `004 data/modeling/results/future_predictions_1m.csv`
+- `004 data/modeling/results/future_predictions_1m_pivot.csv`
+- `004 data/modeling/results/future_predictions_3m.csv`
+- `004 data/modeling/results/future_predictions_3m_pivot.csv`
+- `004 data/modeling/results/future_predictions_6m.csv`
+- `004 data/modeling/results/future_predictions_6m_pivot.csv`
+- `004 data/modeling/results/future_predictions_12m.csv`
+- `004 data/modeling/results/future_predictions_12m_pivot.csv`
 - `004 data/modeling/results/figures/mae_per_model.png`
 - `004 data/modeling/results/figures/mae_by_month.png`
 - `004 data/modeling/results/figures/mae_heatmap_by_vessel.png`
+- `004 data/modeling/results/figures/future_total_offhire_1m.png`
+- `004 data/modeling/results/figures/future_total_offhire_3m.png`
+- `004 data/modeling/results/figures/future_total_offhire_6m.png`
+- `004 data/modeling/results/figures/future_total_offhire_12m.png`
 - `004 data/modeling/models/<modell>/metrics.json`
 - `004 data/modeling/models/<modell>/predictions.csv`
+- `004 data/modeling/models/<modell>/future_predictions.csv`
 - `004 data/modeling/models/<modell>/metode.md`
 - `004 data/modeling/models/<modell>/kode.md`
 - `004 data/modeling/models/<modell>/resultater.md`
@@ -160,3 +184,28 @@ Alle fire modellene evalueres nå under samme hovedoppsett:
 - støttemål: `RMSE` og `sMAPE`
 
 Dette gjør at modellene kan sammenlignes direkte på samme fartøy-måned-observasjoner.
+
+## Fremtidsprognoser
+
+Når historisk evaluering er gjennomført, brukes hele datasettet til og med `2026-03` til å bygge fremtidsprognoser.
+Disse evalueres ikke med `MAE`, `RMSE` eller `sMAPE`, siden faktiske observasjoner ikke finnes ennå.
+
+For hver modell lagres først en basisprognose på `12` steg fram per fartøy i modellmappen.
+Deretter skrives egne samlede artefakter for `1`, `3`, `6` og `12` måneder fram slik at resultatene kan brukes direkte i rapporten.
+
+Felles kolonner i de samlede forecast-filene under `004 data/modeling/results/` er:
+
+- `model`
+- `vessel`
+- `forecast_horizon`
+- `forecast_step`
+- `date`
+- `prediction`
+
+De modellspesifikke filene `models/<modell>/future_predictions.csv` lagrer basisprognosen med:
+
+- `model`
+- `vessel`
+- `forecast_step`
+- `date`
+- `prediction`

@@ -2,13 +2,14 @@
 
 Dette dokumentet genereres automatisk ved hver kjøring av `004 data/modeling/run_models.py`.
 
-- Sist generert: `2026-04-15T15:14:12`
+- Sist generert: `2026-04-16T12:31:13`
 - Status: `ok`
 - MAE: `7.3487`
 - RMSE: `17.4010`
 - sMAPE: `182.9827`
 - Evaluering train: `2021-04 til 2024-12`
 - Evaluering test: `2025-01 til 2026-03`
+- Fremtidsprognoser: `12` steg fra `2026-04` til `2027-03`
 
 ## Detaljer
 
@@ -71,3 +72,20 @@ Dette dokumentet genereres automatisk ved hver kjøring av `004 data/modeling/ru
 | xgboost | Fartøy 4 | 2025-01-01 | 0.0000 | 11.3168 |
 
 Viser de første 10 av totalt 225 testprediksjoner.
+
+## Fremtidsprognoser
+
+| model | vessel | forecast_step | date | prediction |
+| --- | --- | --- | --- | --- |
+| xgboost | Fartøy 1 | 1 | 2026-04-01 | 0.7973 |
+| xgboost | Fartøy 1 | 2 | 2026-05-01 | 0.0000 |
+| xgboost | Fartøy 1 | 3 | 2026-06-01 | 5.8297 |
+| xgboost | Fartøy 1 | 4 | 2026-07-01 | 4.9000 |
+| xgboost | Fartøy 1 | 5 | 2026-08-01 | 2.8385 |
+| xgboost | Fartøy 1 | 6 | 2026-09-01 | 3.8629 |
+| xgboost | Fartøy 1 | 7 | 2026-10-01 | 5.3420 |
+| xgboost | Fartøy 1 | 8 | 2026-11-01 | 7.4683 |
+| xgboost | Fartøy 1 | 9 | 2026-12-01 | 17.7179 |
+| xgboost | Fartøy 1 | 10 | 2027-01-01 | 28.8079 |
+
+Viser de første 10 av totalt 180 fremtidsprognoser.
