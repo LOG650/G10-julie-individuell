@@ -138,8 +138,6 @@ Oppgaver som er unntatt offentlighet eller båndlagt vil ikke bli publisert.
 
 [Modellvalg og sammenligningskriterier [7](#modellvalg-og-sammenligningskriterier)](#modellvalg-og-sammenligningskriterier)
 
-[Teoretisk forankring av modellvalget [7](#teoretisk-forankring-av-modellvalget)](#teoretisk-forankring-av-modellvalget)
-
 [4.0 Casebeskrivelse [10](#casebeskrivelse)](#casebeskrivelse)
 
 [5.0 Metode og data [11](#metode-og-data)](#metode-og-data)
@@ -309,15 +307,9 @@ I denne oppgaven er `LSTM` teoretisk relevant fordi modellen representerer den m
 
 ## Modellvalg og sammenligningskriterier
 
-Et sentralt spørsmål i prognoseteori er hvordan modeller skal sammenlignes på en rettferdig måte. Makridakis et al. (2022) viser gjennom M5-konkurransen at modellvalg har stor betydning for prognoseytelsen i komplekse datasett, men også at rangeringen av modeller avhenger av både datastruktur og evalueringskriterier. Kolassa (2022) understreker samtidig at modellkompleksitet ikke er et kvalitetsmål i seg selv. En metodisk forsvarlig sammenligning krever derfor at modellene testes på samme historiske periode, med samme informasjonsgrunnlag og samme prognosehorisont.
+Et sentralt spørsmål i prognoseteori er hvordan modeller skal sammenlignes på en rettferdig måte. Makridakis et al. (2022) viser gjennom M5-konkurransen at modellvalg har stor betydning for prognoseytelsen i komplekse datasett, men også at rangeringen av modeller avhenger av både datastruktur og evalueringskriterier. Kolassa (2022) understreker samtidig at modellkompleksitet ikke er et kvalitetsmål i seg selv. En metodisk forsvarlig sammenligning forutsetter derfor at modellene vurderes på likt informasjonsgrunnlag, med samme prognosehorisont og med evalueringsmål som faktisk belyser ulike sider av prognosekvalitet.
 
-I denne oppgaven brukes `MAE` som hovedmål fordi metrikken er lett å tolke i samme skala som målvariabelen og mindre dominert av enkeltmåneder med svært store feil enn `RMSE`. `RMSE` brukes som støttemål fordi den kvadrerer avvik og dermed synliggjør hvor hardt modellene straffes for store bommerter. `sMAPE` brukes som et skaleringsuavhengig supplement, men må tolkes med forsiktighet i dette datasettet fordi mange null- og nær-nullverdier kan gjøre prosentbaserte feilmål mindre stabile. Dermed blir modellvurderingen i denne studien en avveiing mellom prediktiv nøyaktighet, robusthet, tolkbarhet og datakrav, ikke bare en jakt på lavest mulig tall i én metrikk (Kolassa, 2022; Schmid et al., 2025).
-
-## Teoretisk forankring av modellvalget
-
-På bakgrunn av teorigrunnlaget kan modellvalget i studien forstås som en kontrollert sammenligning mellom to klassiske og to KI-baserte modelltradisjoner. `SARIMA` og `eksponentiell glatting` representerer parsimoniske modeller som i hovedsak henter prognoseinformasjon fra seriens egen historikk og en relativt enkel struktur for nivå, sesong og avhengighet. `XGBoost` og `LSTM` representerer mer fleksible tilnærminger som kan håndtere ikke-linearitet, heterogenitet og mer komplekse mønstre, men som samtidig stiller høyere krav til feature-konstruksjon, treningsoppsett eller datamengde.
-
-Denne sammenligningen er teoretisk relevant fordi offhire-data sannsynligvis inneholder elementer som taler i begge retninger. På den ene siden kan fartøyvise serier ha gjentakende tidsstruktur som gjør klassiske modeller sterke. På den andre siden kan den samme konteksten være preget av episodiske topper, nullperioder og fartøyforskjeller som taler for mer fleksible modeller. Oppgaven sammenligner derfor ikke bare fire enkeltmodeller, men fire ulike representasjoner av det samme prognoseproblemet under et felles evalueringsoppsett. Det er denne teoretiske spenningen som gjør direkte modelltesting faglig meningsfull.
+I prognosestudier brukes ofte flere feilmål samtidig fordi de fanger ulike egenskaper ved modellene. `MAE` uttrykker gjennomsnittlig absolutt avvik i original skala og er lett å tolke. `RMSE` kvadrerer avvikene og gir derfor større vekt til store feil. `sMAPE` brukes ofte som et skaleringsuavhengig prosentmål, men kan være mer krevende å tolke når serien inneholder mange null- eller nær-nullverdier. Samlet betyr dette at modellvurdering normalt må forstås som en avveiing mellom prediktiv nøyaktighet, robusthet, tolkbarhet og datakrav, heller enn som en jakt på lavest mulig verdi i én enkelt metrikk (Kolassa, 2022; Schmid et al., 2025).
 
 # Casebeskrivelse
 
@@ -350,6 +342,12 @@ Heatmapet viser at offhire i liten grad er jevnt fordelt mellom fartøyene. Enke
 Oppgaven bruker en kvantitativ, casebasert tilnærming der historiske offhire-data analyseres for å undersøke hvordan valg av prognosemodell påvirker prediksjonsnøyaktigheten for fartøy innenfor samme offshoresegment. Simon Møkster Shipping AS brukes som casekontekst, men fartøyene er anonymisert i analysen og omtales derfor som `Fartøy 1` til `Fartøy 16`. Formålet med metoden er ikke å forklare kausale sammenhenger, men å sammenligne hvor godt ulike modeller kan predikere framtidige offhire-hendelser på grunnlag av historiske mønstre.
 
 Studien bygger på kvantitative sekundærdata, og analyseenheten er ett fartøy i én bestemt måned. Dette gjør opplegget egnet både for tradisjonelle tidsseriemodeller og KI-baserte modeller, fordi samme datastruktur kan brukes til å sammenligne modellene på like vilkår. Arbeidet er lagt opp som en etterprøvbar analyseprosess bestående av dataklargjøring, deskriptiv analyse av datasettet, eksplisitt train/test-splitt, modellering, historisk validering og fremtidsprognoser.
+
+### Modellutvalg og evalueringsoppsett
+
+Valget av modeller bygger på at studien skal sammenligne to klassiske og to KI-baserte modelltradisjoner under samme betingelser. `SARIMA` og `eksponentiell glatting` representerer parsimoniske modeller som i hovedsak henter prognoseinformasjon fra seriens egen historikk og en relativt enkel struktur for nivå, sesong og avhengighet. `XGBoost` og `LSTM` representerer mer fleksible tilnærminger som kan håndtere ikke-linearitet, heterogenitet og mer komplekse mønstre, men som samtidig stiller høyere krav til feature-konstruksjon, treningsoppsett og datamengde. Ved å sammenligne disse fire modellene blir det mulig å teste om offhire-data i denne casen best beskrives av eksplisitt tidsseriedynamikk eller av mer fleksible datadrevne representasjoner.
+
+For å sikre en rettferdig sammenligning estimeres og evalueres alle modellene på samme historiske tidsvindu og med samme ekspanderende `1`-stegs prognoselogikk. Dermed får ingen modell tilgang til mer fremtidsinformasjon enn de andre, og forskjeller i resultater kan i større grad tilskrives modellstruktur fremfor ulik testdesign. `MAE` brukes som hovedmål fordi metrikken er lett å tolke i samme skala som målvariabelen og mindre dominert av enkeltmåneder med svært store feil enn `RMSE`. `RMSE` brukes som støttemål fordi den tydeliggjør hvor hardt modellene straffes for store bommerter, mens `sMAPE` brukes som et prosentbasert supplement. Siden datasettet er nulltungt og inneholder flere nær-nullverdier, tolkes `sMAPE` med forsiktighet og brukes ikke som eneste grunnlag for modellrangering.
 
 Datasettet renses først og omstruktureres til long-format før det deles i et treningssett for perioden `2021-04` til `2024-12` og et testsett for perioden `2025-01` til `2026-03`. Deretter estimeres fire modeller, `SARIMA`, `Eksponentiell glatting`, `XGBoost` og `LSTM`, på historiske data og evalueres mot usette observasjoner i testperioden. Sammenligningen bygger på samme ekspanderende `1`-stegs evalueringslogikk for alle modellene og vurderes ved hjelp av `MAE`, `RMSE` og `sMAPE`. Etter den historiske testfasen brukes hele datasettet som grunnlag for fremtidsprognoser med horisonter på `1`, `3`, `6` og `12` måneder.
 
