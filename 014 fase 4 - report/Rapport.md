@@ -148,6 +148,10 @@ Oppgaver som er unntatt offentlighet eller båndlagt vil ikke bli publisert.
 
 [5.2 Data [12](#data)](#data)
 
+[5.2.1 Datagrunnlag [12](#datagrunnlag)](#datagrunnlag)
+
+[5.2.2 Deskriptiv analyse av datasettet [12](#deskriptiv-analyse-av-datasettet)](#deskriptiv-analyse-av-datasettet)
+
 [6.0 Modellering [12](#modellering)](#modellering)
 
 [6.1 SARIMA [12](#sarima)](#sarima)
@@ -160,21 +164,19 @@ Oppgaver som er unntatt offentlighet eller båndlagt vil ikke bli publisert.
 
 [6.5 Oppsett for fremtidsprognoser [12](#oppsett-for-fremtidsprognoser)](#oppsett-for-fremtidsprognoser)
 
-[7.0 Analyse [12](#analyse)](#analyse)
+[7.0 Resultat [13](#resultat)](#resultat)
 
-[8.0 Resultat [13](#resultat)](#resultat)
+[7.1 Resultater fra historisk modelltesting [13](#resultater-fra-historisk-modelltesting)](#resultater-fra-historisk-modelltesting)
 
-[8.1 Resultater fra historisk modelltesting [13](#resultater-fra-historisk-modelltesting)](#resultater-fra-historisk-modelltesting)
+[7.2 Resultater fra fremtidsprognoser [13](#resultater-fra-fremtidsprognoser)](#resultater-fra-fremtidsprognoser)
 
-[8.2 Resultater fra fremtidsprognoser [13](#resultater-fra-fremtidsprognoser)](#resultater-fra-fremtidsprognoser)
+[8.0 Diskusjon [13](#diskusjon)](#diskusjon)
 
-[9.0 Diskusjon [13](#diskusjon)](#diskusjon)
+[9.0 Konklusjon [14](#konklusjon)](#konklusjon)
 
-[10.0 Konklusjon [14](#konklusjon)](#konklusjon)
+[10.0 Bibliografi [15](#bibliografi)](#bibliografi)
 
-[11.0 Bibliografi [15](#bibliografi)](#bibliografi)
-
-[12.0 Vedlegg [15](#vedlegg)](#vedlegg)
+[11.0 Vedlegg [15](#vedlegg)](#vedlegg)
 
 # Innledning
 
@@ -300,25 +302,43 @@ Denne sammenligningen er teoretisk relevant fordi offhire-data kan inneholde bå
 
 # Casebeskrivelse
 
-Denne studien tar utgangspunkt i Simon Møkster Shipping AS som er et rederi som operer innenfor offshore segmentet. I denne konteksten er fartøyene i det aktuelle segmentet en sentral del av verdikjeden, ettersom de brukes i operasjoner som understøtter aktivitetene på norsk sokkel. For et rederi som opererer i dette segmentet så er høy operasjonell tilgjengelighet avgjørende, fordi fartøyenes verdi i stor grad er knyttet til evnen til å opprettholde kontrakter og levere stabile tjenester over tid. Et sentralt problem i denne sammenhengen er offhire. I denne oppgaven er offhire definert som en periode hvor et fartøy midlertidig ikke kan operer i henhold til kontrakt eller ikke generer forventet inntekt. Dette kan være knyttet til tekniske feil, vedlikehold, sertifikatforhold, operasjonelle avvik eller perioder uten kontrakt. For Simon Møkster Shipping AS innebærer slike perioder ikke bare direkte økonomiske konsekvenser, men også økt usikkerhet i planlegging, ressursutnyttelse og kontraktsoppfølging. Casevalget er relevant fordi problemstillingen undersøker hvordan ulike prognosemodeller kan bidra til å predikere slike hendelser bedre. For et rederi vil mer presise progniser kunne gi et bedre grunnlag for planlegging av vedlikehold, vurdering av kontraktsrisiko og oppfølgeing av fartøyenes tilgjengelighet. Caset representerer derfor et konkret operasjonelt beslutningsproblem hvor prognostisering kan ha praktisk verdi.
+Denne studien tar utgangspunkt i Simon Møkster Shipping AS, et rederi som opererer innenfor offshoresegmentet. I denne konteksten er fartøyene en sentral del av verdikjeden fordi de understøtter aktivitetene på norsk sokkel gjennom løpende operasjoner, kontrakter og leveranser. For et rederi i dette segmentet er høy operasjonell tilgjengelighet avgjørende, siden fartøyenes verdi i stor grad er knyttet til evnen til å opprettholde kontrakter og levere stabile tjenester over tid.
 
-Studien er avgrenset til 16 fartøy som opererer innenfor samme segment i rederiet. Dette er gjort for å sikre at analysen bygger på observasjoner fra fartøy med relativt like rammebetingelser og operasjonelle vilkår, selv om fartøyene ikke nødvendigvis er av samme type. Dersom fartøy fra flere ulike segmenter hadde blitt inkludert, ville sammenlignbarheten i datagrunnlaget blitt svakere. Ved å konsenterere analysen om fartøy innenfor samme segment blir det lettere å undersøke mønstre i offhire og å sammenligne modellytelse på en faglig måte. Datagrunnlaget i caset består av historiske data knyttet til fartøyenes drift, kontraktsstatus og perioder med nedetid. Relevante data i en slik sammenheng kan være informasjon om fartøyenes alder, kontraktsperioder og andre registreringer som kan knyttes til operasjonell tilgjengelighet. Slike data danner grunnlaget for å undersøke om historiske mønstre kan brukes til å forutsi framtidige offhire hendelser.
+Et sentralt problem i denne sammenhengen er offhire. I denne oppgaven defineres offhire som en periode hvor et fartøy midlertidig ikke kan operere i henhold til kontrakt eller ikke genererer forventet inntekt. Dette kan skyldes tekniske feil, vedlikehold, sertifikatforhold, operasjonelle avvik eller perioder uten kontrakt. For Simon Møkster Shipping AS innebærer slike perioder ikke bare direkte økonomiske konsekvenser, men også økt usikkerhet i planlegging, ressursutnyttelse, vedlikeholdsvurderinger og kontraktsoppfølging. Mer presise prognoser kan derfor ha praktisk verdi som beslutningsstøtte.
 
-Et viktig trekk ved caset er at offhire ikke nødvendigvis skyldes en enkelt faktor. Tvert imot kan fartøyets tekniske tilstand, driftsmønster, kontraktssituasjon og ytre markedsforhold virke sammen. Dette gjør caset særlig relevant for å sammenligne tradisjonelle tidsseriemodeller og KI baserte prognosemodeller. Tradisjonelle modeller vil i større grad bygge på mønstre i historiske tidsserier, mens maskinlæringsmodeller i større grad kan håndtere flere samtidige variabler og mer komplekse sammenhenger.
+Studien er avgrenset til 16 fartøy innenfor samme segment i rederiet. Dette er gjort for å sikre at analysen bygger på observasjoner fra fartøy med relativt like operasjonelle rammebetingelser, selv om fartøyene ikke nødvendigvis er av samme type. Et viktig trekk ved caset er samtidig at offhire sjelden skyldes én enkelt faktor. Teknisk tilstand, driftsmønster, kontraktssituasjon og markedsforhold kan virke sammen, noe som gjør caset relevant for å sammenligne både tradisjonelle tidsseriemodeller og KI-baserte prognosemodeller.
+
+Figur 1 viser samlet offhire per måned aggregert på tvers av alle fartøy. Figuren gir et første bilde av hvor stabilt eller ujevnt materialet faktisk er over tid.
+
+![Figur 1. Samlet offhire per måned aggregert på tvers av alle fartøy.](<../004 data/visualization/figures/samlet_offhire_per_maaned.png>)
+
+*Figur 1. Samlet offhire per måned fra april 2021 til mars 2026, målt som summen av offhire i prosentpoeng på tvers av alle fartøy.*
+
+Den samlede tidsserien viser tydelige topper og rolige perioder, heller enn en jevn utvikling. Den høyeste enkeltmåneden i datasettet er januar 2022 med 283 summerte prosentpoeng, mens det også finnes to måneder der samlet offhire er null. Dette understøtter at caset ikke dreier seg om en stabil serie, men om et fenomen som opptrer episodisk og ujevnt.
+
+Mens figur 1 viser totalnivået i materialet, viser figur 2 hvordan variasjonen fordeler seg mellom fartøyene og over tid.
+
+![Figur 2. Heatmap for offhire per fartøy og måned.](<../004 data/visualization/figures/heatmap_fartoy_maaned.png>)
+
+*Figur 2. Heatmap som viser offhire per fartøy og måned. Mørkere farger indikerer høyere offhire, mens lyse felt indikerer lave eller null registreringer.*
+
+Heatmapet viser at offhire i liten grad er jevnt fordelt mellom fartøyene. Enkelte fartøy har gjentatte og tydelige topper over flere perioder, mens andre i hovedsak har nullregistreringer. Særlig skiller `Fartøy 10`, `Fartøy 8` og `Fartøy 2` seg ut med flere markerte utslag. Figuren synliggjør også at 2021 er et oppstartsår fra april og at 2026 foreløpig bare dekker årets tre første måneder. Samlet viser casebeskrivelsen dermed et konkret operasjonelt beslutningsproblem der prognostisering kan være verdifullt, men også metodisk krevende.
 
 # Metode og data
 
 ## Metode
 
-Oppgaven bruker en kvantitativ, casebasert tilnærming der historiske offhire-data analyseres for å undersøke hvordan valg av prognosemodell påvirker prediksjonsnøyaktigheten for fartøy innenfor samme offshoresegment. Simon Møkster Shipping AS brukes som casekontekst, men fartøyene er anonymisert i analysen og omtales derfor gjennomgående som `Fartøy 1` til `Fartøy 16`. Formålet med metoden er ikke å forklare kausale sammenhenger, men å evaluere hvor godt ulike modeller kan predikere framtidige offhire-hendelser på grunnlag av historiske mønstre.
+Oppgaven bruker en kvantitativ, casebasert tilnærming der historiske offhire-data analyseres for å undersøke hvordan valg av prognosemodell påvirker prediksjonsnøyaktigheten for fartøy innenfor samme offshoresegment. Simon Møkster Shipping AS brukes som casekontekst, men fartøyene er anonymisert i analysen og omtales derfor som `Fartøy 1` til `Fartøy 16`. Formålet med metoden er ikke å forklare kausale sammenhenger, men å sammenligne hvor godt ulike modeller kan predikere framtidige offhire-hendelser på grunnlag av historiske mønstre.
 
-Studien bygger på kvantitative sekundærdata mottatt som et anonymisert virksomhetsuttrekk. Analyseenheten er ett fartøy i én bestemt måned, og målvariabelen er månedlig registrert offhire per fartøy. Dette gjør opplegget egnet for både tradisjonelle tidsseriemodeller og KI-baserte modeller, fordi samme datastruktur kan brukes til å sammenligne modellene på like vilkår.
+Studien bygger på kvantitative sekundærdata, og analyseenheten er ett fartøy i én bestemt måned. Dette gjør opplegget egnet både for tradisjonelle tidsseriemodeller og KI-baserte modeller, fordi samme datastruktur kan brukes til å sammenligne modellene på like vilkår. Arbeidet er lagt opp som en etterprøvbar analyseprosess bestående av dataklargjøring, deskriptiv analyse av datasettet, eksplisitt train/test-splitt, modellering, historisk validering og fremtidsprognoser.
 
-Arbeidet er lagt opp som en etterprøvbar analyseprosess bestående av dataklargjøring, deskriptiv analyse, eksplisitt train/test-splitt, modellering, historisk validering og sammenligning av resultater. Datasettet renses først og omstruktureres til long-format, før det deles i et treningssett for perioden `2021-04` til `2024-12` og et testsett for perioden `2025-01` til `2026-03`. Deretter estimeres fire modeller, `SARIMA`, `Eksponentiell glatting`, `XGBoost` og `LSTM`, på treningsdataene og evalueres på usette observasjoner i testperioden. Sammenligningen bygger på samme ekspanderende `1`-stegs evalueringslogikk for alle modellene og vurderes ved hjelp av `MAE`, `RMSE` og `sMAPE`.
+Datasettet renses først og omstruktureres til long-format før det deles i et treningssett for perioden `2021-04` til `2024-12` og et testsett for perioden `2025-01` til `2026-03`. Deretter estimeres fire modeller, `SARIMA`, `Eksponentiell glatting`, `XGBoost` og `LSTM`, på historiske data og evalueres mot usette observasjoner i testperioden. Sammenligningen bygger på samme ekspanderende `1`-stegs evalueringslogikk for alle modellene og vurderes ved hjelp av `MAE`, `RMSE` og `sMAPE`. Etter den historiske testfasen brukes hele datasettet som grunnlag for fremtidsprognoser med horisonter på `1`, `3`, `6` og `12` måneder.
 
-Denne metoden er valgt fordi den gir et transparent og sammenlignbart grunnlag for å vurdere modellvalg på samme problem og samme datagrunnlag. Ved å holde testperioden utenfor modelltreningen blir det mulig å evaluere modellenes generaliseringsevne, ikke bare deres tilpasning til historiske data. Samtidig har opplegget klare begrensninger. Datamaterialet består av sekundærdata som ikke kan verifiseres fullt ut eksternt, dataserien er relativt kort, og materialet er preget av mange nullperioder og betydelig variasjon mellom fartøyene. Anonymisering på fartøynivå er valgt for å ivareta konfidensialitet, men innebærer også at enkelte operative forhold ikke kan beskrives mer detaljert i rapporten. Funnene bør derfor tolkes som case-spesifikke for det aktuelle segmentet hos Simon Møkster Shipping AS, og ikke som direkte generaliserbare til hele offshoremarkedet.
+Denne metoden er valgt fordi den gir et transparent og sammenlignbart grunnlag for å vurdere modellvalg på samme problem og samme datagrunnlag. Ved å holde testperioden utenfor den historiske evalueringsfasen blir det mulig å vurdere modellenes generaliseringsevne, ikke bare deres tilpasning til treningsdataene. Samtidig har opplegget klare begrensninger. Datamaterialet består av sekundærdata som ikke kan verifiseres fullt ut eksternt, dataserien er relativt kort, og materialet er preget av mange nullperioder og betydelig variasjon mellom fartøyene. Funnene bør derfor tolkes som case-spesifikke for det aktuelle segmentet hos Simon Møkster Shipping AS, og ikke som direkte generaliserbare til hele offshoremarkedet.
 
 ## Data
+
+### Datagrunnlag
 
 Datagrunnlaget i denne studien består av kvantitative sekundærdata mottatt som et anonymisert uttrekk fra Simon Møkster Shipping AS. Datasettet er lagret som en CSV-fil og inneholder månedlige registreringer av offhire uttrykt som prosentandel dager uten kontrakt for 16 fartøy som opererer innenfor samme segment i offshorenæringen. I tillegg inneholder datasettet en tekstkolonne for spesielle behov eller krav knyttet til de enkelte fartøyene. Siden datasettet er anonymisert, omtales fartøyene i oppgaven som `Fartøy 1` til `Fartøy 16`.
 
@@ -348,21 +368,47 @@ Tabell 1 oppsummerer hovedtrekkene i datagrunnlaget. Tabellen tydeliggjør at da
 | Observasjoner i 2026 | 47 |
 | Kommentar | 2021 starter i april, og 2026 går foreløpig bare til mars |
 
-Figur 1 viser samlet offhire per måned aggregert på tvers av alle fartøy. Denne figuren gir et første bilde av hvor stabilt eller ujevnt datamaterialet faktisk er over tid.
+### Deskriptiv analyse av datasettet
 
-![Figur 1. Samlet offhire per måned aggregert på tvers av alle fartøy.](<../004 data/visualization/figures/samlet_offhire_per_maaned.png>)
+De overordnede figurene i casebeskrivelsen viser at offhire varierer både over tid og mellom fartøy. I denne delen utdypes derfor datastrukturen mer detaljert for å vise hvilke trekk ved materialet som er særlig relevante før modellering. Formålet er ikke å evaluere prognosemodeller, men å beskrive datagrunnlaget på en måte som gjør det tydelig hvorfor sammenligning av ulike modelltyper er metodisk relevant.
 
-*Figur 1. Samlet offhire per måned fra april 2021 til mars 2026, målt som summen av offhire i prosentpoeng på tvers av alle fartøy.*
+#### Variasjon mellom fartøy
 
-Den samlede tidsserien viser tydelige topper og rolige perioder, heller enn en jevn utvikling. Den høyeste enkeltmåneden i datasettet er januar 2022 med 283 summerte prosentpoeng, mens det også finnes to måneder der samlet offhire er null. Dette tyder på at offhire i materialet i stor grad opptrer episodisk og ujevnt, noe som gjør datasettet mer krevende å modellere enn en stabil sesongserie.
+Figur 3 rangerer fartøyene etter gjennomsnittlig månedlig offhire i hele observasjonsperioden. Fordi 2021 og 2026 er ufullstendige år, er gjennomsnittlig månedlig nivå et mer informativt mål enn rene totalsummer.
 
-Mens figur 1 viser totalnivået i datasettet, viser figur 2 hvordan variasjonen fordeler seg mellom fartøyene og over tid.
+![Figur 3. Gjennomsnittlig månedlig offhire per fartøy.](<../004 data/visualization/figures/gjennomsnitt_offhire_per_fartoy.png>)
 
-![Figur 2. Heatmap for offhire per fartøy og måned.](<../004 data/visualization/figures/heatmap_fartoy_maaned.png>)
+*Figur 3. Gjennomsnittlig månedlig offhire per fartøy for hele perioden april 2021 til mars 2026.*
 
-*Figur 2. Heatmap som viser offhire per fartøy og måned. Mørkere farger indikerer høyere offhire, mens lyse felt indikerer lave eller null registreringer.*
+Figuren viser at offhire i stor grad er konsentrert rundt et mindre antall fartøy. `Fartøy 10` har høyest gjennomsnittlig offhire med 16,86 prosent, tett fulgt av `Fartøy 8` med 15,53 prosent og `Fartøy 2` med 15,43 prosent. Samtidig viser figuren at flere fartøy ligger svært lavt gjennom hele perioden, og at `Fartøy 13` og `Fartøy 16` ikke har registrert positiv offhire i datagrunnlaget.
 
-Heatmapet viser at offhire i liten grad er jevnt fordelt mellom fartøyene. Enkelte fartøy har gjentatte og tydelige topper over flere perioder, mens andre i hovedsak har nullregistreringer. Særlig skiller `Fartøy 10`, `Fartøy 8` og `Fartøy 2` seg ut med flere markerte utslag, mens `Fartøy 13` og `Fartøy 16` ikke har positive registreringer i det rensede datagrunnlaget. Figuren synliggjør også at 2021 er et oppstartsår fra april og at 2026 foreløpig bare dekker årets tre første måneder.
+Tabell 2 oppsummerer de fem fartøyene med høyest gjennomsnittlig offhire og viser samtidig hvor stor andel av månedene som likevel er nullmåneder. Tabellen illustrerer at selv fartøyene med høyest nivå preges av betydelig uregelmessighet.
+
+| Tabell 2. Fartøy med høyest gjennomsnittlig offhire | Gjennomsnittlig offhire (%) | Maks offhire (%) | Andel nullmåneder (%) |
+| --- | ---: | ---: | ---: |
+| Fartøy 10 | 16.86 | 100.00 | 56.67 |
+| Fartøy 8 | 15.53 | 93.00 | 58.33 |
+| Fartøy 2 | 15.43 | 100.00 | 68.33 |
+| Fartøy 9 | 7.34 | 100.00 | 88.33 |
+| Fartøy 5 | 6.97 | 88.00 | 76.67 |
+
+Figur 4 utdyper denne variasjonen ved å vise fordelingen av offhire for hvert fartøy gjennom hele perioden, ikke bare gjennomsnittsnivået.
+
+![Figur 4. Boksplott for offhire per fartøy.](<../004 data/visualization/figures/boksplot_offhire_per_fartoy.png>)
+
+*Figur 4. Boksplott som viser median, kvartiler og ekstreme observasjoner for offhire per fartøy.*
+
+Boksplottet viser at datasettet er tydelig nulltungt og høyreskjevt. For de fleste fartøy ligger medianen på eller svært nær null, mens noen få måneder trekker nivået kraftig opp. Dette betyr at gjennomsnitt alene ikke gir et fullstendig bilde av datastrukturen. Offhire fremstår i stedet som et fenomen med mange nullperioder kombinert med enkelte markerte topper, noe som er viktig å ta hensyn til i senere modellvalg.
+
+#### Tidsutvikling for fartøy med høyest offhire
+
+For å undersøke om fartøyene med høyest gjennomsnittlig offhire følger like eller ulike mønstre over tid, viser figur 5 de fem fartøyene med høyest gjennomsnittsnivå som egne tidsserier.
+
+![Figur 5. Tidsserier for fartøy med høyest gjennomsnittlig offhire.](<../004 data/visualization/figures/top5_fartoy_tidsserie.png>)
+
+*Figur 5. Historiske tidsserier for de fem fartøyene med høyest gjennomsnittlig månedlig offhire i datasettet.*
+
+Figuren viser at selv de mest aktive fartøyene ikke følger et jevnt eller stabilt mønster. Offhire opptrer heller i klynger eller som enkeltstående topper, og nivåene varierer betydelig mellom perioder. `Fartøy 10` og `Fartøy 8` har flere kraftige utslag gjennom perioden, mens `Fartøy 5` i større grad preges av sporadiske topper adskilt av lange perioder med null. Samlet peker den deskriptive analysen dermed mot at datasettet er preget av både sterk heterogenitet mellom fartøy og betydelig tidsmessig uregelmessighet. Dette gjør sammenligning av ulike prognosemodeller metodisk relevant.
 
 # Modellering
 
@@ -508,48 +554,6 @@ Etter at modellene var evaluert på den historiske testperioden, ble fremtidspro
 For de klassiske modellene ble prognosene laget per fartøy med fler-stegsprognoser direkte fra den estimerte modellen. For `XGBoost` og `LSTM` ble prognosene generert iterativt måned for måned, slik at predikert verdi fra ett steg inngår som historisk input i neste steg. Dette gjør at alle modellene kan sammenlignes på samme framtidige datovindu, samtidig som de beholder sin opprinnelige modellstruktur.
 
 Fremtidsprognosene evalueres ikke med `MAE`, `RMSE` eller `sMAPE`, fordi faktiske observasjoner ikke finnes ennå. I stedet brukes de som modellbaserte scenariobeskrivelser. For å gjøre resultatene sporbare ble det lagret egne forecast-filer både samlet og per horisont, samt figurer som summerer forventet offhire per måned og modell.
-
-# Analyse
-
-Den deskriptive analysen av de historiske dataene brukes her for å identifisere mønstre i nivå, spredning og variasjon mellom fartøyene før selve modelleringen vurderes. Formålet i denne delen er derfor ikke å evaluere prognosemodeller, men å forstå hvilke trekk i datasettet som senere kan påvirke valg av modell og tolkning av prediksjonsresultater.
-
-## Variasjon mellom fartøy
-
-Figur 3 rangerer fartøyene etter gjennomsnittlig månedlig offhire i hele observasjonsperioden. Fordi 2021 og 2026 er ufullstendige år, er gjennomsnittlig månedlig nivå et mer informativt mål enn rene totalsummer.
-
-![Figur 3. Gjennomsnittlig månedlig offhire per fartøy.](<../004 data/visualization/figures/gjennomsnitt_offhire_per_fartoy.png>)
-
-*Figur 3. Gjennomsnittlig månedlig offhire per fartøy for hele perioden april 2021 til mars 2026.*
-
-Figuren viser at offhire i stor grad er konsentrert rundt et mindre antall fartøy. `Fartøy 10` har høyest gjennomsnittlig offhire med 16,86 prosent, tett fulgt av `Fartøy 8` med 15,53 prosent og `Fartøy 2` med 15,43 prosent. Samtidig viser figuren at flere fartøy ligger svært lavt gjennom hele perioden, og at `Fartøy 13` og `Fartøy 16` ikke har registrert positiv offhire i datagrunnlaget.
-
-Tabell 2 oppsummerer de fem fartøyene med høyest gjennomsnittlig offhire og viser samtidig hvor stor andel av månedene som likevel er nullmåneder. Tabellen illustrerer at selv fartøyene med høyest nivå preges av betydelig uregelmessighet.
-
-| Tabell 2. Fartøy med høyest gjennomsnittlig offhire | Gjennomsnittlig offhire (%) | Maks offhire (%) | Andel nullmåneder (%) |
-| --- | ---: | ---: | ---: |
-| Fartøy 10 | 16.86 | 100.00 | 56.67 |
-| Fartøy 8 | 15.53 | 93.00 | 58.33 |
-| Fartøy 2 | 15.43 | 100.00 | 68.33 |
-| Fartøy 9 | 7.34 | 100.00 | 88.33 |
-| Fartøy 5 | 6.97 | 88.00 | 76.67 |
-
-Figur 4 utdyper denne variasjonen ved å vise fordelingen av offhire for hvert fartøy gjennom hele perioden, ikke bare gjennomsnittsnivået.
-
-![Figur 4. Boksplott for offhire per fartøy.](<../004 data/visualization/figures/boksplot_offhire_per_fartoy.png>)
-
-*Figur 4. Boksplott som viser median, kvartiler og ekstreme observasjoner for offhire per fartøy.*
-
-Boksplottet viser at datasettet er tydelig nulltungt og høyreskjevt. For de fleste fartøy ligger medianen på eller svært nær null, mens noen få måneder trekker nivået kraftig opp. Dette betyr at gjennomsnitt alene ikke gir et fullstendig bilde av datastrukturen. Offhire fremstår i stedet som et fenomen med mange nullperioder kombinert med enkelte markerte topper, noe som er viktig å ta hensyn til i senere modellvalg.
-
-## Tidsutvikling for fartøy med høyest offhire
-
-For å undersøke om fartøyene med høyest gjennomsnittlig offhire følger like eller ulike mønstre over tid, viser figur 5 de fem fartøyene med høyest gjennomsnittsnivå som egne tidsserier.
-
-![Figur 5. Tidsserier for fartøy med høyest gjennomsnittlig offhire.](<../004 data/visualization/figures/top5_fartoy_tidsserie.png>)
-
-*Figur 5. Historiske tidsserier for de fem fartøyene med høyest gjennomsnittlig månedlig offhire i datasettet.*
-
-Figuren viser at selv de mest aktive fartøyene ikke følger et jevnt eller stabilt mønster. Offhire opptrer heller i klynger eller som enkeltstående topper, og nivåene varierer betydelig mellom perioder. `Fartøy 10` og `Fartøy 8` har flere kraftige utslag gjennom perioden, mens `Fartøy 5` i større grad preges av sporadiske topper adskilt av lange perioder med null. Samlet sett peker den deskriptive analysen derfor mot at datasettet er preget av både sterk heterogenitet mellom fartøy og betydelig tidsmessig uregelmessighet, noe som gjør sammenligning av ulike prognosemodeller metodisk relevant.
 
 # Resultat
 
