@@ -1,6 +1,6 @@
 # XGBoost kode
 
-Dette dokumentet genereres automatisk fra den aktive implementasjonen i `004 data/modeling/run_models.py`.
+Dette dokumentet genereres automatisk fra den aktive implementasjonen i `004 data/modeling/xgboost_model.py`.
 
 - Modell: `xgboost`
 - Funksjon: `run_xgboost`

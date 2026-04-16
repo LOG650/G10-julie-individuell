@@ -1,6 +1,6 @@
 # SARIMA kode
 
-Dette dokumentet genereres automatisk fra den aktive implementasjonen i `004 data/modeling/run_models.py`.
+Dette dokumentet genereres automatisk fra den aktive implementasjonen i `004 data/modeling/sarima.py`.
 
 - Modell: `sarima`
 - Funksjon: `run_sarima`

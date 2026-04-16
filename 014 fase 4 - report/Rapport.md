@@ -170,11 +170,35 @@ Oppgaver som er unntatt offentlighet eller båndlagt vil ikke bli publisert.
 
 [8.0 Diskusjon [13](#diskusjon)](#diskusjon)
 
+[Modellvalg og prediksjonsnøyaktighet [13](#modellvalg-og-prediksjonsnøyaktighet)](#modellvalg-og-prediksjonsnøyaktighet)
+
+[Datastruktur, marked og hvorfor resultatene ble som de ble [13](#datastruktur-marked-og-hvorfor-resultatene-ble-som-de-ble)](#datastruktur-marked-og-hvorfor-resultatene-ble-som-de-ble)
+
+[Fremtidsprognoser og praktisk tolkning [14](#fremtidsprognoser-og-praktisk-tolkning)](#fremtidsprognoser-og-praktisk-tolkning)
+
+[Metodiske styrker og svakheter [14](#metodiske-styrker-og-svakheter)](#metodiske-styrker-og-svakheter)
+
+[Betydning for bedriften og samlet vurdering [14](#betydning-for-bedriften-og-samlet-vurdering)](#betydning-for-bedriften-og-samlet-vurdering)
+
 [9.0 Konklusjon [14](#konklusjon)](#konklusjon)
 
 [10.0 Bibliografi [15](#bibliografi)](#bibliografi)
 
 [11.0 Vedlegg [15](#vedlegg)](#vedlegg)
+
+[11.1 Oversikt over figurer [15](#oversikt-over-figurer)](#oversikt-over-figurer)
+
+[11.2 Oversikt over tabeller [15](#oversikt-over-tabeller)](#oversikt-over-tabeller)
+
+[11.3 Kodevedlegg [16](#kodevedlegg)](#kodevedlegg)
+
+[11.3.1 SARIMA-kode [16](#sarima-kode)](#sarima-kode)
+
+[11.3.2 Eksponentiell glatting-kode [16](#eksponentiell-glatting-kode)](#eksponentiell-glatting-kode)
+
+[11.3.3 XGBoost-kode [16](#xgboost-kode)](#xgboost-kode)
+
+[11.3.4 LSTM-kode [16](#lstm-kode)](#lstm-kode)
 
 # Innledning
 
@@ -318,6 +342,8 @@ Denne studien tar utgangspunkt i Simon Møkster Shipping AS, et rederi som opere
 Et sentralt problem i denne sammenhengen er offhire. I denne oppgaven defineres offhire som en periode hvor et fartøy midlertidig ikke kan operere i henhold til kontrakt eller ikke genererer forventet inntekt. Dette kan skyldes tekniske feil, vedlikehold, sertifikatforhold, operasjonelle avvik eller perioder uten kontrakt. For Simon Møkster Shipping AS innebærer slike perioder ikke bare direkte økonomiske konsekvenser, men også økt usikkerhet i planlegging, ressursutnyttelse, vedlikeholdsvurderinger og kontraktsoppfølging. Mer presise prognoser kan derfor ha praktisk verdi som beslutningsstøtte.
 
 Studien er avgrenset til 16 fartøy innenfor samme segment i rederiet. Dette er gjort for å sikre at analysen bygger på observasjoner fra fartøy med relativt like operasjonelle rammebetingelser, selv om fartøyene ikke nødvendigvis er av samme type. Et viktig trekk ved caset er samtidig at offhire sjelden skyldes én enkelt faktor. Teknisk tilstand, driftsmønster, kontraktssituasjon og markedsforhold kan virke sammen, noe som gjør caset relevant for å sammenligne både tradisjonelle tidsseriemodeller og KI-baserte prognosemodeller.
+
+Casebedriften opererer samtidig i et marked preget av betydelig volatilitet. Offshoreaktivitet påvirkes ikke bare av tekniske og operative forhold, men også av svingninger i energipriser, investeringsnivå, kontraktsaktivitet og globale markedsforhold. Dette gjør planlegging av fartøyutnyttelse og tilgjengelighet mer krevende, og øker den praktiske verdien av prognoser for offhire. Studien modellerer ikke slike eksterne forhold eksplisitt, men de utgjør en viktig del av konteksten som gjør prognoseproblemet beslutningsmessig relevant (Menon Economics, 2026).
 
 Figur 1 viser samlet offhire per måned aggregert på tvers av alle fartøy. Figuren gir et første bilde av hvor stabilt eller ujevnt materialet faktisk er over tid.
 
@@ -683,61 +709,49 @@ Samlet viser fremtidsprognosene at modellene gir ganske ulike framtidsbilder, sp
 
 # Diskusjon
 
-I diskusjonsdelen skal du diskutere de forskjellige funnene du har gjort. Her skal du blant annet inkludere en kritisk metodediskusjon, der du vurderer om metoden din var riktig.
+Diskusjonsdelen tolker her funnene opp mot problemstillingen, tidligere forskning og studiens metodiske forutsetninger. Formålet er ikke å gjenta resultatene, men å vurdere hva de faktisk betyr for modellvalg, praktisk beslutningsstøtte og hvor langt funnene kan strekkes utover den konkrete casen.
 
-Diskuter hvor pålitelige funnene dine er, om de er generaliserbare og eventuelle svakheter. Forklar også hvorvidt studiet har gitt ny teoretisk innsikt, og om hypoteser kan avkreftes.
+## Modellvalg og prediksjonsnøyaktighet
 
-Noen viktige punkter:
+Det tydeligste hovedfunnet i studien er at valg av prognosemodell faktisk påvirker prediksjonsnøyaktigheten, men ikke på en måte som gir automatisk fordel til de mest komplekse modellene. `ARIMA/SARIMA` oppnådde lavest `MAE` og lavest `RMSE` i den historiske testen, mens `XGBoost` og `LSTM` presterte konkurransedyktig uten å overgå den beste klassiske modellen. Eksponentiell glatting fungerte som en stabil og transparent benchmark, men kom svakere ut enn de tre øvrige modellene. Samlet tyder dette på at datastrukturen i denne studien fortsatt belønner modeller som kan utnytte fartøyspesifikk tidsseriedynamikk på en presis og parsimonisk måte.
 
-- Her skal resultatene diskuteres
+Dette er i tråd med Schmid et al. (2025), som viser at modellprestasjon i stor grad avhenger av problemstruktur og ikke bare av modelltype. Funnene støtter også Kolassa (2022), som argumenterer for at høy modellkompleksitet ikke automatisk gir størst praktisk verdi. Samtidig viser resultatene at maskinlærings- og dyp læringsmodeller ikke bør avskrives. At `XGBoost` og `LSTM` ligger relativt nær `ARIMA/SARIMA`, viser at de faktisk fanger vesentlige deler av mønsteret i datasettet. Studien gir derfor ikke grunnlag for å hevde at klassiske modeller alltid er best, men den viser at de i denne konkrete casen framstår som det mest forsvarlige førstevalget.
 
-  - Studenter blander ofte sammen diskusjon og resultater\...
+## Datastruktur, marked og hvorfor resultatene ble som de ble
 
-- Her skal dere kommentere de resultatene som dere har funnet
+En sentral forklaring på resultatene ligger i selve datamaterialet. Den deskriptive analysen viste at datasettet er nulltungt, høyreskjevt og preget av store forskjeller mellom fartøyene. I tillegg opptrer offhire ofte som episodiske topper snarere enn som jevne mønstre over tid. Dette betyr at modellene ikke bare konkurrerer om å lære et nivå eller en trend, men om å håndtere et problem der lange perioder med nullverdier avbrytes av enkelte kraftige utslag. Når forskjellene mellom fartøyene samtidig er store, blir modellprestasjon også et spørsmål om hvor godt hver modell håndterer heterogenitet, ikke bare tidsavhengighet.
 
-  - Er dette som forventet?
+Dette bidrar til å forklare hvorfor `ARIMA/SARIMA` kom best ut historisk. Ved å estimeres per fartøy og verifiseres med residualdiagnostikk kan modellen i større grad tilpasses hver enkelt series struktur. Samtidig kan dette også forklare hvorfor `XGBoost` og `LSTM` ikke fikk en tydelig fordel, til tross for større fleksibilitet. Det relativt korte datagrunnlaget og den store andelen nullmåneder kan ha begrenset hvor mye ekstra kompleksitet disse modellene faktisk kunne utnytte på en robust måte.
 
-  - Uventede funn? Hvis ja hvordan kan dere forklare dette
+Resultatene må også forstås i lys av at offshoresegmentet opererer i et volatilt marked. Rederier i olje- og gassrelatert aktivitet påvirkes indirekte av svingninger i energipriser, investeringsnivå, kontraktsaktivitet og globale forhold (Menon Economics, 2026). Studien modellerer ikke slike drivere eksplisitt, men de er en viktig del av bakgrunnen for at operasjonell tilgjengelighet ikke nødvendigvis utvikler seg jevnt over tid. Det betyr at datasettets uregelmessighet ikke bare er et teknisk dataproblem, men også et uttrykk for at fartøyene opererer i en usikker og skiftende kontekst.
 
-- Stemmer deres resultater med forskningslitteraturen?
+## Fremtidsprognoser og praktisk tolkning
 
-  - Hvis ikke, hvorfor ikke? Og det kan være bra!
+Fremtidsprognosene må tolkes annerledes enn den historiske testen. I testperioden finnes en kjent fasit, og modellene kan rangeres etter faktisk prediksjonsfeil. For prognoseperioden finnes ingen observasjoner ennå, og resultatene blir derfor scenariobeskrivelser snarere enn verifiserte utfall. Det viktigste poenget er at modellene spriker betydelig mer jo lengre prognosehorisonten blir. Dette gjelder særlig `XGBoost`, som genererer et markant høyere langtidsforløp enn de andre modellene, mens eksponentiell glatting forblir nærmest flat gjennom hele perioden.
 
-  - Hvis ja, kan dere henvise til forskningslitteraturen for å understøtte deres resultater
+Dette spriket betyr ikke nødvendigvis at én modell er feil og de andre riktige. Det viser først og fremst at usikkerheten øker når prognosehorisonten forlenges. I en næring preget av stor markedsmessig volatilitet blir dette særlig viktig. Rammebetingelsene kan endre seg raskt, og studien inkluderer ikke eksterne drivere som kan fange opp slike skift direkte. Derfor framstår de kortere prognosehorisontene på `1` og `3` måneder som mer praktisk anvendelige enn `12`-månedersprognosene. For Simon Møkster Shipping AS betyr dette at prognosene først og fremst bør brukes som beslutningsstøtte for kortsiktig kapasitetsplanlegging, oppfølging av fartøy med høy historisk offhire og som et supplement til operasjonell vurdering, ikke som et automatisk beslutningsgrunnlag.
 
-- Resultatene diskuteres opp mot problemstillingen!•Har dere fått svar på forskningsspørsmålet?
+## Metodiske styrker og svakheter
 
-- Hvilken betydning for næringslivet?
+Studien har flere metodiske styrker. For det første sammenlignes alle modellene på samme historiske tidsvindu og med samme ekspanderende `1`-stegs evalueringslogikk. Dette styrker den interne sammenlignbarheten og gjør at forskjeller i ytelse i større grad kan tilskrives modellene selv. For det andre kombinerer studien to klassiske og to KI-baserte modeller, noe som gir et bredere og mer faglig interessant sammenligningsgrunnlag enn om bare én modellfamilie var vurdert. For det tredje er den historiske testen holdt atskilt fra fremtidsprognosene, noe som tydeliggjør skillet mellom verifiserbar modellprestasjon og ikke-verifiserte framtidsestimater.
 
-- Anbefales som eget punkt i diskusjonen (dette er et viktig punkt i oppgaven)
+Samtidig er svakhetene reelle. Dataserien er relativt kort, og materialet er preget av mange nullperioder og enkelte ekstreme topper. Dette gjør både modelltrening og evaluering mer krevende. Datagrunnlaget består også av sekundærdata som ikke kan verifiseres fullt ut eksternt. I tillegg er studien avgrenset til ett rederi og ett offshoresegment, noe som begrenser den statistiske generaliserbarheten. En annen viktig begrensning er at eksterne drivere som energipriser, kontraktsmarked og geopolitisk uro ikke er eksplisitt modellert. De kan bare fanges indirekte gjennom historiske observasjoner. Dette er særlig relevant for langtidsprognosene, der usikkerheten naturlig blir større. Studien er derfor best forstått som en prediktiv, casebasert sammenligning og ikke som en kausal analyse av hva som skaper offhire.
 
-- Hva medfører deres resultater for næringslivet/bedriften?
+## Betydning for bedriften og samlet vurdering
 
-- Hvilke endringer bør bedriften/næringslivet gjøre?
+For Simon Møkster Shipping AS har funnene først og fremst verdi fordi de viser at modellvalg bør være et eksplisitt beslutningsspørsmål og ikke bare et teknisk implementeringsvalg. Resultatene tyder på at en klassisk tidsseriemodell, særlig `ARIMA/SARIMA`, per nå er det mest forsvarlige hovedverktøyet for historisk prediksjon av offhire i denne casen. Samtidig viser de konkurransedyktige resultatene til `XGBoost` og `LSTM` at det er faglig relevant å videreutvikle slike modeller dersom datagrunnlaget blir rikere eller mer omfattende over tid.
 
-- Mulig å generalisere?
-
-- Ta med begrensinger/svakheter i oppgaven
-
-- Ikke overfokuser på dette punktet men vær ærlige
+Opp mot problemstillingen gir studien et tydelig svar. Valg av prognosemodell påvirker prediksjonsnøyaktigheten for offhire-hendelser, men effekten av modellvalget må forstås i lys av datastruktur og kontekst. I dette datasettet presterer klassiske tidsseriemodeller best, mens KI-baserte modeller ikke gir en tydelig merverdi i historisk test. Samtidig viser fremtidsprognosene at modellene produserer ulike framtidsbilder, noe som understreker behovet for å bruke prognoser med faglig skjønn i et marked preget av betydelig usikkerhet.
 
 # Konklusjon
 
-I oppgavens konklusjon oppsummerer du hovedfunn sett i forhold til problemstilling.
+I denne oppgaven ble det undersøkt hvordan valg av prognosemodell påvirker prediksjonsnøyaktigheten for offhire-hendelser for fartøy innenfor samme offshoresegment. Med utgangspunkt i historiske data fra Simon Møkster Shipping AS ble to klassiske tidsseriemodeller, `ARIMA/SARIMA` og `eksponentiell glatting`, sammenlignet med to KI-baserte modeller, `XGBoost` og `LSTM`.
 
-Avslutt gjerne med spørsmål til videre forskning, og del personlige refleksjoner du eventuelt måtte ha.
+Hovedfunnene viser at modellvalg faktisk påvirker prediksjonsnøyaktigheten, men ikke på en måte som gir automatisk fordel til de mest komplekse modellene. I denne studien presterte `ARIMA/SARIMA` best i den historiske testen, målt ved både `MAE` og `RMSE`. `XGBoost` og `LSTM` var konkurransedyktige, men ga ikke tydelig bedre resultater enn den beste klassiske modellen, mens `eksponentiell glatting` fungerte som en nyttig, men svakere benchmark. Problemstillingen kan dermed besvares med at valg av modell har betydning, og at klassiske tidsseriemodeller i dette datasettet ga høyest prediksjonsnøyaktighet.
 
-Hva er det viktigste dere har funnet?
+For casebedriften betyr dette at `ARIMA/SARIMA` per nå framstår som det mest forsvarlige hovedverktøyet for historisk prediksjon av offhire. Samtidig viser fremtidsprognosene at modellene gir ulike framtidsbilder, særlig på lengre horisonter. Prognoser bør derfor brukes som beslutningsstøtte og ikke som et automatisk beslutningsgrunnlag, spesielt i et marked preget av betydelig volatilitet og usikre rammebetingelser.
 
-- Konkludere i henhold til oppgavens problemstilling. Ofte begynner en konklusjon med å gjenta forskningsspørsmålet:
-
-  - «I denne oppgaven har analysert/redegjort for\...».
-
-  - «Hovedfunnene i oppgaven viser at \....»
-
-  - «På tross av de svakhetene som oppgaven har er det indikasjoner om at \...»
-
-- I konklusjonen blir det ofte litt gjentagelse fra diskusjon/resultat men det er helt greit. Her skal dere dra frem de viktigste funnene og hvilken betydning det har for deres case.
+Videre forskning bør undersøke om resultatene endrer seg når modellene testes på lengre tidsserier, rikere datagrunnlag og flere forklaringsvariabler, som kontraktsdata, tekniske indikatorer eller markedsforhold. Det vil også være relevant å evaluere fremtidsprognosene når nye observasjoner foreligger, for å se om de samme modellforskjellene består over tid.
 
 # Bibliografi
 
@@ -772,3 +786,665 @@ Menon Economics. (2026). *Maritim verdiskapingsrapport 2026* [Report].
 Schmid, L., Roidl, M., Kirchheim, A., & Pauly, M. (2025). Comparing statistical and machine learning methods for time series forecasting in data-driven logistics: A simulation study. *Entropy, 27*(1), 25. https://doi.org/10.3390/e27010025
 
 # Vedlegg
+
+## Oversikt over figurer
+
+Tabell 14 gir en samlet oversikt over figurene som er brukt i rapporten, hva de viser og hvor de er omtalt.
+
+| Figur | Tittel | Kort beskrivelse | Plassering i rapporten |
+| --- | --- | --- | --- |
+| Figur 1 | Samlet offhire per måned aggregert på tvers av alle fartøy | Viser samlet historisk offhire på tvers av fartøy | `4.0 Casebeskrivelse` |
+| Figur 2 | Heatmap for offhire per fartøy og måned | Viser variasjon mellom fartøy og over tid | `4.0 Casebeskrivelse` |
+| Figur 3 | Gjennomsnittlig månedlig offhire per fartøy | Rangerer fartøy etter gjennomsnittlig nivå | `5.2.2 Deskriptiv analyse av datasettet` |
+| Figur 4 | Boksplott for offhire per fartøy | Viser fordeling, median og ekstreme utslag | `5.2.2 Deskriptiv analyse av datasettet` |
+| Figur 5 | Tidsserier for fartøy med høyest gjennomsnittlig offhire | Viser utviklingen for de mest utsatte fartøyene | `5.2.2 Deskriptiv analyse av datasettet` |
+| Figur 6 | ACF for representativ ARIMA/SARIMA-serie | Støtter identifikasjon av representativ SARIMA-modell | `6.1 SARIMA` |
+| Figur 7 | PACF for representativ ARIMA/SARIMA-serie | Støtter identifikasjon av representativ SARIMA-modell | `6.1 SARIMA` |
+| Figur 8 | Residualdiagnostikk for representativ ARIMA/SARIMA-modell | Viser residualforløp og residualfordeling | `6.1 SARIMA` |
+| Figur 9 | Representativ testprognose for ARIMA/SARIMA | Sammenligner testprediksjon med faktisk forløp | `6.1 SARIMA` |
+| Figur 10 | Representativ testprognose for eksponentiell glatting | Viser modellens testforløp for representativt fartøy | `6.2 Eksponentiell glatting` |
+| Figur 11 | XGBoost feature importance | Viser hvilke features som betyr mest i modellen | `6.3 XGBoost` |
+| Figur 12 | Representativ testprognose for XGBoost | Viser modellens testprediksjoner for representativt fartøy | `6.3 XGBoost` |
+| Figur 13 | Treningshistorikk for LSTM | Viser trenings- og valideringstap over epoker | `6.4 LSTM` |
+| Figur 14 | Representativ testprognose for LSTM | Viser modellens testprediksjoner for representativt fartøy | `6.4 LSTM` |
+| Figur 15 | MAE per modell i testperioden | Samlet sammenligning av modellene på `MAE` | `7.1 Resultater fra historisk modelltesting` |
+| Figur 16 | MAE per testmåned og modell | Viser hvordan prediksjonsfeilen varierer over tid | `7.1 Resultater fra historisk modelltesting` |
+| Figur 17 | Heatmap for MAE per fartøy og modell | Viser feilfordeling mellom fartøy og modeller | `7.1 Resultater fra historisk modelltesting` |
+| Figur 18 | Samlet prognostisert offhire 1 måned fram | Viser én-månedsprognosen på modellnivå | `7.2 Resultater fra fremtidsprognoser` |
+| Figur 19 | Samlet prognostisert offhire 3 måneder fram | Viser tre-månedersprognosen på modellnivå | `7.2 Resultater fra fremtidsprognoser` |
+| Figur 20 | Samlet prognostisert offhire 6 måneder fram | Viser seks-månedersprognosen på modellnivå | `7.2 Resultater fra fremtidsprognoser` |
+| Figur 21 | Samlet prognostisert offhire 12 måneder fram | Viser tolv-månedersprognosen på modellnivå | `7.2 Resultater fra fremtidsprognoser` |
+
+## Oversikt over tabeller
+
+Tabell 15 gir en samlet oversikt over tabellene som er brukt i rapporten, hva de viser og hvor de er omtalt.
+
+| Tabell | Tittel | Kort beskrivelse | Plassering i rapporten |
+| --- | --- | --- | --- |
+| Tabell 1 | Datadekning | Oppsummerer tidsperiode, antall observasjoner og datadekning | `5.2.1 Datagrunnlag` |
+| Tabell 2 | Fartøy med høyest gjennomsnittlig offhire | Viser topp fem fartøy etter gjennomsnittlig offhire | `5.2.2 Deskriptiv analyse av datasettet` |
+| Tabell 3 | Felles evalueringsoppsett | Oppsummerer felles testdesign for modellene | `6.0 Modellering` |
+| Tabell 4 | Beste kandidatmodeller for representativt fartøy (`Fartøy 2`) | Viser SARIMA-kandidater rangert etter `AIC` og `BIC` | `6.1 SARIMA` |
+| Tabell 5 | Valgt ETS-spesifikasjon i siste kjøring | Viser fordeling av valgte ETS-varianter | `6.2 Eksponentiell glatting` |
+| Tabell 6 | XGBoost-featuregrupper | Oppsummerer feature-settet brukt i modellen | `6.3 XGBoost` |
+| Tabell 7 | XGBoost-hyperparametre | Oppsummerer sentrale hyperparametre | `6.3 XGBoost` |
+| Tabell 8 | LSTM-oppsett i siste kjøring | Oppsummerer sekvenslengde, inputfeatures og arkitektur | `6.4 LSTM` |
+| Tabell 9 | Samlet testresultat for modellene | Viser `MAE`, `RMSE` og `sMAPE` for alle modeller | `7.1 Resultater fra historisk modelltesting` |
+| Tabell 10 | Samlet prognostisert offhire 1 måned fram | Viser én-månedsprognosen for alle modeller | `7.2 Resultater fra fremtidsprognoser` |
+| Tabell 11 | Samlet prognostisert offhire 3 måneder fram | Viser tre-månedersprognosen for alle modeller | `7.2 Resultater fra fremtidsprognoser` |
+| Tabell 12 | Samlet prognostisert offhire 6 måneder fram | Viser seks-månedersprognosen for alle modeller | `7.2 Resultater fra fremtidsprognoser` |
+| Tabell 13 | Samlet prognostisert offhire 12 måneder fram | Viser tolv-månedersprognosen for alle modeller | `7.2 Resultater fra fremtidsprognoser` |
+
+## Kodevedlegg
+
+Kodevedleggene nedenfor viser modellspesifikke funksjonsuttrekk fra den aktive implementasjonen i `004 data/modeling/run_models.py`. Hensikten er å dokumentere hvordan hver modell er implementert, uten å gjengi hele hovedskriptet i vedlegget.
+
+### SARIMA-kode
+
+Vedlegg 11.3.1 viser funksjonen `run_sarima`, som står for fartøyvis modellvalg, residualdiagnostikk og ekspanderende `1`-stegs prediksjon for `ARIMA/SARIMA`.
+
+```python
+def run_sarima(
+    train_panel: pd.DataFrame,
+    test_panel: pd.DataFrame,
+    split_metadata: dict[str, Any],
+) -> tuple[ModelResult, pd.DataFrame]:
+    prediction_rows: list[dict[str, Any]] = []
+    stationarity_rows: list[dict[str, Any]] = []
+    model_rows: list[dict[str, Any]] = []
+    residual_rows: list[dict[str, Any]] = []
+    representative_vessel = select_representative_vessel(train_panel)
+    representative_candidates = pd.DataFrame()
+    representative_transformed: pd.Series | None = None
+    representative_residuals: pd.Series | None = None
+    fallback_representative: str | None = None
+
+    train_vessels = sorted(set(train_panel["vessel"]).intersection(test_panel["vessel"]))
+    for vessel in train_vessels:
+        train_series = build_vessel_series(train_panel, vessel).dropna()
+        test_series = build_vessel_series(test_panel, vessel).dropna()
+        if len(train_series) < 24 or test_series.empty:
+            continue
+
+        if train_series.nunique() <= 1:
+            constant_value = float(train_series.iloc[-1])
+            model_rows.append(
+                {
+                    "vessel": vessel,
+                    "p": np.nan,
+                    "d": np.nan,
+                    "q": np.nan,
+                    "P": np.nan,
+                    "D": np.nan,
+                    "Q": np.nan,
+                    "s": 0,
+                    "aic": np.nan,
+                    "bic": np.nan,
+                    "train_observations": int(len(train_series)),
+                }
+            )
+            residual_rows.append(
+                {
+                    "vessel": vessel,
+                    "ljung_box_lag": np.nan,
+                    "ljung_box_pvalue": np.nan,
+                }
+            )
+            for date_value, actual in test_series.items():
+                prediction_rows.append(
+                    {
+                        "model": "sarima",
+                        "vessel": vessel,
+                        "date": pd.Timestamp(date_value).strftime("%Y-%m-%d"),
+                        "actual": float(actual),
+                        "prediction": constant_value,
+                    }
+                )
+            continue
+
+        selected_d, selected_D, transformed_series, stationarity_results = select_sarima_differencing(
+            train_series
+        )
+        stationarity_rows.extend(
+            {"vessel": vessel, **row} for row in stationarity_results
+        )
+        candidate_df = fit_sarima_candidates(train_series, d=selected_d, D=selected_D)
+        best_candidate = candidate_df.iloc[0]
+        selected_order = (
+            int(best_candidate["p"]),
+            int(best_candidate["d"]),
+            int(best_candidate["q"]),
+        )
+        selected_seasonal_order = (
+            int(best_candidate["P"]),
+            int(best_candidate["D"]),
+            int(best_candidate["Q"]),
+            int(best_candidate["s"]),
+        )
+
+        final_model = SARIMAX(
+            train_series,
+            order=selected_order,
+            seasonal_order=selected_seasonal_order,
+            enforce_stationarity=False,
+            enforce_invertibility=False,
+        )
+        final_fit = final_model.fit(disp=False)
+        residuals = pd.Series(final_fit.resid, index=train_series.index).dropna()
+        ljung_lag = min(12, max(len(residuals) // 2, 1))
+        ljung_box = acorr_ljungbox(residuals, lags=[ljung_lag], return_df=True)
+
+        model_rows.append(
+            {
+                "vessel": vessel,
+                "p": selected_order[0],
+                "d": selected_order[1],
+                "q": selected_order[2],
+                "P": selected_seasonal_order[0],
+                "D": selected_seasonal_order[1],
+                "Q": selected_seasonal_order[2],
+                "s": selected_seasonal_order[3],
+                "aic": float(best_candidate["aic"]),
+                "bic": float(best_candidate["bic"]),
+                "train_observations": int(len(train_series)),
+            }
+        )
+        residual_rows.append(
+            {
+                "vessel": vessel,
+                "ljung_box_lag": int(ljung_lag),
+                "ljung_box_pvalue": float(ljung_box["lb_pvalue"].iloc[0]),
+            }
+        )
+
+        history = train_series.copy()
+        for date_value, actual in test_series.items():
+            prediction = float(
+                fit_or_fallback_sarima_forecast(
+                    history,
+                    1,
+                    order=selected_order,
+                    seasonal_order=selected_seasonal_order,
+                )[0]
+            )
+            prediction_rows.append(
+                {
+                    "model": "sarima",
+                    "vessel": vessel,
+                    "date": pd.Timestamp(date_value).strftime("%Y-%m-%d"),
+                    "actual": float(actual),
+                    "prediction": prediction,
+                }
+            )
+            history = pd.concat(
+                [history, pd.Series([float(actual)], index=pd.DatetimeIndex([date_value]))]
+            )
+
+        if fallback_representative is None:
+            fallback_representative = vessel
+        if representative_vessel == vessel or (
+            representative_vessel not in train_vessels and fallback_representative == vessel
+        ):
+            representative_candidates = candidate_df.head(10).copy()
+            representative_transformed = transformed_series
+            representative_residuals = residuals
+            representative_vessel = vessel
+
+    if representative_candidates.empty and fallback_representative is not None:
+        representative_vessel = fallback_representative
+
+    if not prediction_rows:
+        return (
+            ModelResult(
+                model="sarima",
+                status="skipped",
+                details={
+                    **split_metadata,
+                    "reason": "Ingen fartøy hadde tilstrekkelig historikk og variasjon til ARIMA/SARIMA.",
+                },
+            ),
+            pd.DataFrame(),
+        )
+
+    pred_df = pd.DataFrame(prediction_rows)
+    write_dataframe_artifacts(
+        pd.DataFrame(stationarity_rows),
+        model_artifact_path("sarima", "stasjonaritet.csv"),
+        "ARIMA/SARIMA stasjonaritet per fartøy",
+    )
+    write_dataframe_artifacts(
+        representative_candidates,
+        model_artifact_path("sarima", "kandidatmodeller.csv"),
+        "ARIMA/SARIMA kandidatmodeller for representativt fartøy",
+    )
+    write_dataframe_artifacts(
+        pd.DataFrame(model_rows),
+        model_artifact_path("sarima", "modellvalg_per_fartoy.csv"),
+        "ARIMA/SARIMA modellvalg per fartøy",
+    )
+    write_dataframe_artifacts(
+        pd.DataFrame(residual_rows),
+        model_artifact_path("sarima", "residualdiagnostikk.csv"),
+        "ARIMA/SARIMA residualdiagnostikk per fartøy",
+    )
+    if (
+        representative_vessel is not None
+        and representative_transformed is not None
+        and representative_residuals is not None
+    ):
+        save_sarima_diagnostic_plots(
+            representative_vessel,
+            representative_transformed,
+            representative_residuals,
+        )
+    save_representative_prediction_plot(
+        "sarima",
+        representative_vessel,
+        train_panel,
+        test_panel,
+        pred_df,
+        "ARIMA/SARIMA: representativt testforløp",
+    )
+
+    mae_value, rmse_value, smape_value = summarize_prediction_frame(pred_df)
+    metrics = ModelResult(
+        model="sarima",
+        status="ok",
+        mae=mae_value,
+        rmse=rmse_value,
+        smape=smape_value,
+        details={
+            **split_metadata,
+            "series_type": "per_vessel",
+            "test_rows": int(len(pred_df)),
+            "evaluation_method": "ekspanderende 1-stegs prognose per fartøy",
+            "evaluation_level": "fartøynivå",
+            "modeled_vessels": int(pred_df["vessel"].nunique()),
+            "representative_vessel": representative_vessel,
+            "artifact_files": {
+                "stasjonaritet": "stasjonaritet.md",
+                "kandidatmodeller": "kandidatmodeller.md",
+                "modellvalg_per_fartoy": "modellvalg_per_fartoy.md",
+                "residualdiagnostikk_tabell": "residualdiagnostikk.md",
+                "acf": "acf.png",
+                "pacf": "pacf.png",
+                "residualdiagnostikk_figur": "residualdiagnostikk.png",
+                "representativ_testplot": "representativ_testplot.png",
+            },
+        },
+    )
+    return metrics, pred_df
+```
+
+### Eksponentiell glatting-kode
+
+Vedlegg 11.3.2 viser funksjonen `run_exponential_smoothing`, som står for fartøyvis modellvalg mellom `ETS`-varianter og ekspanderende `1`-stegs prediksjon gjennom testperioden.
+
+```python
+def run_exponential_smoothing(
+    train_panel: pd.DataFrame,
+    test_panel: pd.DataFrame,
+    split_metadata: dict[str, Any],
+) -> tuple[ModelResult, pd.DataFrame]:
+    predictions: list[dict[str, Any]] = []
+    model_selection_rows: list[dict[str, Any]] = []
+    residual_rows: list[dict[str, Any]] = []
+    representative_vessel = select_representative_vessel(train_panel)
+
+    for vessel, test_vessel_df in test_panel.groupby("vessel"):
+        train_series = build_vessel_series(train_panel, vessel).dropna()
+        test_series = build_vessel_series(test_panel, vessel).dropna()
+        if len(train_series) < 12 or test_series.empty:
+            continue
+
+        if train_series.nunique() <= 1:
+            constant_value = float(train_series.iloc[-1])
+            model_selection_rows.append(
+                {
+                    "vessel": vessel,
+                    "spec": "CONST",
+                    "aic": np.nan,
+                    "bic": np.nan,
+                    "train_observations": int(len(train_series)),
+                }
+            )
+            residual_rows.append(
+                {
+                    "vessel": vessel,
+                    "ljung_box_lag": np.nan,
+                    "ljung_box_pvalue": np.nan,
+                }
+            )
+            for date_value, actual in test_series.items():
+                predictions.append(
+                    {
+                        "model": "exponential_smoothing",
+                        "vessel": vessel,
+                        "date": pd.Timestamp(date_value).strftime("%Y-%m-%d"),
+                        "actual": float(actual),
+                        "prediction": constant_value,
+                    }
+                )
+            continue
+
+        candidate_df = fit_ets_candidates(train_series)
+        best_candidate = candidate_df.iloc[0]
+        fit = fit_ets_model(
+            train_series,
+            trend=normalize_optional_string(best_candidate["trend"]),
+            seasonal=normalize_optional_string(best_candidate["seasonal"]),
+            seasonal_periods=(
+                int(best_candidate["seasonal_periods"])
+                if pd.notna(best_candidate["seasonal_periods"])
+                else None
+            ),
+        )
+        residuals = pd.Series(fit.resid, index=train_series.index).dropna()
+        ljung_lag = min(12, max(len(residuals) // 2, 1))
+        ljung_box = acorr_ljungbox(residuals, lags=[ljung_lag], return_df=True)
+
+        model_selection_rows.append(
+            {
+                "vessel": vessel,
+                "spec": best_candidate["spec"],
+                "aic": float(best_candidate["aic"]),
+                "bic": float(best_candidate["bic"]),
+                "train_observations": int(len(train_series)),
+            }
+        )
+        residual_rows.append(
+            {
+                "vessel": vessel,
+                "ljung_box_lag": int(ljung_lag),
+                "ljung_box_pvalue": float(ljung_box["lb_pvalue"].iloc[0]),
+            }
+        )
+
+        history = train_series.copy()
+        for date_value, actual in test_series.items():
+            pred = float(
+                fit_or_fallback_exponential_forecast(
+                    history,
+                    1,
+                    trend=normalize_optional_string(best_candidate["trend"]),
+                    seasonal=normalize_optional_string(best_candidate["seasonal"]),
+                    seasonal_periods=(
+                        int(best_candidate["seasonal_periods"])
+                        if pd.notna(best_candidate["seasonal_periods"])
+                        else None
+                    ),
+                )[0]
+            )
+            predictions.append(
+                {
+                    "model": "exponential_smoothing",
+                    "vessel": vessel,
+                    "date": pd.Timestamp(date_value).strftime("%Y-%m-%d"),
+                    "actual": float(actual),
+                    "prediction": pred,
+                }
+            )
+            history = pd.concat(
+                [history, pd.Series([float(actual)], index=pd.DatetimeIndex([date_value]))]
+            )
+
+    if not predictions:
+        return (
+            ModelResult(
+                model="exponential_smoothing",
+                status="skipped",
+                details={
+                    **split_metadata,
+                    "reason": "For få observasjoner per fartøy til å kjøre eksponentiell glatting.",
+                },
+            ),
+            pd.DataFrame(),
+        )
+
+    pred_df = pd.DataFrame(predictions)
+    write_dataframe_artifacts(
+        pd.DataFrame(model_selection_rows),
+        model_artifact_path("exponential_smoothing", "modellvalg_per_fartoy.csv"),
+        "Eksponentiell glatting modellvalg per fartøy",
+    )
+    write_dataframe_artifacts(
+        pd.DataFrame(residual_rows),
+        model_artifact_path("exponential_smoothing", "residualdiagnostikk.csv"),
+        "Eksponentiell glatting residualdiagnostikk",
+    )
+    save_representative_prediction_plot(
+        "exponential_smoothing",
+        representative_vessel,
+        train_panel,
+        test_panel,
+        pred_df,
+        "Eksponentiell glatting: representativt testforløp",
+    )
+    mae_value, rmse_value, smape_value = summarize_prediction_frame(pred_df)
+    metrics = ModelResult(
+        model="exponential_smoothing",
+        status="ok",
+        mae=mae_value,
+        rmse=rmse_value,
+        smape=smape_value,
+        details={
+            **split_metadata,
+            "vessels_used": int(pred_df["vessel"].nunique()),
+            "test_rows": int(len(pred_df)),
+            "evaluation_method": "ekspanderende 1-stegs prognose gjennom testperioden",
+            "evaluation_level": "fartøynivå",
+            "representative_vessel": representative_vessel,
+            "selection_table": "modellvalg_per_fartoy.md",
+            "residual_table": "residualdiagnostikk.md",
+        },
+    )
+    return metrics, pred_df
+```
+
+### XGBoost-kode
+
+Vedlegg 11.3.3 viser funksjonen `run_xgboost`, som står for feature-basert panelmodellering og ekspanderende `1`-stegs prediksjon med månedlig re-trening.
+
+```python
+def run_xgboost(
+    panel_df: pd.DataFrame,
+    split_metadata: dict[str, Any],
+) -> tuple[ModelResult, pd.DataFrame]:
+    history_panel = panel_df[panel_df["date"] <= TRAIN_END_DATE].copy()
+    test_panel = panel_df[panel_df["date"] >= TEST_START_DATE].copy()
+    reference_train_df = build_panel_features(history_panel)
+    if reference_train_df.empty:
+        raise DataTooShortError("For få historiske observasjoner til å bygge XGBoost-features.")
+
+    reference_pipeline, feature_columns = build_xgboost_pipeline()
+    reference_pipeline.fit(reference_train_df[feature_columns], reference_train_df["offhire_days"])
+    save_feature_importance_artifacts(reference_pipeline)
+
+    representative_vessel = select_representative_vessel(history_panel)
+    predictions: list[dict[str, Any]] = []
+    test_dates = sorted(test_panel["date"].unique())
+
+    for date_value in test_dates:
+        train_df = build_panel_features(history_panel)
+        if train_df.empty:
+            continue
+        target_month_df = test_panel[test_panel["date"] == date_value].copy()
+        feature_rows = build_xgboost_feature_rows(history_panel, target_month_df)
+        if feature_rows.empty:
+            history_panel = pd.concat([history_panel, target_month_df], ignore_index=True)
+            history_panel = history_panel.sort_values(["vessel", "date"]).reset_index(drop=True)
+            continue
+
+        pipeline, feature_columns = build_xgboost_pipeline()
+        pipeline.fit(train_df[feature_columns], train_df["offhire_days"])
+        step_predictions = np.clip(
+            pipeline.predict(feature_rows[feature_columns]),
+            0.0,
+            MAX_OFFHIRE_VALUE,
+        )
+        for _, row, prediction in zip(feature_rows.index, feature_rows.itertuples(index=False), step_predictions):
+            predictions.append(
+                {
+                    "model": "xgboost",
+                    "vessel": row.vessel,
+                    "date": pd.Timestamp(row.date).strftime("%Y-%m-%d"),
+                    "actual": float(row.actual),
+                    "prediction": float(prediction),
+                }
+            )
+
+        history_panel = pd.concat([history_panel, target_month_df], ignore_index=True)
+        history_panel = history_panel.sort_values(["vessel", "date"]).reset_index(drop=True)
+
+    pred_df = pd.DataFrame(predictions)
+    save_representative_prediction_plot(
+        "xgboost",
+        representative_vessel,
+        panel_df[panel_df["date"] <= TRAIN_END_DATE],
+        test_panel,
+        pred_df,
+        "XGBoost: representativt testforløp",
+    )
+    mae_value, rmse_value, smape_value = summarize_prediction_frame(pred_df)
+    metrics = ModelResult(
+        model="xgboost",
+        status="ok",
+        mae=mae_value,
+        rmse=rmse_value,
+        smape=smape_value,
+        details={
+            **split_metadata,
+            "train_rows": int(len(reference_train_df)),
+            "test_rows": int(len(pred_df)),
+            "walk_forward_steps": int(len(test_dates)),
+            "evaluation_method": "ekspanderende 1-stegs prognose med månedlig re-trening",
+            "evaluation_level": "fartøynivå",
+            "feature_columns": feature_columns,
+            "representative_vessel": representative_vessel,
+            "model_hyperparameters": {
+                "n_estimators": 200,
+                "max_depth": 4,
+                "learning_rate": 0.05,
+                "subsample": 0.9,
+                "colsample_bytree": 0.9,
+            },
+        },
+    )
+    return metrics, pred_df
+```
+
+### LSTM-kode
+
+Vedlegg 11.3.4 viser funksjonen `run_lstm`, som står for sekvensbygging, månedlig re-trening og ekspanderende `1`-stegs prediksjon for den globale `LSTM`-modellen.
+
+```python
+def run_lstm(
+    panel_df: pd.DataFrame,
+    split_metadata: dict[str, Any],
+) -> tuple[ModelResult, pd.DataFrame]:
+    history_panel = panel_df[panel_df["date"] <= TRAIN_END_DATE].copy()
+    test_panel = panel_df[panel_df["date"] >= TEST_START_DATE].copy()
+    representative_vessel = select_representative_vessel(history_panel)
+    window_size = 12
+
+    X_reference, y_reference, _ = build_lstm_sequences(history_panel, window_size=window_size)
+    _, _, _, history_df = train_lstm_regressor(X_reference, y_reference)
+    save_lstm_training_history(history_df)
+
+    pred_records: list[dict[str, Any]] = []
+    test_dates = sorted(test_panel["date"].unique())
+
+    for date_value in test_dates:
+        X_train, y_train, _ = build_lstm_sequences(history_panel, window_size=window_size)
+        if len(X_train) == 0:
+            continue
+
+        model, x_scaler, y_scaler, _ = train_lstm_regressor(X_train, y_train)
+        month_df = test_panel[test_panel["date"] == date_value].copy()
+
+        for _, row in month_df.iterrows():
+            vessel_history = (
+                history_panel[history_panel["vessel"] == row["vessel"]]
+                .sort_values("date")
+                .reset_index(drop=True)
+            )
+            if len(vessel_history) < window_size:
+                continue
+
+            history_values = vessel_history["offhire_days"].to_numpy(dtype=np.float32)[-window_size:]
+            history_months = vessel_history["month_num"].to_numpy(dtype=np.float32)[-window_size:]
+            history_special = (
+                vessel_history["Spesielle behov/krav"]
+                .fillna("")
+                .str.strip()
+                .ne("")
+                .astype(np.float32)
+                .to_numpy()[-window_size:]
+            )
+            sequence = np.stack(
+                [
+                    history_values,
+                    np.sin(2 * np.pi * history_months / 12.0),
+                    np.cos(2 * np.pi * history_months / 12.0),
+                    history_special,
+                ],
+                axis=1,
+            )
+            sequence_scaled = x_scaler.transform(sequence).reshape(1, sequence.shape[0], sequence.shape[1])
+            prediction_scaled = model.predict(sequence_scaled, verbose=0).reshape(-1, 1)
+            prediction = float(
+                np.clip(
+                    y_scaler.inverse_transform(prediction_scaled).reshape(-1)[0],
+                    0.0,
+                    MAX_OFFHIRE_VALUE,
+                )
+            )
+            pred_records.append(
+                {
+                    "model": "lstm",
+                    "vessel": row["vessel"],
+                    "date": pd.Timestamp(row["date"]).strftime("%Y-%m-%d"),
+                    "actual": float(row["offhire_days"]),
+                    "prediction": prediction,
+                }
+            )
+
+        history_panel = pd.concat([history_panel, month_df], ignore_index=True)
+        history_panel = history_panel.sort_values(["vessel", "date"]).reset_index(drop=True)
+
+    pred_df = pd.DataFrame(pred_records)
+    save_representative_prediction_plot(
+        "lstm",
+        representative_vessel,
+        panel_df[panel_df["date"] <= TRAIN_END_DATE],
+        test_panel,
+        pred_df,
+        "LSTM: representativt testforløp",
+    )
+    mae_value, rmse_value, smape_value = summarize_prediction_frame(pred_df)
+    metrics = ModelResult(
+        model="lstm",
+        status="ok",
+        mae=mae_value,
+        rmse=rmse_value,
+        smape=smape_value,
+        details={
+            **split_metadata,
+            "train_sequences": int(len(X_reference)),
+            "test_sequences": int(len(pred_df)),
+            "evaluation_method": "ekspanderende 1-stegs prognose med månedlig re-trening",
+            "evaluation_level": "fartøynivå",
+            "walk_forward_steps": int(len(test_dates)),
+            "sequence_length": window_size,
+            "input_features": ["offhire_days", "month_sin", "month_cos", "special_flag"],
+            "representative_vessel": representative_vessel,
+            "architecture": {
+                "lstm_units": 32,
+                "dense_units": 16,
+                "batch_size": 8,
+                "max_epochs": 100,
+            },
+        },
+    )
+    return metrics, pred_df
+```
