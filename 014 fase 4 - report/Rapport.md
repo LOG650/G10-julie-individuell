@@ -338,15 +338,6 @@ Portene regulerer hvilken informasjon som beholdes, oppdateres og eksponeres vid
 
 I denne oppgaven er `LSTM` teoretisk relevant fordi modellen representerer den mest fleksible og sekvensorienterte måten å lære mønstre i offhire-data på. Dersom fartøyenes historikk inneholder lange eller sammensatte avhengigheter som ikke lett lar seg beskrive gjennom eksplisitte lagg og lineære parametere, bør `LSTM` i prinsippet kunne fange dette. Samtidig kommer denne fleksibiliteten med klare kostnader i form av større datakrav, høyere treningssensitivitet og lavere tolkbarhet enn både klassiske modeller og `XGBoost`. Modellen er derfor faglig interessant nettopp fordi den utfordrer spørsmålet om hvor mye kompleksitet datasettet faktisk bærer (Hochreiter & Schmidhuber, 1995).
 
-Tabell 9 oppsummerer de fire modellene i en felles matematisk oversikt. Siden lange LaTeX-uttrykk ofte blir lite lesbare i tabellformat, er modellrepresentasjonene nedenfor skrevet i forkortet notasjon.
-
-| Tabell 9. Matematisk oversikt over modellene | Modelltype | Standard matematisk representasjon (forkortet) | Hvordan den brukes i denne studien |
-| --- | --- | --- | --- |
-| `SARIMA` | Sesongjustert univariat tidsseriemodell | `Phi(B^12) phi(B) (1-B)^d (1-B^12)^D y_t = Theta(B^12) theta(B) e_t` | Estimeres fartøyvis for å predikere neste måneds offhire-prosent |
-| `ETS` | Glattemodell med nivå, trend og sesong | `yhat_(t+1|t) = l_t + b_t + s_(t+1-12)` | Brukes fartøyvis som benchmark med sterkere vekt på nyere observasjoner |
-| `XGBoost` | Feature-basert gradient boosting | `yhat_i = sum_(k=1)^K f_k(x_i)` | Brukes som global panelmodell med lag, rullerende mål og kalenderfeatures |
-| `LSTM` | Rekurrent sekvensmodell | `yhat_(t+1) = W_y h_t + b_y` | Brukes på sekvenser av `12` måneder for å predikere neste måned |
-
 ## Modellvalg og sammenligningskriterier
 
 Et sentralt spørsmål i prognoseteori er hvordan modeller skal sammenlignes på en rettferdig måte. Makridakis et al. (2022) viser gjennom M5-konkurransen at modellvalg har stor betydning for prognoseytelsen i komplekse datasett, men også at rangeringen av modeller avhenger av både datastruktur og evalueringskriterier. Kolassa (2022) understreker samtidig at modellkompleksitet ikke er et kvalitetsmål i seg selv. En metodisk forsvarlig sammenligning forutsetter derfor at modellene vurderes på likt informasjonsgrunnlag, med samme prognosehorisont og med evalueringsmål som faktisk belyser ulike sider av prognosekvalitet.
@@ -656,9 +647,9 @@ Resultatdelen er delt i to. Først presenteres resultatene fra den historiske mo
 
 Alle modeller er evaluert på de samme `225` fartøy-månedene i testperioden fra januar 2025 til mars 2026. `MAE` brukes som hovedmål, mens `RMSE` og `sMAPE` brukes som støttemål. Siden datasettet er svært nulltungt, må `sMAPE` tolkes med forsiktighet; metrikken blir høy når både faktiske og predikerte verdier ligger nær null.
 
-Tabell 10 viser det samlede testresultatet. `ARIMA/SARIMA` oppnår lavest `MAE` og lavest `RMSE` i siste kjøring, mens `XGBoost` og `LSTM` ligger svært nær hverandre. Eksponentiell glatting er svakest av de fire når alle sammenlignes på samme fartøynivå og samme evalueringslogikk.
+Tabell 9 viser det samlede testresultatet. `ARIMA/SARIMA` oppnår lavest `MAE` og lavest `RMSE` i siste kjøring, mens `XGBoost` og `LSTM` ligger svært nær hverandre. Eksponentiell glatting er svakest av de fire når alle sammenlignes på samme fartøynivå og samme evalueringslogikk.
 
-| Tabell 10. Samlet testresultat for modellene | Antall prediksjoner | MAE | RMSE | sMAPE |
+| Tabell 9. Samlet testresultat for modellene | Antall prediksjoner | MAE | RMSE | sMAPE |
 | --- | ---: | ---: | ---: | ---: |
 | `ARIMA/SARIMA` | 225 | 6.15 | 16.78 | 100.44 |
 | `XGBoost` | 225 | 7.35 | 17.40 | 182.98 |
@@ -691,9 +682,9 @@ Etter at modellene var testet historisk, ble alle fire modellene kjørt på hele
 
 ### Prognose 1 måned fram
 
-Tabell 11 viser énmånedersprognosen for april `2026`. Allerede på dette korte nivået er det tydelig at modellene ikke er helt samstemte. `XGBoost` gir høyest samlet prognose med `102.19`, mens eksponentiell glatting ligger lavest med `53.37`. På fartøynivå peker tre av fire modeller sterkest mot `Fartøy 10`, mens `ARIMA/SARIMA` har den høyeste enkeltprognosen på `Fartøy 9` med `42.93`.
+Tabell 10 viser énmånedersprognosen for april `2026`. Allerede på dette korte nivået er det tydelig at modellene ikke er helt samstemte. `XGBoost` gir høyest samlet prognose med `102.19`, mens eksponentiell glatting ligger lavest med `53.37`. På fartøynivå peker tre av fire modeller sterkest mot `Fartøy 10`, mens `ARIMA/SARIMA` har den høyeste enkeltprognosen på `Fartøy 9` med `42.93`.
 
-| Tabell 11. Samlet prognostisert offhire 1 måned fram | Eksponentiell glatting | LSTM | ARIMA/SARIMA | XGBoost |
+| Tabell 10. Samlet prognostisert offhire 1 måned fram | Eksponentiell glatting | LSTM | ARIMA/SARIMA | XGBoost |
 | --- | ---: | ---: | ---: | ---: |
 | `2026-04` | 53.37 | 91.60 | 76.35 | 102.19 |
 
@@ -703,9 +694,9 @@ Tabell 11 viser énmånedersprognosen for april `2026`. Allerede på dette korte
 
 ### Prognose 3 måneder fram
 
-Tabell 12 viser at forskjellene øker raskt når horisonten forlenges til tre måneder. `Eksponentiell glatting` ligger nærmest flatt gjennom hele vinduet, mens `LSTM` beveger seg moderat nedover. `ARIMA/SARIMA` og særlig `XGBoost` estimerer langt høyere nivåer i mai og juni. Ved utgangen av juni `2026` er forskjellen mellom høyeste og laveste modell over `180` prognostiserte offhire-enheter.
+Tabell 11 viser at forskjellene øker raskt når horisonten forlenges til tre måneder. `Eksponentiell glatting` ligger nærmest flatt gjennom hele vinduet, mens `LSTM` beveger seg moderat nedover. `ARIMA/SARIMA` og særlig `XGBoost` estimerer langt høyere nivåer i mai og juni. Ved utgangen av juni `2026` er forskjellen mellom høyeste og laveste modell over `180` prognostiserte offhire-enheter.
 
-| Tabell 12. Samlet prognostisert offhire 3 måneder fram | Eksponentiell glatting | LSTM | ARIMA/SARIMA | XGBoost |
+| Tabell 11. Samlet prognostisert offhire 3 måneder fram | Eksponentiell glatting | LSTM | ARIMA/SARIMA | XGBoost |
 | --- | ---: | ---: | ---: | ---: |
 | `2026-04` | 53.37 | 91.60 | 76.35 | 102.19 |
 | `2026-05` | 53.69 | 77.58 | 138.96 | 181.85 |
@@ -717,9 +708,9 @@ Tabell 12 viser at forskjellene øker raskt når horisonten forlenges til tre m�
 
 ### Prognose 6 måneder fram
 
-Tabell 13 viser seksmånedersprognosen fra april til september `2026`. Også her fremstår eksponentiell glatting som den mest konservative modellen, med et nesten uendret totalnivå fra måned til måned. `LSTM` faller tydelig utover sommeren, mens `ARIMA/SARIMA` varierer mer og beholder flere markerte topper. `XGBoost` ligger gjennomgående høyest og holder seg over `150` i alle måneder unntatt april.
+Tabell 12 viser seksmånedersprognosen fra april til september `2026`. Også her fremstår eksponentiell glatting som den mest konservative modellen, med et nesten uendret totalnivå fra måned til måned. `LSTM` faller tydelig utover sommeren, mens `ARIMA/SARIMA` varierer mer og beholder flere markerte topper. `XGBoost` ligger gjennomgående høyest og holder seg over `150` i alle måneder unntatt april.
 
-| Tabell 13. Samlet prognostisert offhire 6 måneder fram | Eksponentiell glatting | LSTM | ARIMA/SARIMA | XGBoost |
+| Tabell 12. Samlet prognostisert offhire 6 måneder fram | Eksponentiell glatting | LSTM | ARIMA/SARIMA | XGBoost |
 | --- | ---: | ---: | ---: | ---: |
 | `2026-04` | 53.37 | 91.60 | 76.35 | 102.19 |
 | `2026-05` | 53.69 | 77.58 | 138.96 | 181.85 |
@@ -734,9 +725,9 @@ Tabell 13 viser seksmånedersprognosen fra april til september `2026`. Også her
 
 ### Prognose 12 måneder fram
 
-Tabell 14 viser det fulle tolvmånedersvinduet fram til mars `2027`. Her blir modellforskjellene svært tydelige. `Eksponentiell glatting` holder seg nesten helt flatt mellom `53.37` og `56.84`, mens `LSTM` først faller og deretter stiger moderat igjen mot slutten av perioden. `ARIMA/SARIMA` beholder et mer bølgende og sesongpreget forløp med tydelige topper i mai-juni `2026` og januar-februar `2027`. `XGBoost` skiller seg klart ut som den mest aggressive modellen, med en topp på `547.73` i februar `2027`.
+Tabell 13 viser det fulle tolvmånedersvinduet fram til mars `2027`. Her blir modellforskjellene svært tydelige. `Eksponentiell glatting` holder seg nesten helt flatt mellom `53.37` og `56.84`, mens `LSTM` først faller og deretter stiger moderat igjen mot slutten av perioden. `ARIMA/SARIMA` beholder et mer bølgende og sesongpreget forløp med tydelige topper i mai-juni `2026` og januar-februar `2027`. `XGBoost` skiller seg klart ut som den mest aggressive modellen, med en topp på `547.73` i februar `2027`.
 
-| Tabell 14. Samlet prognostisert offhire 12 måneder fram | Eksponentiell glatting | LSTM | ARIMA/SARIMA | XGBoost |
+| Tabell 13. Samlet prognostisert offhire 12 måneder fram | Eksponentiell glatting | LSTM | ARIMA/SARIMA | XGBoost |
 | --- | ---: | ---: | ---: | ---: |
 | `2026-04` | 53.37 | 91.60 | 76.35 | 102.19 |
 | `2026-05` | 53.69 | 77.58 | 138.96 | 181.85 |
@@ -839,7 +830,7 @@ Schmid, L., Roidl, M., Kirchheim, A., & Pauly, M. (2025). Comparing statistical 
 
 ## Oversikt over figurer
 
-Tabell 15 gir en samlet oversikt over figurene som er brukt i rapporten, hva de viser og hvor de er omtalt.
+Tabell 14 gir en samlet oversikt over figurene som er brukt i rapporten, hva de viser og hvor de er omtalt.
 
 | Figur | Tittel | Kort beskrivelse | Plassering i rapporten |
 | --- | --- | --- | --- |
@@ -867,7 +858,7 @@ Tabell 15 gir en samlet oversikt over figurene som er brukt i rapporten, hva de 
 
 ## Oversikt over tabeller
 
-Tabell 16 gir en samlet oversikt over tabellene som er brukt i rapporten, hva de viser og hvor de er omtalt.
+Tabell 15 gir en samlet oversikt over tabellene som er brukt i rapporten, hva de viser og hvor de er omtalt.
 
 | Tabell | Tittel | Kort beskrivelse | Plassering i rapporten |
 | --- | --- | --- | --- |
@@ -879,12 +870,11 @@ Tabell 16 gir en samlet oversikt over tabellene som er brukt i rapporten, hva de
 | Tabell 6 | XGBoost-featuregrupper | Oppsummerer feature-settet brukt i modellen | `6.3 XGBoost` |
 | Tabell 7 | XGBoost-hyperparametre | Oppsummerer sentrale hyperparametre | `6.3 XGBoost` |
 | Tabell 8 | LSTM-oppsett i siste kjøring | Oppsummerer sekvenslengde, inputfeatures og arkitektur | `6.4 LSTM` |
-| Tabell 9 | Matematisk oversikt over modellene | Oppsummerer modelltype, standardform og bruk i studien | `3.0 Teori` |
-| Tabell 10 | Samlet testresultat for modellene | Viser `MAE`, `RMSE` og `sMAPE` for alle modeller | `7.1 Resultater fra historisk modelltesting` |
-| Tabell 11 | Samlet prognostisert offhire 1 måned fram | Viser én-månedsprognosen for alle modeller | `7.2 Resultater fra fremtidsprognoser` |
-| Tabell 12 | Samlet prognostisert offhire 3 måneder fram | Viser tre-månedersprognosen for alle modeller | `7.2 Resultater fra fremtidsprognoser` |
-| Tabell 13 | Samlet prognostisert offhire 6 måneder fram | Viser seks-månedersprognosen for alle modeller | `7.2 Resultater fra fremtidsprognoser` |
-| Tabell 14 | Samlet prognostisert offhire 12 måneder fram | Viser tolv-månedersprognosen for alle modeller | `7.2 Resultater fra fremtidsprognoser` |
+| Tabell 9 | Samlet testresultat for modellene | Viser `MAE`, `RMSE` og `sMAPE` for alle modeller | `7.1 Resultater fra historisk modelltesting` |
+| Tabell 10 | Samlet prognostisert offhire 1 måned fram | Viser én-månedsprognosen for alle modeller | `7.2 Resultater fra fremtidsprognoser` |
+| Tabell 11 | Samlet prognostisert offhire 3 måneder fram | Viser tre-månedersprognosen for alle modeller | `7.2 Resultater fra fremtidsprognoser` |
+| Tabell 12 | Samlet prognostisert offhire 6 måneder fram | Viser seks-månedersprognosen for alle modeller | `7.2 Resultater fra fremtidsprognoser` |
+| Tabell 13 | Samlet prognostisert offhire 12 måneder fram | Viser tolv-månedersprognosen for alle modeller | `7.2 Resultater fra fremtidsprognoser` |
 
 ## Kodevedlegg
 
