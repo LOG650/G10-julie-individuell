@@ -1,252 +1,142 @@
-![Description: N:\\ADMARKIV\\STRAUMSH\\MALER\\Ny logo\\kunlogo-20-0-0-0.png](media/media/image1.png){width="3.75in" height="3.75in"}
-
-**Tittel (norsk og/eller engelsk)**
-
-Forfatter(e): Julie Bjørheim
-
-Totalt antall sider inkludert forsiden: :
-
-Molde, Innleveringsdato
-
-![Description: HiM_midt](media/media/image2.jpeg){width="2.0in" height="1.2430555555555556in"}
-
-**Obligatorisk egenerklæring/gruppeerklæring**
-
-Den enkelte student er selv ansvarlig for å sette seg inn i hva som er lovlige hjelpemidler, retningslinjer for bruk av disse og regler om kildebruk. Erklæringen skal bevisstgjøre studentene på deres ansvar og hvilke konsekvenser fusk kan medføre. Manglende erklæring fritar ikke studentene fra sitt ansvar.
-
-+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| *Du/dere fyller ut erklæringen ved å klikke i ruten til høyre for den enkelte del 1-6:*                                                                                                                                                                                                                                                                                                                                         |
-+===============================+=================================================================================================================================================================================================================================================================================================================================================================+===============================+
-| **1.**                        | **Jeg/vi erklærer herved at min/vår besvarelse er mitt/vårt eget arbeid, og at jeg/vi ikke har brukt andre kilder eller har mottatt annen hjelp enn det som er nevnt i besvarelsen.**                                                                                                                                                                           |                               |
-+-------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------+
-| **2.**                        | **Jeg/vi erklærer videre at denne besvarelsen:**                                                                                                                                                                                                                                                                                                                |                               |
-|                               |                                                                                                                                                                                                                                                                                                                                                                 |                               |
-|                               | - ikke har vært brukt til annen eksamen ved annen avdeling/universitet/høgskole innenlands eller utenlands.                                                                                                                                                                                                                                                     |                               |
-|                               |                                                                                                                                                                                                                                                                                                                                                                 |                               |
-|                               | - ikke refererer til andres arbeid uten at det er oppgitt.                                                                                                                                                                                                                                                                                                      |                               |
-|                               |                                                                                                                                                                                                                                                                                                                                                                 |                               |
-|                               | - ikke refererer til eget tidligere arbeid uten at det er oppgitt.                                                                                                                                                                                                                                                                                              |                               |
-|                               |                                                                                                                                                                                                                                                                                                                                                                 |                               |
-|                               | - har alle referansene oppgitt i litteraturlisten.                                                                                                                                                                                                                                                                                                              |                               |
-|                               |                                                                                                                                                                                                                                                                                                                                                                 |                               |
-|                               | - ikke er en kopi, duplikat eller avskrift av andres arbeid eller besvarelse.                                                                                                                                                                                                                                                                                   |                               |
-+-------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------+
-| **3.**                        | **Jeg/vi er kjent med at brudd på ovennevnte er å [betrakte som fusk]{.underline} og kan medføre annullering av eksamen og utestengelse fra universiteter og høgskoler i Norge, jf. [Universitets- og høgskoleloven](http://www.lovdata.no/all/nl-20050401-015.html) §§4-7 og 4-8 og [Forskrift om eksamen](http://kvalitet.himolde.no/KS_UNL114) §§14 og 15.** |                               |
-+-------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------+
-| **4.**                        | **Jeg/vi er kjent med at alle innleverte oppgaver kan bli plagiatkontrollert i URKUND, se [Retningslinjer for elektronisk innlevering og publisering av studiepoenggivende studentoppgaver](http://kvalitet.himolde.no/KS_UNL221)**                                                                                                                             |                               |
-+-------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------+
-| **5.**                        | **Jeg/vi er kjent med at høgskolen vil behandle alle saker hvor det forligger mistanke om fusk etter høgskolens [retningslinjer for behandling av saker om fusk](http://kvalitet.himolde.no/KS_UNL409)**                                                                                                                                                        |                               |
-+-------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------+
-| **6.**                        | **Jeg/vi har satt oss inn i regler og retningslinjer i bruk av [kilder og referanser på biblioteket sine nettsider](http://www.himolde.no/biblioteket/Sider/Veiledning/Kilder-og-referanser.aspx)**                                                                                                                                                             |                               |
-+-------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------+
-
-**Personvern**
-
-**Personopplysningsloven**
-
-Forskningsprosjekt som innebærer behandling av personopplysninger iht. Personopplysningsloven skal meldes til Norsk senter for forskningsdata, NSD, for vurdering.
-
-**Har oppgaven vært vurdert av NSD?** **ja** **nei**
-
-\- Hvis ja:
-
-**Referansenummer:      **
-
-\- Hvis nei:
-
-**Jeg/vi erklærer at oppgaven ikke omfattes av Personopplysningsloven:**
-
-**Helseforskningsloven**
-
-Dersom prosjektet faller inn under Helseforskningsloven, skal det også søkes om forhåndsgodkjenning fra Regionale komiteer for medisinsk og helsefaglig forskningsetikk, REK, i din region.
-
-**Har oppgaven vært til behandling hos REK?** **ja** **nei**
-
-\- Hvis ja:
-
-**Referansenummer:      **
-
-**Publiseringsavtale**
-
-**Studiepoeng:** **     **
-
-**Veileder:** **     **
-
-**Fullmakt til elektronisk publisering av oppgaven**
-
-Forfatter(ne) har opphavsrett til oppgaven. Det betyr blant annet enerett til å gjøre verket tilgjengelig for allmennheten (Åndsverkloven. §2).
-
-Alle oppgaver som fyller kriteriene vil bli registrert og publisert i Brage HiM med forfatter(ne)s godkjennelse.
-
-Oppgaver som er unntatt offentlighet eller båndlagt vil ikke bli publisert.
-
-**Jeg/vi gir herved Høgskolen i Molde en vederlagsfri rett til å**
-
-**gjøre oppgaven tilgjengelig for elektronisk publisering:** **ja** **nei**
-
-**Er oppgaven båndlagt (konfidensiell)?** **ja** **nei**
-
-**(**Båndleggingsavtale må fylles ut)
-
-\- Hvis ja:
-
-**Kan oppgaven publiseres når båndleggingsperioden er over?** **ja** **nei**
-
-**Dato:** **     **
-
-**Antall ord:** Marker denne setningen, og skriv inn antall ord dersom det er et krav at antall ord skal oppgis. Hvis det ikke er et krav at antall ord skal oppgis slettes hele dette avsnittet, og i begge tilfeller slettes denne setning.
-
-**Forfattererklæring**: Marker denne setningen, og skriv inn forfattererklæring dersom det er et krav til oppgaven. Hvis det ikke er krav om forfattererklæring slettes hele dette avsnitt, og i begge tilfeller slettes denne setning.
-
-**Sammendrag**
-
-**\**
-
-**Abstract**
-
-**\**
-
-# Innholdsfortegnelse {#innholdsfortegnelse .TOC-Heading}
-
-[1.0 Innledning [1](#innledning)](#innledning)
-
-[1.1 Problemstilling [2](#problemstilling)](#problemstilling)
-
-[1.2 Avgrensinger [2](#avgrensinger)](#avgrensinger)
-
-[1.3 Antagelser [3](#antagelser)](#antagelser)
-
-[2.0 Litteratur [4](#litteratur)](#litteratur)
-
-[3.0 Teori [6](#teori)](#teori)
-
-[Prognostisering som beslutningsstøtte [6](#prognostisering-som-beslutningsstøtte)](#prognostisering-som-beslutningsstøtte)
-
-[Tidsserier og sentrale komponenter [6](#tidsserier-og-sentrale-komponenter)](#tidsserier-og-sentrale-komponenter)
-
-[Klassiske tidsseriemodeller [6](#klassiske-tidsseriemodeller)](#klassiske-tidsseriemodeller)
-
-[SARIMA [6](#sarima-1)](#sarima-1)
-
-[Eksponentiell glatting [6](#eksponentiell-glatting-1)](#eksponentiell-glatting-1)
-
-[Maskinlæring og dyp læring i prognostisering [7](#maskinlæring-og-dyp-læring-i-prognostisering)](#maskinlæring-og-dyp-læring-i-prognostisering)
-
-[XGBoost [7](#xgboost-1)](#xgboost-1)
-
-[LSTM [7](#lstm-1)](#lstm-1)
-
-[Modellvalg og sammenligningskriterier [7](#modellvalg-og-sammenligningskriterier)](#modellvalg-og-sammenligningskriterier)
-
-[4.0 Casebeskrivelse [10](#casebeskrivelse)](#casebeskrivelse)
-
-[5.0 Metode og data [11](#metode-og-data)](#metode-og-data)
-
-[5.1 Metode [11](#metode)](#metode)
-
-[5.2 Data [12](#data)](#data)
-
-[5.2.1 Datagrunnlag [12](#datagrunnlag)](#datagrunnlag)
-
-[5.2.2 Deskriptiv analyse av datasettet [12](#deskriptiv-analyse-av-datasettet)](#deskriptiv-analyse-av-datasettet)
-
-[6.0 Modellering [12](#modellering)](#modellering)
-
-[6.1 SARIMA [12](#sarima)](#sarima)
-
-[6.2 Eksponentiell glatting [12](#eksponentiell-glatting)](#eksponentiell-glatting)
-
-[6.3 XGBoost [12](#xgboost)](#xgboost)
-
-[6.4 LSTM [12](#lstm)](#lstm)
-
-[6.5 Oppsett for fremtidsprognoser [12](#oppsett-for-fremtidsprognoser)](#oppsett-for-fremtidsprognoser)
-
-[7.0 Resultat [13](#resultat)](#resultat)
-
-[7.1 Resultater fra historisk modelltesting [13](#resultater-fra-historisk-modelltesting)](#resultater-fra-historisk-modelltesting)
-
-[7.2 Resultater fra fremtidsprognoser [13](#resultater-fra-fremtidsprognoser)](#resultater-fra-fremtidsprognoser)
-
-[8.0 Diskusjon [13](#diskusjon)](#diskusjon)
-
-[Modellvalg og prediksjonsnøyaktighet [13](#modellvalg-og-prediksjonsnøyaktighet)](#modellvalg-og-prediksjonsnøyaktighet)
-
-[Datastruktur, marked og hvorfor resultatene ble som de ble [13](#datastruktur-marked-og-hvorfor-resultatene-ble-som-de-ble)](#datastruktur-marked-og-hvorfor-resultatene-ble-som-de-ble)
-
-[Fremtidsprognoser og praktisk tolkning [14](#fremtidsprognoser-og-praktisk-tolkning)](#fremtidsprognoser-og-praktisk-tolkning)
-
-[Metodiske styrker og svakheter [14](#metodiske-styrker-og-svakheter)](#metodiske-styrker-og-svakheter)
-
-[Betydning for bedriften og samlet vurdering [14](#betydning-for-bedriften-og-samlet-vurdering)](#betydning-for-bedriften-og-samlet-vurdering)
-
-[9.0 Konklusjon [14](#konklusjon)](#konklusjon)
-
-[10.0 Bibliografi [15](#bibliografi)](#bibliografi)
-
-[11.0 Vedlegg [15](#vedlegg)](#vedlegg)
-
-[11.1 Oversikt over figurer [15](#oversikt-over-figurer)](#oversikt-over-figurer)
-
-[11.2 Oversikt over tabeller [15](#oversikt-over-tabeller)](#oversikt-over-tabeller)
-
-[11.3 Kodevedlegg [16](#kodevedlegg)](#kodevedlegg)
-
-[11.3.1 SARIMA-kode [16](#sarima-kode)](#sarima-kode)
-
-[11.3.2 Eksponentiell glatting-kode [16](#eksponentiell-glatting-kode)](#eksponentiell-glatting-kode)
-
-[11.3.3 XGBoost-kode [16](#xgboost-kode)](#xgboost-kode)
-
-[11.3.4 LSTM-kode [16](#lstm-kode)](#lstm-kode)
+# Tittel (norsk og/eller engelsk)
+
+**Forfatter(e):** Julie Bjørheim
+
+**Totalt antall sider inkludert forsiden:** [fylles inn ved sluttføring]
+
+**Molde, innleveringsdato:** [fylles inn ved sluttføring]
+
+---
+
+## Obligatorisk egenerklæring/gruppeerklæring
+
+Denne delen følger malen fra Høgskolen i Molde og fylles ut i endelig Word-versjon før levering.
+
+### Personvern
+
+- **Har oppgaven vært vurdert av NSD?** [ja/nei]
+- **NSD referansenummer:** [fylles inn ved behov]
+- **Har oppgaven vært til behandling hos REK?** [ja/nei]
+- **REK referansenummer:** [fylles inn ved behov]
+
+### Publiseringsavtale
+
+- **Studiepoeng:** [fylles inn ved sluttføring]
+- **Veileder:** [fylles inn ved sluttføring]
+- **Elektronisk publisering:** [ja/nei]
+- **Båndlagt (konfidensiell):** [ja/nei]
+- **Publisering etter båndleggingsperiode:** [ja/nei, hvis relevant]
+- **Dato:** [fylles inn ved sluttføring]
+- **Antall ord:** [fylles inn hvis påkrevd]
+- **Forfattererklæring:** [fylles inn hvis påkrevd]
+
+---
+
+## Sammendrag
+
+Denne oppgaven undersøker hvordan valg av prognosemodell påvirker prediksjonsnøyaktigheten for offhire-hendelser for fartøy innenfor samme offshoresegment. Offhire representerer perioder med operasjonell nedetid eller manglende kontraktsinntekt, og utgjør et viktig beslutningsproblem i et marked preget av teknisk kompleksitet, kontraktsmessige forpliktelser og betydelig volatilitet. Studien er gjennomført som en kvantitativ, casebasert sammenligning av fire prognosemodeller: `SARIMA`, `eksponentiell glatting`, `XGBoost` og `LSTM`. Datagrunnlaget består av historiske, anonymiserte offhire-data for `16` fartøy. Modellene ble estimert og evaluert på samme historiske oppsett med et eksplisitt train/test-splitt og ekspanderende `1`-stegs prognoser gjennom testperioden. Prediksjonsnøyaktigheten ble vurdert ved hjelp av `MAE`, `RMSE` og `sMAPE`.
+
+Resultatene viser at modellvalg har betydning for prediksjonsnøyaktigheten, men ikke på en måte som gir automatisk fordel til de mest komplekse modellene. `ARIMA/SARIMA` oppnådde lavest `MAE` og `RMSE` i den historiske testen, mens `XGBoost` og `LSTM` var konkurransedyktige uten å overgå den beste klassiske modellen. `Eksponentiell glatting` fungerte som en nyttig, men svakere benchmark. Fremtidsprognosene for `1`, `3`, `6` og `12` måneder fram viste samtidig at modellene ga ulike framtidsbilder, og at usikkerheten økte med lengre prognosehorisont. Studien konkluderer derfor med at klassiske tidsseriemodeller framstår som det mest forsvarlige førstevalget i denne casen, samtidig som prognoser bør brukes som beslutningsstøtte og tolkes med faglig skjønn.
+
+## Abstract
+
+This thesis examines how the choice of forecasting model affects the predictive accuracy of offhire events for vessels operating within the same offshore segment. Offhire refers to periods of operational downtime or lost contract revenue and represents an important decision-support problem in a market characterized by technical complexity, contractual obligations, and substantial volatility. The study is designed as a quantitative, case-based comparison of four forecasting models: `SARIMA`, `exponential smoothing`, `XGBoost`, and `LSTM`. The empirical basis consists of historical, anonymized offhire data for `16` vessels. All models were estimated and evaluated under the same historical setup, using an explicit train/test split and expanding `1-step` forecasts throughout the test period. Predictive performance was assessed using `MAE`, `RMSE`, and `sMAPE`.
+
+The results show that model choice affects predictive accuracy, but not in a way that automatically favors the most complex models. `ARIMA/SARIMA` achieved the lowest `MAE` and `RMSE` in the historical test, while `XGBoost` and `LSTM` were competitive without outperforming the best classical model. `Exponential smoothing` served as a useful but weaker benchmark. The future forecasts for `1`, `3`, `6`, and `12` months ahead also showed that the models produced different future paths and that uncertainty increased as the forecasting horizon became longer. The study therefore concludes that classical time-series models represent the most defensible first choice in this case, while forecasts should be used as decision support and interpreted with professional judgment.
+
+## Innhold
+
+1.0 Innledning
+   1.1 Problemstilling
+   1.2 Avgrensinger
+   1.3 Antagelser
+2.0 Litteratur
+3.0 Teori
+   3.1 Prognostisering som beslutningsstøtte
+   3.2 Tidsserier og sentrale komponenter
+   3.3 Klassiske tidsseriemodeller
+   3.4 SARIMA
+   3.5 Eksponentiell glatting
+   3.6 Maskinlæring og dyp læring i prognostisering
+   3.7 XGBoost
+   3.8 LSTM
+   3.9 Modellvalg og sammenligningskriterier
+4.0 Casebeskrivelse
+5.0 Metode og data
+   5.1 Metode
+   5.1.1 Modellutvalg og evalueringsoppsett
+   5.2 Data
+   5.2.1 Datagrunnlag
+   5.2.2 Deskriptiv analyse av datasettet
+6.0 Modellering
+   6.1 SARIMA
+   6.2 Eksponentiell glatting
+   6.3 XGBoost
+   6.4 LSTM
+   6.5 Oppsett for fremtidsprognoser
+7.0 Resultat
+   7.1 Resultater fra historisk modelltesting
+   7.2 Resultater fra fremtidsprognoser
+8.0 Diskusjon
+   8.1 Modellvalg og prediksjonsnøyaktighet
+   8.2 Datastruktur, marked og hvorfor resultatene ble som de ble
+   8.3 Fremtidsprognoser og praktisk tolkning
+   8.4 Metodiske styrker og svakheter
+   8.5 Betydning for bedriften og samlet vurdering
+9.0 Konklusjon
+10.0 Bibliografi
+11.0 Vedlegg
+   11.1 Oversikt over figurer
+   11.2 Oversikt over tabeller
+   11.3 Kodevedlegg
 
 # Innledning
 
-Fartøy som opererer innenfor offshoresegmentet er helt essensielle for petroleumsindustrien. De bidrar til transport av utstyr, drivstoff, forsyninger og andre innsatsfaktorer som er nødvendige for å opprettholde aktivitet på norsk sokkel. Operasjonene foregår i et komplekst og risikoutsatt miljø som er preget av varierende værforhold, teknisk kompleksitet og kontraktsmessige forpliktelser. I denne konteksten kan perioder med nedetid, også kalt offhire, medføre betydelige konsekvenser både for operatørselskapene og for rederiene.
+Fartøy som opererer i offshoresegmentet er en sentral del av infrastrukturen rundt petroleumsaktiviteten på norsk sokkel. De transporterer utstyr, drivstoff, forsyninger og andre innsatsfaktorer som er nødvendige for å opprettholde løpende aktivitet. Samtidig foregår operasjonene i et miljø preget av teknisk kompleksitet, kontraktsmessige forpliktelser og krevende operasjonelle rammevilkår. I denne konteksten kan perioder med nedetid, ofte omtalt som offhire, få betydelige konsekvenser både for rederiene og for oppdragsgiverne.
 
-Nedetid har ikke bare tapte inntekter i form av at det er tapte charterdager, men har også indirekte effekt på produksjonen til operatørene, kan få kontrakts sanksjoner og en svekket konkurranseevne i forhold til andre rederier i et allerede volatilt marked. Videre så har offshoremarkedet opplevd betydelige svingninger i etterspørsel og rate på fartøyene, noe som forsterker behovet for bedre beslutningstøtte i flåten (Menon Economics, 2026).
+For rederier innebærer offhire ikke bare tapte charterinntekter, men også økt usikkerhet knyttet til planlegging, ressursutnyttelse, kontraktsoppfølging og konkurranseevne. For operatørene kan samme nedetid skape forstyrrelser i logistikk og drift. Behovet for mer presise prognoser blir særlig tydelig i et marked som samtidig er preget av betydelige svingninger i aktivitet, investeringsnivå og fartøyrater (Menon Economics, 2026). Bedre beslutningsstøtte for offhire er derfor ikke bare et teknisk analyseproblem, men også et praktisk spørsmål om operasjonell robusthet i et volatilt marked.
 
-Tradisjonelt har prognoser innen logistikk og operasjonsstyring vært basert på klassiske statistiske metoder, særlig ARIMA-lignende modeller og eksponentiell glatting. Disse modellene er metodisk etablerte og godt egnet til å beskrive mønstre i historiske tidsserier når problemstrukturen er relativt stabil (Gardner, 1985; Hyndman et al., 2002; Hyndman & Khandakar, 2008). Samtidig peker forskning innen logistikk og supply chain management på at maskinlæringsmodeller kan være konkurransedyktige eller bedre når datastrukturen er mer kompleks og sammenhengene er mer ikke-lineære (Carbonneau et al., 2008; Schmid et al., 2025).
+Tradisjonelt har prognostisering innen logistikk og operasjonsstyring i stor grad vært basert på klassiske statistiske modeller, særlig ARIMA-lignende modeller og eksponentiell glatting. Disse modellene er metodisk etablerte og egner seg godt når historiske tidsserier inneholder relativt stabile mønstre i nivå, trend og sesong (Gardner, 1985; Hyndman et al., 2002; Hyndman & Khandakar, 2008). Samtidig viser nyere forskning at maskinlæringsmodeller kan være konkurransedyktige eller bedre når datastrukturen er mer kompleks, heterogen eller ikke-lineær (Carbonneau et al., 2008; Schmid et al., 2025).
 
-Innen maritim sektor har datadrevne metoder de siste årene i stor grad vært brukt til prediktivt vedlikehold og operasjonelle beslutningsproblemer, mens forskning på operasjonell nedetid og offhire på fartøynivå fortsatt er mer begrenset. Dette gjør det relevant å undersøke hvordan både tradisjonelle tidsseriemodeller og KI-baserte modeller presterer i akkurat denne konteksten (Chu et al., 2024; Kalafatelis et al., 2025; Kjeldsberg & Munim, 2024).
+Innen maritim sektor har datadrevne metoder de siste årene særlig vært brukt til prediktivt vedlikehold, markedsprediksjoner og andre operasjonelle beslutningsproblemer. Forskning som direkte sammenligner tradisjonelle tidsseriemodeller og KI-baserte modeller for prognostisering av offhire på fartøynivå er derimot mer begrenset. Dette gjør det faglig relevant å undersøke hvordan ulike modellfamilier presterer i akkurat denne konteksten (Chu et al., 2024; Kalafatelis et al., 2025; Kjeldsberg & Munim, 2024).
 
 ## Problemstilling
 
-Formålet med denne studien er å undersøke modellvalg i prognostisering av operasjonell nedetid i offshorenæringen. På bakgrunn av behovet for mer presis beslutningsstøtte i et ustabilt marked formuleres følgende problemstilling:
+Formålet med denne studien er å undersøke hvordan modellvalg påvirker prognostisering av operasjonell nedetid i offshorenæringen. På bakgrunn av behovet for mer presis beslutningsstøtte i et volatilt marked formuleres følgende problemstilling:
 
-*Hvordan påvirker valg av prognosemodell prediksjonsnøyaktigheten for offhire- hendelser for fartøy innenfor samme offshoresegment, når maskinlæringsmodeller sammenlignes med tradisjonelle tidsseriemodeller?*
+*Hvordan påvirker valg av prognosemodell prediksjonsnøyaktigheten for offhire-hendelser for fartøy innenfor samme offshoresegment, når maskinlæringsmodeller sammenlignes med tradisjonelle tidsseriemodeller?*
 
 ## Avgrensinger
 
-Denne studien avgrenses til 16 fartøy som opererer innenfor samme segment i offshorenæringen. Andre fartøy utenfor dette segmentet vil ikke bli inkludert. Dette gjøres for å sikre sammenlignbarhet i operasjonelle forhold og kontrakts struktur, selv om fartøyene ikke nødvendigvis tilhører én og samme fartøytype.
+Studien avgrenses til 16 anonymiserte fartøy som opererer innenfor samme offshoresegment. Fartøy utenfor dette segmentet inngår ikke i analysen. Avgrensningen er valgt for å sikre størst mulig sammenlignbarhet i operasjonelle rammebetingelser og kontraktsforhold, selv om fartøyene ikke nødvendigvis tilhører én og samme fartøytype.
 
-Videre så avgrenses analysen til prediksjon av offhire- hendelser definert som perioder hvor fartøy ikke generer kontrakts inntekter som følge av tekniske forhold eller manglende kontrakt. Det vil heller ikke bli lagt opp mer skille mellom ulike årsaks kategorier innen offhire, da formålet er å evaluere modellens prediktive ytelse, ikke å analysere årsakssammenhenger.
+Analysen er videre avgrenset til prediksjon av offhire-hendelser, definert som perioder der fartøy midlertidig ikke opererer i henhold til kontrakt eller ikke genererer forventet inntekt. Det skilles ikke videre mellom ulike årsakskategorier innen offhire, fordi formålet er å evaluere modellenes prediktive ytelse og ikke å analysere årsakssammenhenger.
 
-Analysen baseres på historiske operasjonelle data innen en definert tidsperiode. Eksterne økonomiske faktorer som globale energipriser eller geopolitisk risiko vil bli inkludert i den grad de er reflektert indirekte i datasettet.
+Studien bygger på historiske operasjonelle data innen en definert tidsperiode. Eksterne forhold som energipriser, geopolitisk risiko og bredere markedsendringer modelleres ikke eksplisitt, men inngår bare i den grad de er indirekte reflektert i observasjonene.
 
-Videre fokuserer studien på sammenligning av modelltyper med hensyn til prediksjonsnøyaktighet. Implementeringskostnader, organisatoriske endringer og teknologisk integrasjon inngår ikke i analysen og faller derfor utenfor formålet. I tillegg til at modellene som vil bli brukt er avgrenset til kun to av hver kategori, det vil si to tradisjonelle metoder og to KI baserte modeller.
+Fokus ligger på sammenligning av modelltyper med hensyn til prediksjonsnøyaktighet. Implementeringskostnader, organisatoriske endringer og teknologisk integrasjon inngår ikke i analysen. Modellutvalget er avgrenset til fire modeller: to tradisjonelle metoder, `SARIMA` og `eksponentiell glatting`, og to KI-baserte modeller, `XGBoost` og `LSTM`.
 
 ## Antagelser
 
 **Definisjon av offhire**
 
-Det antas at definisjonen av offhire er konsistent gjennom hele oppgaven. Dette innebærer at registrering av nedetid ikke har endret kriterier eller rapporteringspraksis over en lengre periode. Antagelsen er nødvendig for å sikre at variasjon i datasettet reflekterer reelle operasjonelle forhold og ikke endringer i registreringsrutiner. Konsekvensen er at eventuelle strukturelle brudd i rapporteringspraksis ikke fanges eksplisitt opp i modellen.
+Det antas at definisjonen av offhire er konsistent gjennom hele datamaterialet. Dette er nødvendig for at variasjon i datasettet skal kunne tolkes som uttrykk for reelle operasjonelle forhold og ikke som følge av endrede registreringsrutiner. Eventuelle strukturelle brudd i rapporteringspraksis fanges derfor ikke eksplisitt opp i analysen.
 
 **Historiske mønstre inneholder prediktiv informasjon**
 
-Det antas at historiske operasjonelle data inneholder systematiske mønstre som kan benyttes til å predikere fremtidige offhire- hendelser. Denne antagelsen ligger implisitt til grunn for all tidsserie- og maskinlæringsbasert prognostisering. Dersom fremtidige hendelser er fullstendig tilfeldige, vil ingen modell kunne gi systematisk bedre prediksjoner enn tilfeldige estimater. Konsekvensen av antagelsen er at analysen evaluerer modellens evne til å utnytte eksisterende mønstre, men ikke kan forutsi strukturelle brudd som ligger utenfor datagrunnlaget.
+Det antas at historiske operasjonelle data inneholder mønstre som kan brukes til å predikere framtidige offhire-hendelser. Denne antagelsen ligger til grunn for både tidsseriemodeller og maskinlæringsmodeller. Analysen vurderer derfor modellenes evne til å utnytte eksisterende historisk struktur, men ikke deres evne til å forutsi strukturelle brudd utenfor datagrunnlaget.
 
 **Uavhengighet mellom fartøy**
 
-Datasettet vil inkludere flere fartøy, antas det at observasjoner kan behandles som uavhengige mellom fartøy. Dette forenkler modelleringen og muligjør sammenligning av prediktiv ytelse uten å eksplisitt modellere flåteinteraksjoner. Konsekvensen er at eventuelle systematiske sammenhenger mellom fartøy, eksempelvis felles teknisk design eller kontrakts struktur, ikke modellers eksplisitt.
+Det antas at observasjoner kan behandles som tilnærmet uavhengige mellom fartøy. Denne antagelsen forenkler modelleringen og gjør det mulig å sammenligne prediktiv ytelse uten å eksplisitt modellere flåteinteraksjoner. Eventuelle systematiske sammenhenger mellom fartøy, for eksempel felles teknisk design eller kontraktsstruktur, inngår dermed ikke eksplisitt i modellene.
 
 **Markedsusikkerhet reflekteres i historiske data**
 
-Det antas at markedsmessig usikkerhet, herunder svingninger i etterspørsel og rater, indirekte er reflektert i de historiske dataene som inngår i analysen. Studien modellerer ikke økonomiske variable eksplisitt, men forutsetter at effekten av markedsforhold er representert gjennom observasjoner av kontraktsstatus og offhire. Konsekvensen er at modellen evalueres under historisk observerte markedsforhold, men ikke testes mot hypotetiske ekstreme scenarier.
+Det antas at markedsmessig usikkerhet, herunder svingninger i aktivitet og rater, indirekte er reflektert i de historiske dataene. Studien modellerer ikke slike forhold eksplisitt, men forutsetter at deler av effekten er synlig i observerte offhire-mønstre. Modellene evalueres derfor under historisk observerte markedsforhold, men ikke mot hypotetiske ekstreme scenarier.
 
 **Prediktiv fremfor kausal analyse**
 
-Det antas at formålet med analysen er prediksjon og ikke kausal forklaring. Modellenes prestasjon vurderes ut fra prediktiv nøyaktighet, uavhengig av om forklaringsvariablene representerer direkte årsakssammenhenger. Denne antagelsen er nødvendig for å kunne sammenligne maskinlæringsmodeller og tradisjonelle tidsseriemodeller på likt grunnlag. Konsekvensen er at studien ikke kan trekke konklusjoner om hvilke faktorer som årsaksmessig påvirker offhire.
+Det antas at formålet med analysen er prediksjon og ikke kausal forklaring. Modellenes prestasjon vurderes derfor ut fra prediktiv nøyaktighet og ikke ut fra om variablene representerer direkte årsakssammenhenger. Konsekvensen er at studien kan sammenligne modeller på likt grunnlag, men ikke trekke kausale konklusjoner om hvilke forhold som skaper offhire.
 
 # Litteratur
 
