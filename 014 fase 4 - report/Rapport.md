@@ -338,14 +338,14 @@ Portene regulerer hvilken informasjon som beholdes, oppdateres og eksponeres vid
 
 I denne oppgaven er `LSTM` teoretisk relevant fordi modellen representerer den mest fleksible og sekvensorienterte måten å lære mønstre i offhire-data på. Dersom fartøyenes historikk inneholder lange eller sammensatte avhengigheter som ikke lett lar seg beskrive gjennom eksplisitte lagg og lineære parametere, bør `LSTM` i prinsippet kunne fange dette. Samtidig kommer denne fleksibiliteten med klare kostnader i form av større datakrav, høyere treningssensitivitet og lavere tolkbarhet enn både klassiske modeller og `XGBoost`. Modellen er derfor faglig interessant nettopp fordi den utfordrer spørsmålet om hvor mye kompleksitet datasettet faktisk bærer (Hochreiter & Schmidhuber, 1995).
 
-Tabell 9 oppsummerer de fire modellene i en felles matematisk oversikt og viser hvordan de brukes i denne studien.
+Tabell 9 oppsummerer de fire modellene i en felles matematisk oversikt. Siden lange LaTeX-uttrykk ofte blir lite lesbare i tabellformat, er modellrepresentasjonene nedenfor skrevet i forkortet notasjon.
 
-| Tabell 9. Matematisk oversikt over modellene | Modelltype | Standard matematisk representasjon | Hvordan den brukes i denne studien |
+| Tabell 9. Matematisk oversikt over modellene | Modelltype | Standard matematisk representasjon (forkortet) | Hvordan den brukes i denne studien |
 | --- | --- | --- | --- |
-| `SARIMA` | Sesongjustert univariat tidsseriemodell | $\Phi(B^{12}) \phi(B) (1-B)^d (1-B^{12})^D y_t = \Theta(B^{12}) \theta(B) \varepsilon_t$ | Estimeres fartøyvis for å predikere neste måneds offhire-prosent |
-| `ETS` | Glattemodell med nivå, trend og sesong | $\hat y_{t+1|t} = \ell_t + b_t + s_{t+1-12}$ | Brukes fartøyvis som benchmark med sterkere vekt på nyere observasjoner |
-| `XGBoost` | Feature-basert gradient boosting | $\hat y_i = \sum_{k=1}^{K} f_k(x_i)$ | Brukes som global panelmodell med lag, rullerende mål og kalenderfeatures |
-| `LSTM` | Rekurrent sekvensmodell | $\hat y_{t+1} = W_y h_t + b_y$ | Brukes på sekvenser av `12` måneder for å predikere neste måned |
+| `SARIMA` | Sesongjustert univariat tidsseriemodell | `Phi(B^12) phi(B) (1-B)^d (1-B^12)^D y_t = Theta(B^12) theta(B) e_t` | Estimeres fartøyvis for å predikere neste måneds offhire-prosent |
+| `ETS` | Glattemodell med nivå, trend og sesong | `yhat_(t+1|t) = l_t + b_t + s_(t+1-12)` | Brukes fartøyvis som benchmark med sterkere vekt på nyere observasjoner |
+| `XGBoost` | Feature-basert gradient boosting | `yhat_i = sum_(k=1)^K f_k(x_i)` | Brukes som global panelmodell med lag, rullerende mål og kalenderfeatures |
+| `LSTM` | Rekurrent sekvensmodell | `yhat_(t+1) = W_y h_t + b_y` | Brukes på sekvenser av `12` måneder for å predikere neste måned |
 
 ## Modellvalg og sammenligningskriterier
 
