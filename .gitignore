@@ -16,7 +16,7 @@ __pycache__/
 .ipynb_checkpoints/
 
 # Local reference library
-003 references/*.pdf
+# PDF references are tracked because they are part of the deliverable.
 
 # Local report working files
 014 fase 4 - report/Rapport.docx
