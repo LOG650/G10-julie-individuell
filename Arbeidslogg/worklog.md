@@ -94,3 +94,12 @@ Next step:
 - Updated the automatic `kode.md` generation so each model folder now documents the active implementation from its own module instead of from the previous monolithic pipeline file.
 - Verified the refactored pipeline with both `py_compile` and a full end-to-end run; the latest historical ranking remained `SARIMA`, `XGBoost`, `LSTM`, and `Eksponentiell glatting`.
 - Committed and pushed the main implementation changes in `7ad8661` (`Finalize report and modularize modeling pipeline`).
+
+## 17.04.2026
+- Continued the report finishing work with a full structural and editorial review of `Rapport.md`, focusing on overlap between theory, modeling, results, discussion, and conclusion.
+- Moved the standard mathematical model formulations out of `Modellering` and into the relevant theory subsections for `SARIMA`, `Eksponentiell glatting`, `XGBoost`, and `LSTM`, so the distinction between theory and project-specific modeling is clearer.
+- Refined the report front page and manual table of contents so the Markdown version aligns better with the required project template and the lecturers' example structure.
+- Removed the obsolete Word draft `Rapport prøving.docx` from the repository and kept `Rapport.md` as the active report source.
+- Opened version control for the full `003 references` folder and pushed all reference PDFs to GitHub to satisfy the delivery requirement that the PDF sources must be available in the repository.
+- Tightened the report's theory presentation by removing an unreadable mathematical summary table and keeping the detailed model explanations in running text instead.
+- Committed and pushed the main report and repository changes in `23642e6` (`Refine report structure and model theory sections`), `b6e68f8` (`Refine report front page and contents`), `7730b45` (`Remove obsolete report draft document`), `bfafd26` (`Track reference PDFs in repository`), and `6df4621` (`Remove unreadable model summary table`).
