@@ -1,7 +1,14 @@
 # Historical Data Visualization
 
-Denne mappen inneholder genererte figurer og tabeller for de historiske offhire-dataene i
-`004 data/Data som skal brukes Anonymisert.csv`.
+Denne mappen inneholder kode for historiske visualiseringer basert på
+`004 data/raw/Data som skal brukes Anonymisert.csv`.
+
+## Struktur
+
+- `./generate_historical_visuals.py`: genererer figurer, tabeller og sammendrag
+- `outputs/figures/`: PNG-filer klare for rapport eller vedlegg
+- `outputs/tables/`: CSV- og Markdown-tabeller
+- `outputs/summary.md`: kort oversikt over hva som ble generert
 
 ## Kjøring
 
@@ -11,12 +18,6 @@ Bruk prosjektets permanente virtuelle miljø:
 source /Users/juliekarlsen/.venvs/g10-julie-individuell/bin/activate
 python "004 data/visualization/generate_historical_visuals.py"
 ```
-
-## Output
-
-- `figures/`: PNG-filer klare for rapport eller vedlegg
-- `tables/`: CSV- og Markdown-tabeller
-- `summary.md`: kort oversikt over hva som ble generert og hva som er mest relevant for rapporten
 
 ## Standardpakke
 

@@ -53,7 +53,7 @@ Next step:
 - Built a separate historical visualization pipeline under `004 data/visualization` and generated figures and summary tables for the descriptive data analysis.
 - Inserted the key historical figures and explanatory text directly into the report, and refined the report text so the case is described as 16 vessels operating within the same offshore segment.
 - Identified that the previous evaluation setup was too weak, and rebuilt the modeling workflow around an explicit time-based train/test split.
-- Added `004 data/train.csv` and `004 data/test.csv` in the same raw format as the master dataset, with train covering `2021-04` to `2024-12` and test covering `2025-01` to `2026-03`.
+- Added `004 data/processed/train.csv` and `004 data/processed/test.csv` in the same raw format as the master dataset, with train covering `2021-04` to `2024-12` and test covering `2025-01` to `2026-03`.
 - Updated the modeling code so historical evaluation now runs on the explicit train/test split, while future forecasts still use the full history up to March 2026.
 - Regenerated Exponential Smoothing results under the new split and documented the revised evaluation setup in both the report and modeling README.
 - Committed and pushed the main implementation changes to GitHub in commits `d336d02` (`Update analysis assets and add historical visualizations`) and `8dfcf9d` (`Add explicit train-test split for model evaluation`).
@@ -73,7 +73,7 @@ Next step:
 - Refactored `Eksponentiell glatting` into a comparable per-vessel benchmark with explicit ETS specification selection, residual diagnostics, and representative test plots.
 - Refactored `XGBoost` into a cleaner panel-data workflow with lag features, rolling features, calendar features, vessel encoding, feature importance outputs, and month-by-month walk-forward evaluation.
 - Refactored `LSTM` into a shared sequence-based evaluation workflow with `12`-month input windows, train-only scaling, training-history artifacts, and representative test plots.
-- Added combined verification outputs under `004 data/modeling/results`, including summary tables by model, vessel, and month, plus figure outputs for `MAE` comparison and vessel-level error heatmaps.
+- Added combined verification outputs under `004 data/modeling/outputs/shared`, including summary tables by model, vessel, and month, plus figure outputs for `MAE` comparison and vessel-level error heatmaps.
 - Removed `future_predictions.csv` from the standard modeling run so the default pipeline now documents only model building, testing, and verification, while future forecasting is left for a later report section.
 - Updated the modeling README and the report chapters so they match the revised workflow and explicitly use figures/tables as verification material for each model.
 - Ran the full pipeline after the refactor and confirmed the latest shared historical test ranking: `SARIMA` best, followed by `XGBoost`, `LSTM`, and `Eksponentiell glatting`.
@@ -81,7 +81,7 @@ Next step:
 
 ## 16.04.2026
 - Extended the modeling pipeline so future forecasts are now generated systematically for `1`, `3`, `6`, and `12` months ahead from the latest observed month in the dataset.
-- Reintroduced future forecast outputs under `004 data/modeling/results` with combined forecast tables, horizon-specific tables, pivot tables, and updated forecast figures for use in the report.
+- Reintroduced future forecast outputs under `004 data/modeling/outputs/shared` with combined forecast tables, horizon-specific tables, pivot tables, and updated forecast figures for use in the report.
 - Reworked the report structure from `Casebeskrivelse` through `Resultat` so the historical material is split more clearly between case context, data description, modeling, and results.
 - Moved the descriptive historical analysis into `Metode og data`, added clearer subsections for `Datagrunnlag` and `Deskriptiv analyse av datasettet`, and removed the previous standalone analysis chapter.
 - Revised `Litteratur` and `Teori` so the text is more technically balanced across `SARIMA`, `Eksponentiell glatting`, `XGBoost`, and `LSTM`, while keeping the report aligned with APA 7.

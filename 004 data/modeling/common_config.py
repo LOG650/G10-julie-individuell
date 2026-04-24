@@ -36,12 +36,18 @@ warnings.filterwarnings(
 
 
 ROOT = Path(__file__).resolve().parents[2]
-MASTER_DATA_PATH = ROOT / "004 data" / "Data som skal brukes Anonymisert.csv"
-TRAIN_DATA_PATH = ROOT / "004 data" / "train.csv"
-TEST_DATA_PATH = ROOT / "004 data" / "test.csv"
-RESULTS_DIR = Path(__file__).resolve().parent / "results"
-MODEL_LOG_DIR = Path(__file__).resolve().parent / "model_logs"
-MODEL_ARTIFACTS_DIR = Path(__file__).resolve().parent / "models"
+DATA_DIR = ROOT / "004 data"
+RAW_DATA_DIR = DATA_DIR / "raw"
+PROCESSED_DATA_DIR = DATA_DIR / "processed"
+MODELING_DIR = Path(__file__).resolve().parent
+MODELING_OUTPUT_DIR = MODELING_DIR / "outputs"
+
+MASTER_DATA_PATH = RAW_DATA_DIR / "Data som skal brukes Anonymisert.csv"
+TRAIN_DATA_PATH = PROCESSED_DATA_DIR / "train.csv"
+TEST_DATA_PATH = PROCESSED_DATA_DIR / "test.csv"
+RESULTS_DIR = MODELING_OUTPUT_DIR / "shared"
+MODEL_LOG_DIR = MODELING_OUTPUT_DIR / "logs"
+MODEL_ARTIFACTS_DIR = MODELING_OUTPUT_DIR / "models"
 COMPARISON_LOG_PATH = MODEL_LOG_DIR / "Modellsammenligning.md"
 TRAIN_END_DATE = pd.Timestamp(year=2024, month=12, day=1)
 TEST_START_DATE = pd.Timestamp(year=2025, month=1, day=1)

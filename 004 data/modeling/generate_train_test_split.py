@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from run_models import (
-    TEST_DATA_PATH,
-    TRAIN_DATA_PATH,
+from common_config import TEST_DATA_PATH, TRAIN_DATA_PATH
+from common_data import (
     ensure_split_datasets,
     format_period,
     load_dataset,

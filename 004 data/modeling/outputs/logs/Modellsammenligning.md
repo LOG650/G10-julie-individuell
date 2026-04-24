@@ -2,7 +2,7 @@
 
 Dette dokumentet oppsummerer siste kjøring av alle modellene og er ment som arbeidsgrunnlag for metode-, analyse- og diskusjonsdelen i rapporten.
 
-- Sist generert: `2026-04-16T17:56:37`
+- Sist generert: `2026-04-24T11:42:50`
 - Evaluering train: `2021-04 til 2024-12`
 - Evaluering test: `2025-01 til 2026-03`
 - Fremtidsprognoser: `1 måned, 3 måneder, 6 måneder, 12 måneder`

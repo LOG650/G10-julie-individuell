@@ -21,10 +21,13 @@ import matplotlib.pyplot as plt
 
 
 ROOT = Path(__file__).resolve().parents[2]
-DATA_PATH = ROOT / "004 data" / "Data som skal brukes Anonymisert.csv"
+DATA_DIR = ROOT / "004 data"
+DATA_PATH = DATA_DIR / "raw" / "Data som skal brukes Anonymisert.csv"
 VISUALIZATION_DIR = Path(__file__).resolve().parent
-FIGURES_DIR = VISUALIZATION_DIR / "figures"
-TABLES_DIR = VISUALIZATION_DIR / "tables"
+OUTPUTS_DIR = VISUALIZATION_DIR / "outputs"
+FIGURES_DIR = OUTPUTS_DIR / "figures"
+TABLES_DIR = OUTPUTS_DIR / "tables"
+SUMMARY_PATH = OUTPUTS_DIR / "summary.md"
 
 MONTH_ORDER = {
     "Januar": 1,
@@ -61,6 +64,7 @@ class DatasetStats:
 
 
 def ensure_output_dirs() -> None:
+    OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
     FIGURES_DIR.mkdir(parents=True, exist_ok=True)
     TABLES_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -568,7 +572,7 @@ def write_visualization_summary(
             ]
         )
 
-    (VISUALIZATION_DIR / "summary.md").write_text(
+    SUMMARY_PATH.write_text(
         "\n".join(summary_lines) + "\n",
         encoding="utf-8",
     )
@@ -602,7 +606,7 @@ def main() -> None:
         top_vessels=top_vessels,
     )
 
-    print("Genererte historiske visualiseringer i 004 data/visualization/.")
+    print("Genererte historiske visualiseringer i 004 data/visualization/outputs/.")
     print(f"- Figurer: {len(list(FIGURES_DIR.glob('*.png')))}")
     print(f"- Tabeller: {len(list(TABLES_DIR.glob('*')))}")
     print(

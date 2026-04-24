@@ -2,7 +2,7 @@
 
 Dette dokumentet genereres automatisk ved hver kjøring av `004 data/modeling/run_models.py`.
 
-- Sist generert: `2026-04-16T17:56:37`
+- Sist generert: `2026-04-24T11:42:50`
 - Status: `ok`
 - MAE: `7.3487`
 - RMSE: `17.4010`

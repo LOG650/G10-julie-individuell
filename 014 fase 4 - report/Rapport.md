@@ -356,7 +356,7 @@ Casebedriften opererer samtidig i et marked preget av betydelig volatilitet. Off
 
 Figur 1 viser samlet offhire per måned aggregert på tvers av alle fartøy. Figuren gir et første bilde av hvor stabilt eller ujevnt materialet faktisk er over tid.
 
-![Figur 1. Samlet offhire per måned aggregert på tvers av alle fartøy.](<../004 data/visualization/figures/samlet_offhire_per_maaned.png>)
+![Figur 1. Samlet offhire per måned aggregert på tvers av alle fartøy.](<../004 data/visualization/outputs/figures/samlet_offhire_per_maaned.png>)
 
 *Figur 1. Samlet offhire per måned fra april 2021 til mars 2026, målt som summen av offhire i prosentpoeng på tvers av alle fartøy.*
 
@@ -364,7 +364,7 @@ Den samlede tidsserien viser tydelige topper og rolige perioder, heller enn en j
 
 Mens figur 1 viser totalnivået i materialet, viser figur 2 hvordan variasjonen fordeler seg mellom fartøyene og over tid.
 
-![Figur 2. Heatmap for offhire per fartøy og måned.](<../004 data/visualization/figures/heatmap_fartoy_maaned.png>)
+![Figur 2. Heatmap for offhire per fartøy og måned.](<../004 data/visualization/outputs/figures/heatmap_fartoy_maaned.png>)
 
 *Figur 2. Heatmap som viser offhire per fartøy og måned. Mørkere farger indikerer høyere offhire, mens lyse felt indikerer lave eller null registreringer.*
 
@@ -428,7 +428,7 @@ De overordnede figurene i casebeskrivelsen viser at offhire varierer både over 
 
 Figur 3 rangerer fartøyene etter gjennomsnittlig månedlig offhire i hele observasjonsperioden. Fordi 2021 og 2026 er ufullstendige år, er gjennomsnittlig månedlig nivå et mer informativt mål enn rene totalsummer.
 
-![Figur 3. Gjennomsnittlig månedlig offhire per fartøy.](<../004 data/visualization/figures/gjennomsnitt_offhire_per_fartoy.png>)
+![Figur 3. Gjennomsnittlig månedlig offhire per fartøy.](<../004 data/visualization/outputs/figures/gjennomsnitt_offhire_per_fartoy.png>)
 
 *Figur 3. Gjennomsnittlig månedlig offhire per fartøy for hele perioden april 2021 til mars 2026.*
 
@@ -446,7 +446,7 @@ Tabell 2 oppsummerer de fem fartøyene med høyest gjennomsnittlig offhire og vi
 
 Figur 4 utdyper denne variasjonen ved å vise fordelingen av offhire for hvert fartøy gjennom hele perioden, ikke bare gjennomsnittsnivået.
 
-![Figur 4. Boksplott for offhire per fartøy.](<../004 data/visualization/figures/boksplot_offhire_per_fartoy.png>)
+![Figur 4. Boksplott for offhire per fartøy.](<../004 data/visualization/outputs/figures/boksplot_offhire_per_fartoy.png>)
 
 *Figur 4. Boksplott som viser median, kvartiler og ekstreme observasjoner for offhire per fartøy.*
 
@@ -456,7 +456,7 @@ Boksplottet viser at datasettet er tydelig nulltungt og høyreskjevt. For de fle
 
 For å undersøke om fartøyene med høyest gjennomsnittlig offhire følger like eller ulike mønstre over tid, viser figur 5 de fem fartøyene med høyest gjennomsnittsnivå som egne tidsserier.
 
-![Figur 5. Tidsserier for fartøy med høyest gjennomsnittlig offhire.](<../004 data/visualization/figures/top5_fartoy_tidsserie.png>)
+![Figur 5. Tidsserier for fartøy med høyest gjennomsnittlig offhire.](<../004 data/visualization/outputs/figures/top5_fartoy_tidsserie.png>)
 
 *Figur 5. Historiske tidsserier for de fem fartøyene med høyest gjennomsnittlig månedlig offhire i datasettet.*
 
@@ -504,21 +504,21 @@ I denne studien brukes `SARIMA` fartøyvis, slik at hver tidsserie modelleres so
 
 Figur 6 og 7 viser `ACF` og `PACF` for det representative fartøyet etter valgt transformasjon. Figur 8 viser residualene for samme eksempel. I tillegg viser residualtabellen i artefaktene at alle estimerte `ARIMA/SARIMA`-modeller hadde `Ljung-Box`-p-verdier over `0.05`, noe som taler for at det ikke gjenstår tydelig autokorrelasjon i residualene.
 
-![Figur 6. ACF for representativ ARIMA/SARIMA-serie.](<../004 data/modeling/models/SARIMA/acf.png>)
+![Figur 6. ACF for representativ ARIMA/SARIMA-serie.](<../004 data/modeling/outputs/models/SARIMA/acf.png>)
 
 *Figur 6. ACF for representativt fartøy (`Fartøy 2`) brukt som støtte i modellidentifikasjonen.*
 
-![Figur 7. PACF for representativ ARIMA/SARIMA-serie.](<../004 data/modeling/models/SARIMA/pacf.png>)
+![Figur 7. PACF for representativ ARIMA/SARIMA-serie.](<../004 data/modeling/outputs/models/SARIMA/pacf.png>)
 
 *Figur 7. PACF for representativt fartøy (`Fartøy 2`) brukt som støtte i modellidentifikasjonen.*
 
-![Figur 8. Residualdiagnostikk for representativ ARIMA/SARIMA-modell.](<../004 data/modeling/models/SARIMA/residualdiagnostikk.png>)
+![Figur 8. Residualdiagnostikk for representativ ARIMA/SARIMA-modell.](<../004 data/modeling/outputs/models/SARIMA/residualdiagnostikk.png>)
 
 *Figur 8. Residualdiagnostikk for valgt `ARIMA/SARIMA`-modell på `Fartøy 2`. Figuren viser både residualforløp og residualfordeling.*
 
 Figur 9 viser hvordan den valgte modellen treffer i testperioden for det representative fartøyet. Figuren brukes ikke som hovedbevis for modellytelsen, men som en konkret verifikasjon av at modellen faktisk følger de viktigste bevegelsene i testvinduet.
 
-![Figur 9. Representativ testprognose for ARIMA/SARIMA.](<../004 data/modeling/models/SARIMA/representativ_testplot.png>)
+![Figur 9. Representativ testprognose for ARIMA/SARIMA.](<../004 data/modeling/outputs/models/SARIMA/representativ_testplot.png>)
 
 *Figur 9. Historiske testprediksjoner for `ARIMA/SARIMA` på `Fartøy 2`. Grå linje viser treningsdata, blå linje faktisk testforløp og oransje linje modellens prediksjoner.*
 
@@ -544,7 +544,7 @@ Tabell 5 oppsummerer hvilke spesifikasjoner som faktisk ble valgt. Resultatet vi
 
 Residualdiagnostikken viser at `ETS` fungerer rimelig godt for mange fartøy, men svakere enn `ARIMA/SARIMA` på enkelte serier. Særlig `Fartøy 2` og `Fartøy 7` fikk `Ljung-Box`-p-verdier under `0.05`, noe som indikerer at restautokorrelasjon ikke var like godt håndtert i alle tilfeller. Figur 10 viser testforløpet for det representative fartøyet.
 
-![Figur 10. Representativ testprognose for eksponentiell glatting.](<../004 data/modeling/models/Eksponentiell glatting/representativ_testplot.png>)
+![Figur 10. Representativ testprognose for eksponentiell glatting.](<../004 data/modeling/outputs/models/Eksponentiell glatting/representativ_testplot.png>)
 
 *Figur 10. Historiske testprediksjoner for eksponentiell glatting på `Fartøy 2`. Figuren viser at modellen fanger nivået i serien, men håndterer topper svakere enn den beste `ARIMA/SARIMA`-modellen.*
 
@@ -582,13 +582,13 @@ Hyperparametrene ble holdt faste gjennom hele testoppsettet, som vist i tabell 7
 
 Figur 11 viser at modellen i hovedsak bygger på kort og mellomlang historikk. `lag_1` er viktigst, men også `rolling_mean_12`, `rolling_mean_6`, `rolling_mean_3` og enkelte fartøyindikatorer bidrar mye. Dette er konsistent med at problemet både har tidsseriepreg og tydelig fartøyheterogenitet.
 
-![Figur 11. XGBoost feature importance.](<../004 data/modeling/models/XGBoost/feature_importance.png>)
+![Figur 11. XGBoost feature importance.](<../004 data/modeling/outputs/models/XGBoost/feature_importance.png>)
 
 *Figur 11. Viktigste features i referansemodellen for `XGBoost` estimert på treningsperioden. Laggede verdier og rullerende gjennomsnitt dominerer.*
 
 Figur 12 viser den historiske testytelsen for det representative fartøyet. Sammenlignet med de klassiske modellene framstår `XGBoost` som mer fleksibel, men fortsatt sårbar i perioder med svært uregelmessige topper.
 
-![Figur 12. Representativ testprognose for XGBoost.](<../004 data/modeling/models/XGBoost/representativ_testplot.png>)
+![Figur 12. Representativ testprognose for XGBoost.](<../004 data/modeling/outputs/models/XGBoost/representativ_testplot.png>)
 
 *Figur 12. Historiske testprediksjoner for `XGBoost` på `Fartøy 2`. Figuren viser modellens evne til å følge nivåendringer uten eksplisitt tidsseriemodell.*
 
@@ -619,13 +619,13 @@ Det konkrete oppsettet er vist i tabell 8.
 
 Figur 13 viser treningshistorikken fra referansekjøringen på treningsperioden. Valideringstapet flater tidlig ut og begynner deretter å stige, noe som understøtter at tidlig stopping er nødvendig for å unngå overtilpasning.
 
-![Figur 13. Treningshistorikk for LSTM.](<../004 data/modeling/models/LSTM/training_history.png>)
+![Figur 13. Treningshistorikk for LSTM.](<../004 data/modeling/outputs/models/LSTM/training_history.png>)
 
 *Figur 13. Trenings- og valideringstap for `LSTM` estimert på treningsperioden. Figuren viser at modellen lærer raskt, men at valideringstapet ikke forbedres videre etter de første epokene.*
 
 Figur 14 viser testforløpet for det representative fartøyet. Som for `XGBoost` er modellen fleksibel, men den store fordelen over de beste klassiske modellene er ikke tydelig i dette datasettet.
 
-![Figur 14. Representativ testprognose for LSTM.](<../004 data/modeling/models/LSTM/representativ_testplot.png>)
+![Figur 14. Representativ testprognose for LSTM.](<../004 data/modeling/outputs/models/LSTM/representativ_testplot.png>)
 
 *Figur 14. Historiske testprediksjoner for `LSTM` på `Fartøy 2`. Figuren viser at modellen følger nivåendringer relativt godt, men ikke tydelig bedre enn de sterkeste alternativene.*
 
@@ -658,19 +658,19 @@ Tabell 9 viser det samlede testresultatet. `ARIMA/SARIMA` oppnår lavest `MAE` o
 
 Figur 15 visualiserer de samme `MAE`-resultatene som en samlet sammenligning. Figuren tydeliggjør at forskjellen mellom de tre beste modellene er relativt liten, men at `ARIMA/SARIMA` likevel kommer best ut i siste kjøring.
 
-![Figur 15. MAE per modell i testperioden.](<../004 data/modeling/results/figures/mae_per_model.png>)
+![Figur 15. MAE per modell i testperioden.](<../004 data/modeling/outputs/shared/figures/mae_per_model.png>)
 
 *Figur 15. Samlet `MAE` for de fire modellene i testperioden. Lavere verdi indikerer bedre prediksjonsnøyaktighet.*
 
 Figur 16 viser hvordan `MAE` varierer mellom testmånedene. Ingen modell dominerer alle måneder fullstendig, men `ARIMA/SARIMA` er gjennomgående sterk og særlig stabil i flere av månedene med mer moderate nivåer. Samtidig viser figuren at alle modellene får høyere feil i måneder der offhire-nivået er preget av store hopp og episoder.
 
-![Figur 16. MAE per testmåned og modell.](<../004 data/modeling/results/figures/mae_by_month.png>)
+![Figur 16. MAE per testmåned og modell.](<../004 data/modeling/outputs/shared/figures/mae_by_month.png>)
 
 *Figur 16. `MAE` per måned i testperioden for de fire modellene. Figuren viser hvordan modellytelsen varierer over tid, ikke bare samlet.*
 
 Figur 17 viser `MAE` per fartøy og modell som heatmap. Figuren tydeliggjør at de største feilene er konsentrert rundt noen få fartøy, særlig `Fartøy 10`, `Fartøy 9` og `Fartøy 8`, mens flere fartøy med lav eller null offhire er enklere å predikere for alle modellene. Dette betyr at samlet modellrangering i stor grad påvirkes av hvor godt modellene håndterer de mest krevende fartøyene.
 
-![Figur 17. Heatmap for MAE per fartøy og modell.](<../004 data/modeling/results/figures/mae_heatmap_by_vessel.png>)
+![Figur 17. Heatmap for MAE per fartøy og modell.](<../004 data/modeling/outputs/shared/figures/mae_heatmap_by_vessel.png>)
 
 *Figur 17. Heatmap som viser `MAE` per fartøy og modell i testperioden. Mørkere felt indikerer høyere prediksjonsfeil.*
 
@@ -678,7 +678,7 @@ Resultatene fra den historiske modelltesten peker mot tre hovedobservasjoner. Fo
 
 ## Resultater fra fremtidsprognoser
 
-Etter at modellene var testet historisk, ble alle fire modellene kjørt på hele historikken til og med `2026-03`. Prognosevinduet dekker dermed perioden `2026-04` til `2027-03`. For å holde hovedteksten lesbar presenteres tabellene nedenfor som samlet prognostisert offhire per måned på tvers av de `15` fartøyene som fikk framtidsprognoser. De detaljerte fartøyvise forecast-tabellene er lagret som egne artefakter i `004 data/modeling/results/`.
+Etter at modellene var testet historisk, ble alle fire modellene kjørt på hele historikken til og med `2026-03`. Prognosevinduet dekker dermed perioden `2026-04` til `2027-03`. For å holde hovedteksten lesbar presenteres tabellene nedenfor som samlet prognostisert offhire per måned på tvers av de `15` fartøyene som fikk framtidsprognoser. De detaljerte fartøyvise forecast-tabellene er lagret som egne artefakter i `004 data/modeling/outputs/shared/`.
 
 ### Prognose 1 måned fram
 
@@ -688,7 +688,7 @@ Tabell 10 viser énmånedersprognosen for april `2026`. Allerede på dette korte
 | --- | ---: | ---: | ---: | ---: |
 | `2026-04` | 53.37 | 91.60 | 76.35 | 102.19 |
 
-![Figur 18. Samlet prognostisert offhire 1 måned fram.](<../004 data/modeling/results/figures/future_total_offhire_1m.png>)
+![Figur 18. Samlet prognostisert offhire 1 måned fram.](<../004 data/modeling/outputs/shared/figures/future_total_offhire_1m.png>)
 
 *Figur 18. Samlet prognostisert offhire i april `2026` for de fire modellene.*
 
@@ -702,7 +702,7 @@ Tabell 11 viser at forskjellene øker raskt når horisonten forlenges til tre m�
 | `2026-05` | 53.69 | 77.58 | 138.96 | 181.85 |
 | `2026-06` | 54.00 | 66.39 | 154.27 | 238.57 |
 
-![Figur 19. Samlet prognostisert offhire 3 måneder fram.](<../004 data/modeling/results/figures/future_total_offhire_3m.png>)
+![Figur 19. Samlet prognostisert offhire 3 måneder fram.](<../004 data/modeling/outputs/shared/figures/future_total_offhire_3m.png>)
 
 *Figur 19. Samlet prognostisert offhire fra april til juni `2026` for de fire modellene.*
 
@@ -719,7 +719,7 @@ Tabell 12 viser seksmånedersprognosen fra april til september `2026`. Også her
 | `2026-08` | 54.63 | 41.29 | 125.77 | 155.66 |
 | `2026-09` | 54.95 | 25.67 | 58.83 | 206.98 |
 
-![Figur 20. Samlet prognostisert offhire 6 måneder fram.](<../004 data/modeling/results/figures/future_total_offhire_6m.png>)
+![Figur 20. Samlet prognostisert offhire 6 måneder fram.](<../004 data/modeling/outputs/shared/figures/future_total_offhire_6m.png>)
 
 *Figur 20. Samlet prognostisert offhire fra april til september `2026` for de fire modellene.*
 
@@ -742,7 +742,7 @@ Tabell 13 viser det fulle tolvmånedersvinduet fram til mars `2027`. Her blir mo
 | `2027-02` | 56.52 | 67.61 | 149.42 | 547.73 |
 | `2027-03` | 56.84 | 64.86 | 127.60 | 353.12 |
 
-![Figur 21. Samlet prognostisert offhire 12 måneder fram.](<../004 data/modeling/results/figures/future_total_offhire_12m.png>)
+![Figur 21. Samlet prognostisert offhire 12 måneder fram.](<../004 data/modeling/outputs/shared/figures/future_total_offhire_12m.png>)
 
 *Figur 21. Samlet prognostisert offhire fra april `2026` til mars `2027` for de fire modellene.*
 
