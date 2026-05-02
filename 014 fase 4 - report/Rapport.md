@@ -1,6 +1,10 @@
-# Prognostisering av offhire for fartøy i offshoresegmentet
+::: {custom-style="Title"}
+Prognostisering av offhire for fartøy i offshoresegmentet
+:::
 
-**En sammenligning av SARIMA, eksponentiell glatting, XGBoost og LSTM**
+::: {custom-style="Subtitle"}
+En sammenligning av SARIMA, eksponentiell glatting, XGBoost og LSTM
+:::
 
 **Forfatter(e):** Julie Bjørheim
 
@@ -38,7 +42,11 @@ Denne delen følger malen fra Høgskolen i Molde og fylles ut i endelig Word-ver
 <w:p><w:r><w:br w:type="page"/></w:r></w:p>
 ```
 
-# Sammendrag
+<div class="pdf-page-break"></div>
+
+::: {custom-style="Heading 4"}
+Sammendrag
+:::
 
 Denne oppgaven undersøker hvordan valg av prognosemodell påvirker prediksjonsnøyaktigheten for offhire-hendelser for fartøy innenfor samme offshoresegment. Offhire representerer perioder med operasjonell nedetid eller manglende kontraktsinntekt, og utgjør et viktig beslutningsproblem i et marked preget av teknisk kompleksitet, kontraktsmessige forpliktelser og betydelig volatilitet. Studien er gjennomført som en kvantitativ, casebasert sammenligning av fire prognosemodeller: `SARIMA`, `eksponentiell glatting`, `XGBoost` og `LSTM`. Datagrunnlaget består av historiske, anonymiserte offhire-data for `16` fartøy. Modellene ble estimert og evaluert på samme historiske oppsett med et eksplisitt train/test-splitt og ekspanderende `1`-stegs prognoser gjennom testperioden. Prediksjonsnøyaktigheten ble vurdert ved hjelp av `MAE`, `RMSE` og `sMAPE`.
 
@@ -48,7 +56,11 @@ Resultatene viser at modellvalg har betydning for prediksjonsnøyaktigheten, men
 <w:p><w:r><w:br w:type="page"/></w:r></w:p>
 ```
 
-# Abstract
+<div class="pdf-page-break"></div>
+
+::: {custom-style="Heading 4"}
+Abstract
+:::
 
 This thesis examines how the choice of forecasting model affects the predictive accuracy of offhire events for vessels operating within the same offshore segment. Offhire refers to periods of operational downtime or lost contract revenue and represents an important decision-support problem in a market characterized by technical complexity, contractual obligations, and substantial volatility. The study is designed as a quantitative, case-based comparison of four forecasting models: `SARIMA`, `exponential smoothing`, `XGBoost`, and `LSTM`. The empirical basis consists of historical, anonymized offhire data for `16` vessels. All models were estimated and evaluated under the same historical setup, using an explicit train/test split and expanding `1-step` forecasts throughout the test period. Predictive performance was assessed using `MAE`, `RMSE`, and `sMAPE`.
 
@@ -58,97 +70,16 @@ The results show that model choice affects predictive accuracy, but not in a way
 <w:p><w:r><w:br w:type="page"/></w:r></w:p>
 ```
 
-# Innhold
+<div class="pdf-page-break"></div>
 
-1.0 Innledning
-
-   1.1 Problemstilling
-
-   1.2 Avgrensninger
-
-   1.3 Antakelser
-
-2.0 Litteratur
-
-3.0 Teori
-
-   3.1 Prognostisering som beslutningsstøtte
-
-   3.2 Tidsserier og sentrale komponenter
-
-   3.3 Klassiske tidsseriemodeller
-
-   3.4 SARIMA
-
-   3.5 Eksponentiell glatting
-
-   3.6 Maskinlæring og dyp læring i prognostisering
-
-   3.7 XGBoost
-
-   3.8 LSTM
-
-   3.9 Modellvalg og sammenligningskriterier
-
-4.0 Casebeskrivelse
-
-5.0 Metode og data
-
-   5.1 Metode
-
-   5.1.1 Modellutvalg og evalueringsoppsett
-
-   5.2 Data
-
-   5.2.1 Datagrunnlag
-
-   5.2.2 Deskriptiv analyse av datasettet
-
-6.0 Modellering
-
-   6.1 SARIMA
-
-   6.2 Eksponentiell glatting
-
-   6.3 XGBoost
-
-   6.4 LSTM
-
-   6.5 Oppsett for fremtidsprognoser
-
-7.0 Resultater
-
-   7.1 Resultater fra historisk modelltesting
-
-   7.2 Resultater fra fremtidsprognoser
-
-8.0 Diskusjon
-
-   8.1 Modellvalg og prediksjonsnøyaktighet
-
-   8.2 Datastruktur, marked og hvorfor resultatene ble som de ble
-
-   8.3 Fremtidsprognoser og praktisk tolkning
-
-   8.4 Metodiske styrker og svakheter
-
-   8.5 Betydning for bedriften og samlet vurdering
-
-9.0 Konklusjon
-
-10.0 Bibliografi
-
-11.0 Vedlegg
-
-   11.1 Oversikt over figurer
-
-   11.2 Oversikt over tabeller
-
-   11.3 Kodevedlegg
+::: {#toc-placeholder}
+:::
 
 ```{=openxml}
 <w:p><w:r><w:br w:type="page"/></w:r></w:p>
 ```
+
+<div class="pdf-page-break"></div>
 
 # Innledning
 
