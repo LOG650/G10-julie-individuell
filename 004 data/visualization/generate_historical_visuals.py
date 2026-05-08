@@ -465,30 +465,45 @@ def plot_top_vessels_over_time(panel_df: pd.DataFrame, top_vessels: list[str]) -
         freq="MS",
     )
 
-    fig, ax = plt.subplots(figsize=(12, 6))
+    fig, axes = plt.subplots(
+        len(top_vessels),
+        1,
+        figsize=(12, 2.4 * len(top_vessels) + 1.3),
+        sharex=True,
+    )
+    if len(top_vessels) == 1:
+        axes = [axes]
+
     line_colors = ["#0F4C5C", "#136F63", "#1F9D8B", "#2A6F97", "#D97706"]
 
-    for color, vessel in zip(line_colors, top_vessels, strict=False):
+    for ax, color, vessel in zip(axes, line_colors, top_vessels, strict=False):
         vessel_series = (
             panel_df.loc[panel_df["vessel"] == vessel, ["date", "offhire_pct"]]
             .drop_duplicates(subset=["date"])
             .set_index("date")
             .reindex(full_index)
         )
+        values = vessel_series["offhire_pct"].fillna(0.0)
         ax.plot(
             full_index,
-            vessel_series["offhire_pct"],
-            label=vessel,
-            linewidth=2.0,
+            values,
+            linewidth=2.1,
             color=color,
         )
+        ax.fill_between(full_index, values, 0.0, color=color, alpha=0.14)
+        ax.set_title(vessel, fontsize=11, loc="left")
+        ax.set_ylabel("Offhire (%)")
+        ax.grid(axis="y")
+        ax.set_axisbelow(True)
+        ax.set_ylim(bottom=0.0)
 
-    ax.set_title("Tidsserier for fartøy med høyest gjennomsnittlig offhire")
-    ax.set_xlabel("Måned")
-    ax.set_ylabel("Offhire (%)")
-    ax.grid(axis="y")
-    ax.set_axisbelow(True)
-    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.16), ncol=3)
+    axes[-1].set_xlabel("Måned")
+    fig.suptitle(
+        "Tidsserier for de fem fartøyene med høyest gjennomsnittlig offhire",
+        y=0.995,
+        fontsize=14,
+    )
+    fig.tight_layout(rect=(0, 0, 1, 0.98))
     fig.autofmt_xdate(rotation=45)
     save_figure(fig, "top5_fartoy_tidsserie.png")
 

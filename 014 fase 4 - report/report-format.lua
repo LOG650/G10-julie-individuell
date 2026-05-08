@@ -54,7 +54,15 @@ local function build_toc_blocks()
 
   for _, entry in ipairs(toc_entries) do
     if entry.level <= 3 then
-      local link = pandoc.Link(entry.text, "#" .. entry.identifier)
+      local toc_text = pandoc.Inlines({})
+      toc_text:insert(pandoc.Str(entry.label))
+      toc_text:insert(pandoc.Space())
+
+      for _, inline in ipairs(entry.title) do
+        toc_text:insert(inline)
+      end
+
+      local link = pandoc.Link(toc_text, "#" .. entry.identifier)
       table.insert(blocks, styled_paragraph("TOC " .. tostring(entry.level), pandoc.Inlines({link})))
     end
   end
@@ -85,11 +93,13 @@ local function format_document(doc)
       end
 
       local label = section_label(el.level)
+      local title = pandoc.Inlines(el.content)
       el.content = prefixed_inlines(label, el.content)
 
       table.insert(toc_entries, {
         level = el.level,
-        text = pandoc.Inlines(el.content),
+        label = label,
+        title = title,
         identifier = el.identifier,
       })
 
