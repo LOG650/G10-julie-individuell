@@ -23,7 +23,7 @@ Modellen ble re-trent måned for måned i en ekspanderende 1-stegs evaluering.
 
 ## Steg 5. Modellvalidering
 
-Modellen ble evaluert på testperioden med `MAE=7.3487`, `RMSE=17.4010` og `sMAPE=182.9827`.
+Modellen ble evaluert på testperioden med `MAE=7.3487`, `RMSE=17.4010`, `sMAPE=182.9827` og `MASE=1.2042`.
 
 ## Repo-artefakter
 

@@ -175,7 +175,7 @@ def write_model_code_log(
 
 
 def format_metric(value: float | None) -> str:
-    if value is None:
+    if value is None or pd.isna(value):
         return "ikke tilgjengelig"
     return f"{value:.4f}"
 
@@ -242,7 +242,9 @@ def write_model_method_log(result: ModelResult) -> None:
                 "Residualdiagnostikk ble gjennomført per fartøy med Ljung-Box-test, "
                 "og modellene ble evaluert med ekspanderende 1-stegs prognoser på testperioden. "
                 f"Samlet resultat: `MAE={format_metric(result.mae)}`, "
-                f"`RMSE={format_metric(result.rmse)}` og `sMAPE={format_metric(result.smape)}`."
+                f"`RMSE={format_metric(result.rmse)}`, "
+                f"`sMAPE={format_metric(result.smape)}` og "
+                f"`MASE={format_metric(result.mase)}`."
             ),
             "",
             "## Repo-artefakter",
@@ -285,7 +287,7 @@ def write_model_method_log(result: ModelResult) -> None:
             (
                 "Modellen ble evaluert med ekspanderende 1-stegs prognoser gjennom testperioden. "
                 f"Resultat: `MAE={format_metric(result.mae)}`, `RMSE={format_metric(result.rmse)}` "
-                f"og `sMAPE={format_metric(result.smape)}`."
+                f"`sMAPE={format_metric(result.smape)}` og `MASE={format_metric(result.mase)}`."
             ),
             "",
             "## Repo-artefakter",
@@ -322,7 +324,8 @@ def write_model_method_log(result: ModelResult) -> None:
             "",
             (
                 f"Modellen ble evaluert på testperioden med `MAE={format_metric(result.mae)}`, "
-                f"`RMSE={format_metric(result.rmse)}` og `sMAPE={format_metric(result.smape)}`."
+                f"`RMSE={format_metric(result.rmse)}`, "
+                f"`sMAPE={format_metric(result.smape)}` og `MASE={format_metric(result.mase)}`."
             ),
             "",
             "## Repo-artefakter",
@@ -359,7 +362,8 @@ def write_model_method_log(result: ModelResult) -> None:
             "",
             (
                 f"Holdout-evaluering på testsekvenser ga `MAE={format_metric(result.mae)}`, "
-                f"`RMSE={format_metric(result.rmse)}` og `sMAPE={format_metric(result.smape)}`."
+                f"`RMSE={format_metric(result.rmse)}`, "
+                f"`sMAPE={format_metric(result.smape)}` og `MASE={format_metric(result.mase)}`."
             ),
             "",
             "## Repo-artefakter",
@@ -413,6 +417,11 @@ def write_model_result_log(
             f"- sMAPE: `{result.smape:.4f}`"
             if result.smape is not None
             else "- sMAPE: `ikke tilgjengelig`"
+        ),
+        (
+            f"- MASE: `{result.mase:.4f}`"
+            if result.mase is not None and not pd.isna(result.mase)
+            else "- MASE: `ikke tilgjengelig`"
         ),
     ]
     if "evaluation_train_period" in details and "evaluation_test_period" in details:
@@ -633,15 +642,22 @@ def save_lstm_training_history(history_df: pd.DataFrame) -> None:
     plt.close(fig)
 
 
-def save_summary_artifacts(prediction_frames: dict[str, pd.DataFrame]) -> None:
+def save_summary_artifacts(
+    prediction_frames: dict[str, pd.DataFrame],
+    mase_scale_map: dict[str, float] | None = None,
+) -> None:
     non_empty_frames = [frame for frame in prediction_frames.values() if not frame.empty]
     if not non_empty_frames:
         return
 
     combined = pd.concat(non_empty_frames, ignore_index=True)
-    overall = build_metrics_table(combined, ["model"])
-    by_vessel = build_metrics_table(combined, ["model", "vessel"])
-    by_month = build_metrics_table(combined, ["model", "date"])
+    overall = build_metrics_table(combined, ["model"], mase_scale_map=mase_scale_map)
+    by_vessel = build_metrics_table(
+        combined,
+        ["model", "vessel"],
+        mase_scale_map=mase_scale_map,
+    )
+    by_month = build_metrics_table(combined, ["model", "date"], mase_scale_map=mase_scale_map)
 
     write_dataframe_artifacts(
         overall,
@@ -915,8 +931,8 @@ def write_model_comparison_log(
             "",
             "## Samlet oversikt",
             "",
-            "| Modell | Status | MAE | RMSE | sMAPE | Kommentar |",
-            "| --- | --- | --- | --- | --- | --- |",
+            "| Modell | Status | MAE | RMSE | sMAPE | MASE | Kommentar |",
+            "| --- | --- | --- | --- | --- | --- | --- |",
         ]
     )
 
@@ -932,6 +948,7 @@ def write_model_comparison_log(
                     format_metric(result.mae),
                     format_metric(result.rmse),
                     format_metric(result.smape),
+                    format_metric(result.mase),
                     detail_summary,
                 ]
             )
@@ -979,6 +996,9 @@ def write_model_comparison_log(
     if successful_results:
         best_mae = min(successful_results, key=lambda result: result.mae or float("inf"))
         best_rmse = min(successful_results, key=lambda result: result.rmse or float("inf"))
+        mase_candidates = [
+            result for result in successful_results if result.mase is not None and not pd.isna(result.mase)
+        ]
         content_lines.append(
             f"- Lavest MAE i siste kjøring: `{MODEL_METADATA[best_mae.model]['display_name']}` "
             f"({best_mae.mae:.4f})."
@@ -987,6 +1007,12 @@ def write_model_comparison_log(
             f"- Lavest RMSE i siste kjøring: `{MODEL_METADATA[best_rmse.model]['display_name']}` "
             f"({best_rmse.rmse:.4f})."
         )
+        if mase_candidates:
+            best_mase = min(mase_candidates, key=lambda result: result.mase or float("inf"))
+            content_lines.append(
+                f"- Lavest MASE i siste kjøring: `{MODEL_METADATA[best_mase.model]['display_name']}` "
+                f"({best_mase.mase:.4f})."
+            )
     else:
         content_lines.append("- Ingen modeller produserte komplette metrikker i siste kjøring.")
 
@@ -1054,6 +1080,7 @@ def save_model_specific_outputs(
             "mae": result.mae,
             "rmse": result.rmse,
             "smape": result.smape,
+            "mase": result.mase,
             "details": result.details or {},
         }
         metrics_path.write_text(

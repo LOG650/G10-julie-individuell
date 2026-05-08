@@ -2,7 +2,7 @@
 
 Dette dokumentet oppsummerer siste kjøring av alle modellene og er ment som arbeidsgrunnlag for metode-, analyse- og diskusjonsdelen i rapporten.
 
-- Sist generert: `2026-04-24T11:42:50`
+- Sist generert: `2026-05-08T16:40:39`
 - Evaluering train: `2021-04 til 2024-12`
 - Evaluering test: `2025-01 til 2026-03`
 - Fremtidsprognoser: `1 måned, 3 måneder, 6 måneder, 12 måneder`
@@ -10,12 +10,12 @@ Dette dokumentet oppsummerer siste kjøring av alle modellene og er ment som arb
 
 ## Samlet oversikt
 
-| Modell | Status | MAE | RMSE | sMAPE | Kommentar |
-| --- | --- | --- | --- | --- | --- |
-| SARIMA | ok | 6.1521 | 16.7823 | 100.4363 | Modellerte fartøy: 15 |
-| XGBoost | ok | 7.3487 | 17.4010 | 182.9827 | Walk-forward måneder: 15 |
-| LSTM | ok | 7.5722 | 17.4062 | 178.7664 | Sekvenslengde: 12 |
-| Eksponentiell glatting | ok | 8.3676 | 17.9544 | 168.6203 | Fartøy brukt: 15 |
+| Modell | Status | MAE | RMSE | sMAPE | MASE | Kommentar |
+| --- | --- | --- | --- | --- | --- | --- |
+| SARIMA | ok | 6.1521 | 16.7823 | 100.4363 | 0.9098 | Modellerte fartøy: 15 |
+| XGBoost | ok | 7.3487 | 17.4010 | 182.9827 | 1.2042 | Walk-forward måneder: 15 |
+| LSTM | ok | 7.5722 | 17.4062 | 178.7664 | 1.3198 | Sekvenslengde: 12 |
+| Eksponentiell glatting | ok | 8.3676 | 17.9544 | 168.6203 | 1.1775 | Fartøy brukt: 15 |
 
 ## Lenker til detaljfiler
 
@@ -35,6 +35,7 @@ Dette dokumentet oppsummerer siste kjøring av alle modellene og er ment som arb
 
 - Lavest MAE i siste kjøring: `SARIMA` (6.1521).
 - Lavest RMSE i siste kjøring: `SARIMA` (16.7823).
+- Lavest MASE i siste kjøring: `SARIMA` (0.9098).
 - Datasettet dekker observasjoner fra `2021-04` til `2026-03` fordelt på 6 kalenderår.
 - Siste år i datasettet er foreløpig ufullstendig og går til `Mars 2026`.
 

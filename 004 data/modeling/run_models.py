@@ -13,6 +13,7 @@ from common_data import (
     load_dataset,
     validate_dataset_split,
 )
+from common_eval import build_mase_scale_map, mase_from_prediction_frame
 from common_io import (
     cleanup_extra_artifacts,
     ensure_results_dir,
@@ -37,6 +38,7 @@ def save_outputs(
     panel_df: pd.DataFrame,
     active_models: list[str],
     model_functions: dict[str, object],
+    mase_scale_map: dict[str, float],
 ) -> None:
     metrics_payload = [
         {
@@ -45,6 +47,7 @@ def save_outputs(
             "mae": result.mae,
             "rmse": result.rmse,
             "smape": result.smape,
+            "mase": result.mase,
             "details": result.details or {},
         }
         for result in results
@@ -62,7 +65,7 @@ def save_outputs(
         active_models,
         model_functions=model_functions,
     )
-    save_summary_artifacts(prediction_frames)
+    save_summary_artifacts(prediction_frames, mase_scale_map=mase_scale_map)
 
     non_empty_frames = [frame for frame in prediction_frames.values() if not frame.empty]
     if non_empty_frames:
@@ -94,6 +97,7 @@ def main() -> None:
         .reset_index(drop=True)
     )
     split_metadata = build_split_metadata(train_panel, test_panel)
+    mase_scale_map = build_mase_scale_map(train_panel)
     active_models = ACTIVE_MODELS.copy()
     for model_name in active_models:
         cleanup_extra_artifacts(model_name)
@@ -124,6 +128,7 @@ def main() -> None:
         runner = model_runners[model_name]
         try:
             result, pred_df = runner()
+            result.mase = mase_from_prediction_frame(pred_df, mase_scale_map=mase_scale_map)
             results.append(result)
             prediction_frames[model_name] = pred_df
         except DataTooShortError as exc:
@@ -179,6 +184,7 @@ def main() -> None:
         full_panel,
         active_models,
         model_functions,
+        mase_scale_map,
     )
 
     print("Modellkjøring fullført.")
@@ -188,8 +194,11 @@ def main() -> None:
     )
     for result in results:
         if result.status == "ok":
+            mase_text = f"{result.mase:.3f}" if result.mase is not None else "n/a"
             print(
-                f"- {result.model}: OK | MAE={result.mae:.3f} | RMSE={result.rmse:.3f}"
+                f"- {result.model}: OK | MAE={result.mae:.3f} | "
+                f"RMSE={result.rmse:.3f} | "
+                f"MASE={mase_text}"
             )
         else:
             reason = (result.details or {}).get("reason", "ingen detalj")

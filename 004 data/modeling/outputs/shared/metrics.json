@@ -2,9 +2,10 @@
   {
     "model": "sarima",
     "status": "ok",
-    "mae": 6.152124735720608,
+    "mae": 6.152124735720609,
     "rmse": 16.782290549820456,
     "smape": 100.43626886295267,
+    "mase": 0.9098181009049752,
     "details": {
       "evaluation_train_period": "2021-04 til 2024-12",
       "evaluation_test_period": "2025-01 til 2026-03",
@@ -31,9 +32,10 @@
   {
     "model": "exponential_smoothing",
     "status": "ok",
-    "mae": 8.367609879091702,
+    "mae": 8.3676098790917,
     "rmse": 17.954421168837566,
     "smape": 168.6202539943568,
+    "mase": 1.1775491947966237,
     "details": {
       "evaluation_train_period": "2021-04 til 2024-12",
       "evaluation_test_period": "2025-01 til 2026-03",
@@ -54,6 +56,7 @@
     "mae": 7.348737865136729,
     "rmse": 17.400957056837225,
     "smape": 182.98268728468335,
+    "mase": 1.2042054426141764,
     "details": {
       "evaluation_train_period": "2021-04 til 2024-12",
       "evaluation_test_period": "2025-01 til 2026-03",
@@ -101,6 +104,7 @@
     "mae": 7.572219503063626,
     "rmse": 17.406238905992605,
     "smape": 178.76644891446256,
+    "mase": 1.3197974432242436,
     "details": {
       "evaluation_train_period": "2021-04 til 2024-12",
       "evaluation_test_period": "2025-01 til 2026-03",

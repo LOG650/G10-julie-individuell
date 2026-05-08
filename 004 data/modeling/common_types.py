@@ -11,6 +11,7 @@ class ModelResult:
     mae: float | None = None
     rmse: float | None = None
     smape: float | None = None
+    mase: float | None = None
     details: dict[str, Any] | None = None
 
 

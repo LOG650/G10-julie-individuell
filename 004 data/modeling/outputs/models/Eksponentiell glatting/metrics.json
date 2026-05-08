@@ -1,9 +1,10 @@
 {
   "model": "exponential_smoothing",
   "status": "ok",
-  "mae": 8.367609879091702,
+  "mae": 8.3676098790917,
   "rmse": 17.954421168837566,
   "smape": 168.6202539943568,
+  "mase": 1.1775491947966237,
   "details": {
     "evaluation_train_period": "2021-04 til 2024-12",
     "evaluation_test_period": "2025-01 til 2026-03",

@@ -1,9 +1,10 @@
 {
   "model": "sarima",
   "status": "ok",
-  "mae": 6.152124735720608,
+  "mae": 6.152124735720609,
   "rmse": 16.782290549820456,
   "smape": 100.43626886295267,
+  "mase": 0.9098181009049752,
   "details": {
     "evaluation_train_period": "2021-04 til 2024-12",
     "evaluation_test_period": "2025-01 til 2026-03",

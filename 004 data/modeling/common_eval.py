@@ -21,6 +21,22 @@ def smape(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     return float(np.mean(safe_ratio))
 
 
+def build_mase_scale_map(train_panel: pd.DataFrame) -> dict[str, float]:
+    if train_panel.empty:
+        return {}
+
+    scale_map: dict[str, float] = {}
+    ordered = train_panel.sort_values(["vessel", "date"]).copy()
+    for vessel, vessel_df in ordered.groupby("vessel"):
+        values = vessel_df["offhire_days"].to_numpy(dtype=float)
+        if len(values) < 2:
+            continue
+        scale = float(np.abs(np.diff(values)).mean())
+        if scale > 0.0:
+            scale_map[str(vessel)] = scale
+    return scale_map
+
+
 def select_representative_vessel(panel_df: pd.DataFrame) -> str | None:
     if panel_df.empty:
         return None
@@ -34,7 +50,10 @@ def select_representative_vessel(panel_df: pd.DataFrame) -> str | None:
     return str(vessel_means.iloc[0]["vessel"])
 
 
-def add_error_columns(pred_df: pd.DataFrame) -> pd.DataFrame:
+def add_error_columns(
+    pred_df: pd.DataFrame,
+    mase_scale_map: dict[str, float] | None = None,
+) -> pd.DataFrame:
     if pred_df.empty:
         return pred_df.copy()
 
@@ -48,6 +67,18 @@ def add_error_columns(pred_df: pd.DataFrame) -> pd.DataFrame:
         0.0,
         (200.0 * df["abs_error"]) / denominator,
     )
+    if mase_scale_map is None:
+        df["mase_scale"] = np.nan
+        df["mase_component"] = np.nan
+        return df
+
+    df["mase_scale"] = pd.to_numeric(df["vessel"].map(mase_scale_map), errors="coerce")
+    valid_scale_mask = df["mase_scale"].notna() & (df["mase_scale"] > 0.0)
+    df["mase_component"] = np.where(
+        valid_scale_mask,
+        df["abs_error"] / df["mase_scale"],
+        np.nan,
+    )
     return df
 
 
@@ -58,6 +89,16 @@ def summarize_prediction_frame(pred_df: pd.DataFrame) -> tuple[float, float, flo
         float(np.sqrt(enriched["squared_error"].mean())),
         float(enriched["smape_component"].mean()),
     )
+
+
+def mase_from_prediction_frame(
+    pred_df: pd.DataFrame,
+    mase_scale_map: dict[str, float] | None = None,
+) -> float | None:
+    enriched = add_error_columns(pred_df, mase_scale_map=mase_scale_map)
+    if "mase_component" not in enriched or enriched["mase_component"].dropna().empty:
+        return None
+    return float(enriched["mase_component"].mean())
 
 
 def build_future_prediction_row(
@@ -79,8 +120,9 @@ def build_future_prediction_row(
 def build_metrics_table(
     pred_df: pd.DataFrame,
     group_columns: list[str],
+    mase_scale_map: dict[str, float] | None = None,
 ) -> pd.DataFrame:
-    enriched = add_error_columns(pred_df)
+    enriched = add_error_columns(pred_df, mase_scale_map=mase_scale_map)
     if enriched.empty:
         return pd.DataFrame()
 
@@ -91,6 +133,7 @@ def build_metrics_table(
             mae=("abs_error", "mean"),
             rmse=("squared_error", lambda values: float(np.sqrt(np.mean(values)))),
             smape=("smape_component", "mean"),
+            mase=("mase_component", "mean"),
         )
         .sort_values(group_columns)
         .reset_index(drop=True)

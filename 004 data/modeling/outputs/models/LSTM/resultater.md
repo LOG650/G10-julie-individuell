@@ -2,11 +2,12 @@
 
 Dette dokumentet genereres automatisk ved hver kjøring av `004 data/modeling/run_models.py`.
 
-- Sist generert: `2026-04-24T11:42:50`
+- Sist generert: `2026-05-08T16:40:39`
 - Status: `ok`
 - MAE: `7.5722`
 - RMSE: `17.4062`
 - sMAPE: `178.7664`
+- MASE: `1.3198`
 - Evaluering train: `2021-04 til 2024-12`
 - Evaluering test: `2025-01 til 2026-03`
 - Fremtidsprognoser: `12` steg fra `2026-04` til `2027-03`

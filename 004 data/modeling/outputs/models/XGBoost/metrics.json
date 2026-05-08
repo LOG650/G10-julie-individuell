@@ -4,6 +4,7 @@
   "mae": 7.348737865136729,
   "rmse": 17.400957056837225,
   "smape": 182.98268728468335,
+  "mase": 1.2042054426141764,
   "details": {
     "evaluation_train_period": "2021-04 til 2024-12",
     "evaluation_test_period": "2025-01 til 2026-03",

@@ -23,7 +23,7 @@ Hver fartøysserie ble estimert separat på train-settet, og beste ETS-variant b
 
 ## Steg 5. Modellvalidering
 
-Modellen ble evaluert med ekspanderende 1-stegs prognoser gjennom testperioden. Resultat: `MAE=8.3676`, `RMSE=17.9544` og `sMAPE=168.6203`.
+Modellen ble evaluert med ekspanderende 1-stegs prognoser gjennom testperioden. Resultat: `MAE=8.3676`, `RMSE=17.9544` `sMAPE=168.6203` og `MASE=1.1775`.
 
 ## Repo-artefakter
 

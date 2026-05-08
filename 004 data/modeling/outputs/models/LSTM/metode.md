@@ -23,7 +23,7 @@ Modellen ble re-trent måned for måned i en ekspanderende 1-stegs evaluering.
 
 ## Steg 5. Modellvalidering
 
-Holdout-evaluering på testsekvenser ga `MAE=7.5722`, `RMSE=17.4062` og `sMAPE=178.7664`.
+Holdout-evaluering på testsekvenser ga `MAE=7.5722`, `RMSE=17.4062`, `sMAPE=178.7664` og `MASE=1.3198`.
 
 ## Repo-artefakter
 

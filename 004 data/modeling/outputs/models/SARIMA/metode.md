@@ -23,7 +23,7 @@ Kandidatmodeller ble estimert per fartøy og rangert med AIC, BIC og parsimoni. 
 
 ## Steg 5. Modellvalidering
 
-Residualdiagnostikk ble gjennomført per fartøy med Ljung-Box-test, og modellene ble evaluert med ekspanderende 1-stegs prognoser på testperioden. Samlet resultat: `MAE=6.1521`, `RMSE=16.7823` og `sMAPE=100.4363`.
+Residualdiagnostikk ble gjennomført per fartøy med Ljung-Box-test, og modellene ble evaluert med ekspanderende 1-stegs prognoser på testperioden. Samlet resultat: `MAE=6.1521`, `RMSE=16.7823`, `sMAPE=100.4363` og `MASE=0.9098`.
 
 ## Repo-artefakter
 
