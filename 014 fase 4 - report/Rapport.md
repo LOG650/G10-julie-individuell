@@ -3,12 +3,12 @@ Prognostisering av offhire for fartøy i offshoresegmentet
 :::
 
 ::: {custom-style="Subtitle"}
-En sammenligning av SARIMA, eksponentiell glatting, XGBoost og LSTM
+En sammenligning av SARIMA, Eksponentiell Glatting, XGBoost og LSTM
 :::
 
 **Forfatter(e):** Julie Bjørheim
 
-**Totalt antall sider inkludert forsiden:** [oppdateres i endelig Word-versjon]
+**Totalt antall sider inkludert forsiden:** 82
 
 **Molde, innleveringsdato:** 31.05.2026
 
@@ -16,25 +16,67 @@ En sammenligning av SARIMA, eksponentiell glatting, XGBoost og LSTM
 
 **Obligatorisk egenerklæring/gruppeerklæring**
 
-Denne delen følger malen fra Høgskolen i Molde og fylles ut i endelig Word-versjon før levering.
+Den enkelte student er selv ansvarlig for å sette seg inn i hva som er lovlige hjelpemidler, retningslinjer for bruk av disse og regler om kildebruk. Erklæringen skal bevisstgjøre studentene på deres ansvar og hvilke konsekvenser fusk kan medføre. Manglende erklæring fritar ikke studentene fra sitt ansvar.
+
+Du fyller ut erklæringen ved å klikke i ruten til høyre for den enkelte del `1`–`6` i Word-versjonen.
+
+1. Jeg erklærer herved at min besvarelse er mitt eget arbeid, og at jeg ikke har brukt andre kilder eller mottatt annen hjelp enn det som er nevnt i besvarelsen.
+2. Jeg erklærer videre at denne besvarelsen:
+   - ikke har vært brukt til annen eksamen ved annen avdeling, universitet eller høgskole innenlands eller utenlands
+   - ikke refererer til andres arbeid uten at det er oppgitt
+   - ikke refererer til eget tidligere arbeid uten at det er oppgitt
+   - har alle referansene oppgitt i litteraturlisten
+   - ikke er en kopi, duplikat eller avskrift av andres arbeid eller besvarelse
+3. Jeg er kjent med at brudd på ovennevnte er å betrakte som fusk og kan medføre annullering av eksamen og utestengelse fra universiteter og høgskoler i Norge.
+4. Jeg er kjent med at alle innleverte oppgaver kan bli plagiatkontrollert.
+5. Jeg er kjent med at høgskolen vil behandle alle saker hvor det foreligger mistanke om fusk etter høgskolens retningslinjer.
+6. Jeg har satt meg inn i regler og retningslinjer for bruk av kilder og referanser.
 
 **Personvern**
 
-- **Har oppgaven vært vurdert av NSD?** [ja/nei]
-- **NSD referansenummer:** [fylles inn ved behov]
-- **Har oppgaven vært til behandling hos REK?** [ja/nei]
-- **REK referansenummer:** [fylles inn ved behov]
+**Personopplysningsloven**
+
+Forskningsprosjekt som innebærer behandling av personopplysninger i henhold til personopplysningsloven skal meldes til Norsk senter for forskningsdata, NSD, for vurdering.
+
+- **Har oppgaven vært vurdert av NSD?** Nei
+- **Referansenummer:** [fylles inn ved behov]
+- **Jeg erklærer at oppgaven ikke omfattes av personopplysningsloven.**
+
+**Helseforskningsloven**
+
+Dersom prosjektet faller inn under helseforskningsloven, skal det også søkes om forhåndsgodkjenning fra Regionale komiteer for medisinsk og helsefaglig forskningsetikk, REK.
+
+- **Har oppgaven vært til behandling hos REK?** Nei
+- **Referansenummer:** [fylles inn ved behov]
 
 **Publiseringsavtale**
 
 - **Studiepoeng:** 15
 - **Veileder:** Per Kristian Rekdal, Bård Inge Austigaard Pettersen
-- **Elektronisk publisering:** [ja/nei]
-- **Båndlagt (konfidensiell):** [ja/nei]
+- **Elektronisk publisering:** Ja
+- **Båndlagt (konfidensiell):** Nei
 - **Publisering etter båndleggingsperiode:** [ja/nei, hvis relevant]
 - **Dato:** 31.05.2026
-- **Antall ord:** [fylles inn hvis påkrevd]
+- **Antall ord:** [fylles inn manuelt]
 - **Forfattererklæring:** [fylles inn hvis påkrevd]
+
+**KI-erklæring**
+
+Erklæring om bruk av kunstig intelligens (KI) på hjemmeeksamen:
+
+- **Har du benyttet KI-verktøy i din besvarelse?** Ja
+- **Tekstgenerering og skrivehjelp:** Ja
+- **Språkvask og korrektur:** Ja
+- **Programmering og kodehjelp:** Ja
+- **Hjelp til å analysere digitale data:** Ja
+- **Lage bilder og figurer:** Ja
+- **Annet:** Ja
+- Jeg bekrefter at detaljert forklaring av hvilket KI-verktøy som er brukt, og hvordan det er brukt, er lagt inn i oppgaven under overskriften `Bruk av kunstig intelligens`.
+- Jeg bekrefter at all bruk av KI-verktøy i min hjemmeeksamen eller oppgave er beskrevet i besvarelsen.
+- Jeg er kjent med retningslinjene for bruk av KI på hjemmeeksamen ved Høgskolen i Molde.
+- Teksten som er levert inn er min egen, uavhengig av KI-verktøy.
+
+Julie Bjørheim, 31.05.2026
 
 ---
 
@@ -50,9 +92,9 @@ Forord
 
 Denne oppgaven er skrevet som avslutning på studiet ved Høgskolen i Molde. I arbeidet med oppgaven ønsker jeg å takke forelesere og veiledere ved Høgskolen i Molde for faglige innspill, konstruktive tilbakemeldinger og veiledning gjennom hele prosessen.
 
-Jeg vil også rette en særlig takk til Simon Møkster Shipping AS for samarbeidet, for tilgang til anonymiserte data og for verdifull innsikt i et operativt problem som har gjort studien både faglig relevant og praksisnær.
+Denne oppgaven er skrevet som en del av emnet LOG650 Forskningsprosjekt ved Høgskolen i Molde. Temaet for oppgaven er prognostisering av månedlig nedetid for fartøy i offshoresegmentet, med særlig vekt på sammenligning av tradisjonelle tidsseriemodeller og KI-baserte prognosemodeller. Gjennom prosjektet har jeg fått bedre innsikt i hvordan historiske driftsdata kan brukes som beslutningsstøtte, men også hvilke begrensninger som oppstår når datagrunnlaget er kort, ujevnt og preget av mange nullobservasjoner.
 
-Til slutt vil jeg takke alle som har bidratt med støtte og oppmuntring underveis i arbeidet.
+Jeg ønsker å rette en takk til Simon Møkster Shipping AS for tilgang til datagrunnlag og relevant casekontekst. Jeg vil også takke veilederne ved Høgskolen i Molde for faglige innspill og støtte underveis i arbeidet. Generative KI-verktøy er brukt som støtte i arbeidsprosessen, blant annet til idéutvikling, strukturering, språklig bearbeiding og kodearbeid. Alle faglige vurderinger, modellvalg, analyser og endelige formuleringer er gjennomgått og kvalitetssikret.
 
 ```{=openxml}
 <w:p><w:r><w:br w:type="page"/></w:r></w:p>
@@ -64,9 +106,11 @@ Til slutt vil jeg takke alle som har bidratt med støtte og oppmuntring undervei
 Sammendrag
 :::
 
-Denne oppgaven undersøker hvordan valg av prognosemodell påvirker prediksjonsnøyaktigheten for månedlig offhire-prosent for fartøy innenfor samme offshoresegment. I denne studien operasjonaliseres offhire som prosentandel dager per måned registrert uten kontrakt, brukt som en indikator på operasjonell nedetid og redusert kontraktsutnyttelse. Studien er gjennomført som en kvantitativ, casebasert sammenligning av fire prognosemodeller: `SARIMA`, `eksponentiell glatting`, `XGBoost` og `LSTM`. Datagrunnlaget består av historiske, anonymiserte offhire-data for `16` fartøy, men den direkte historiske modellsammenligningen bygger på `15` fartøy fordi ett fartøy manglet tilstrekkelig historikk for lik evaluering. Modellene ble estimert og evaluert på samme historiske oppsett med et eksplisitt train/test-splitt og ekspanderende `1`-stegs prognoser gjennom testperioden. Prediksjonsnøyaktigheten ble vurdert ved hjelp av `MAE`, `RMSE`, `sMAPE` og `MASE`.
+Denne oppgaven undersøker hvordan valg av prognosemodell påvirker prediksjonsnøyaktigheten for månedlig nedetid i prosent for fartøy innenfor samme offshoresegment. I studien operasjonaliseres nedetid som prosentandel dager per måned registrert uten kontrakt, brukt som en indikator på operasjonell nedetid og redusert kontraktsutnyttelse. Studien er gjennomført som en kvantitativ, casebasert sammenligning av fire prognosemodeller: ARIMA/SARIMA, eksponentiell glatting, XGBoost og LSTM.
 
-Resultatene viser at modellvalg har betydning for prediksjonsnøyaktigheten, men ikke på en måte som gir automatisk fordel til de mest komplekse modellene. `ARIMA/SARIMA` oppnådde lavest `MAE`, `RMSE` og `MASE` i den historiske testen, mens `XGBoost` og `LSTM` var konkurransedyktige på absolutt feil uten å overgå den beste klassiske modellen. `Eksponentiell glatting` fungerte som en nyttig benchmark og kom svakere ut på `MAE` og `RMSE`, men noe bedre enn `XGBoost` og `LSTM` på `MASE`. Framtidsprognosene for `1`, `3`, `6` og `12` måneder fram viste samtidig at modellene ga ulike framtidsbilder. Disse prognosene er punktprognoser uten usikkerhetsintervaller, og bør derfor tolkes med økende forsiktighet jo lengre horisonten blir. Studien konkluderer derfor med at klassiske tidsseriemodeller framstår som det mest forsvarlige førstevalget i denne casen, samtidig som prognoser bør brukes som beslutningsstøtte og tolkes med faglig skjønn.
+Datagrunnlaget består av historiske, anonymiserte offhire-data fra Simon Møkster Shipping AS for 16 fartøy. Den direkte historiske modellsammenligningen bygger på 15 fartøy, fordi ett fartøy manglet tilstrekkelig historikk for lik evaluering. Modellene ble estimert og evaluert innenfor samme historiske oppsett, med eksplisitt trenings- og testdeling og ekspanderende én-stegs prognoser gjennom testperioden. Prediksjonsnøyaktigheten ble vurdert ved hjelp av MAE, RMSE, sMAPE og MASE. Resultatene viser at modellvalg har betydning for prediksjonsnøyaktigheten, men ikke på en måte som automatisk gir fordel til de mest komplekse modellene. ARIMA/SARIMA oppnådde lavest MAE, RMSE og MASE i den historiske testen. XGBoost og LSTM var konkurransedyktige på absolutt feil, men overgikk ikke den beste klassiske modellen. Eksponentiell glatting fungerte som en nyttig referansemodell og kom svakere ut på MAE og RMSE, men noe bedre enn XGBoost og LSTM på MASE.
+
+Fremtidsprognosene for 1, 3, 6 og 12 måneder frem viste samtidig at modellene ga ulike fremtidsbilder. Prognosene er punktprognoser uten usikkerhetsintervaller og bør derfor tolkes med økende forsiktighet jo lengre horisonten blir. Studien konkluderer med at ARIMA/SARIMA, basert på den historiske testen, fremstår som det mest forsvarlige førstevalget i denne casen. Samtidig bør prognosene brukes som beslutningsstøtte og tolkes med faglig skjønn.
 
 ```{=openxml}
 <w:p><w:r><w:br w:type="page"/></w:r></w:p>
@@ -78,9 +122,11 @@ Resultatene viser at modellvalg har betydning for prediksjonsnøyaktigheten, men
 Abstract
 :::
 
-This thesis examines how the choice of forecasting model affects the predictive accuracy of monthly offhire percentage for vessels operating within the same offshore segment. In this study, offhire is operationalized as the monthly share of days registered without contract, used as an indicator of operational downtime and reduced contract utilization. The study is designed as a quantitative, case-based comparison of four forecasting models: `SARIMA`, `exponential smoothing`, `XGBoost`, and `LSTM`. The empirical basis consists of historical, anonymized offhire data for `16` vessels, but the direct historical model comparison is based on `15` vessels because one vessel lacked sufficient history for like-for-like evaluation. All models were estimated and evaluated under the same historical setup, using an explicit train/test split and expanding `1-step` forecasts throughout the test period. Predictive performance was assessed using `MAE`, `RMSE`, `sMAPE`, and `MASE`.
+This thesis examines how the choice of forecasting model affects prediction accuracy for monthly vessel downtime within the same offshore segment. In the study, downtime is operationalized as the monthly percentage of days registered without contract, used as an indicator of operational downtime and reduced contract utilization. The study is designed as a quantitative, case-based comparison of four forecasting models: ARIMA/SARIMA, exponential smoothing, XGBoost, and LSTM.
 
-The results show that model choice affects predictive accuracy, but not in a way that automatically favors the most complex models. `ARIMA/SARIMA` achieved the lowest `MAE`, `RMSE`, and `MASE` in the historical test, while `XGBoost` and `LSTM` were competitive on absolute error without outperforming the best classical model. `Exponential smoothing` served as a useful benchmark and performed worse on `MAE` and `RMSE`, but slightly better than `XGBoost` and `LSTM` on `MASE`. The future forecasts for `1`, `3`, `6`, and `12` months ahead also showed that the models produced different future paths. These forecasts are point forecasts without uncertainty intervals and should therefore be interpreted more cautiously as the forecasting horizon becomes longer. The study therefore concludes that classical time-series models represent the most defensible first choice in this case, while forecasts should be used as decision support and interpreted with professional judgment.
+The empirical basis consists of historical, anonymized offhire data from Simon Møkster Shipping AS for 16 vessels. The direct historical model comparison is based on 15 vessels, because one vessel lacked sufficient history for like-for-like evaluation. All models were estimated and evaluated under the same historical setup, using an explicit train/test split and expanding one-step-ahead forecasts throughout the test period. Predictive accuracy was assessed using MAE, RMSE, sMAPE, and MASE. The results show that model choice affects predictive accuracy, but not in a way that automatically favors the most complex models. ARIMA/SARIMA achieved the lowest MAE, RMSE, and MASE in the historical test. XGBoost and LSTM were competitive in terms of absolute error, but did not outperform the best classical model. Exponential smoothing served as a useful reference model and performed weaker on MAE and RMSE, but slightly better than XGBoost and LSTM on MASE.
+
+The future forecasts for 1, 3, 6, and 12 months ahead also showed that the models produced different future paths. These forecasts are point forecasts without uncertainty intervals and should therefore be interpreted with increasing caution as the forecasting horizon becomes longer. The study concludes that ARIMA/SARIMA, based on the historical test, appears to be the most defensible first choice in this case. At the same time, the forecasts should be used as decision support and interpreted with professional judgment.
 
 ```{=openxml}
 <w:p><w:r><w:br w:type="page"/></w:r></w:p>
@@ -99,50 +145,46 @@ The results show that model choice affects predictive accuracy, but not in a way
 
 # Innledning
 
-Fartøy som opererer i offshoresegmentet er en sentral del av infrastrukturen rundt petroleumsaktiviteten på norsk sokkel. De transporterer utstyr, drivstoff, forsyninger og andre innsatsfaktorer som er nødvendige for å opprettholde løpende aktivitet. Samtidig foregår operasjonene i et miljø preget av teknisk kompleksitet, kontraktsmessige forpliktelser og krevende operasjonelle rammevilkår. I denne konteksten kan perioder med nedetid, ofte omtalt som offhire, få betydelige konsekvenser både for rederiene og for oppdragsgiverne.
+Fartøy som opererer i offshoresegmentet, er en sentral del av infrastrukturen rundt petroleumsaktiviteten på norsk sokkel. De transporterer utstyr, drivstoff, forsyninger og andre objekter som er nødvendige for å opprettholde aktiviteten. Samtidig foregår operasjonene i et miljø preget av teknisk kompleksitet, kontraktsmessige forpliktelser og krevende operasjonelle rammevilkår. I denne konteksten kan perioder med nedetid, ofte omtalt som offhire, få betydelige konsekvenser både for rederiene og for oppdragsgiverne.
 
-For rederier innebærer offhire ikke bare tapte charterinntekter, men også økt usikkerhet knyttet til planlegging, ressursutnyttelse, kontraktsoppfølging og konkurranseevne. For operatørene kan samme nedetid skape forstyrrelser i logistikk og drift. Behovet for mer presise prognoser blir særlig tydelig i et marked som samtidig er preget av betydelige svingninger i aktivitet, investeringsnivå og fartøyrater (Menon Economics, 2026). Bedre beslutningsstøtte for offhire er derfor ikke bare et teknisk analyseproblem, men også et praktisk spørsmål om operasjonell robusthet i et volatilt marked.
+For rederier innebærer nedetid ikke bare tapte inntekter, men også økt usikkerhet knyttet til planlegging, ressursutnyttelse, kontraktsoppfølging og konkurranseevne. For operatørene kan samme nedetid skape forstyrrelser i logistikk og drift. Behovet for mer presise prognoser blir særlig tydelig i et marked som samtidig er preget av betydelige svingninger i aktivitet, investeringsnivå og fartøyrater (Menon Economics, 2026). Bedre beslutningsstøtte for nedetid er derfor ikke bare et teknisk analyseproblem, men også et praktisk spørsmål om operasjonell robusthet i et volatilt marked.
 
 Tradisjonelt har prognostisering innen logistikk og operasjonsstyring i stor grad vært basert på klassiske statistiske modeller, særlig ARIMA-lignende modeller og eksponentiell glatting. Disse modellene er metodisk etablerte og egner seg godt når historiske tidsserier inneholder relativt stabile mønstre i nivå, trend og sesong (Gardner, 1985; Hyndman et al., 2002; Hyndman & Khandakar, 2008). Samtidig viser nyere forskning at maskinlæringsmodeller kan være konkurransedyktige eller bedre når datastrukturen er mer kompleks, heterogen eller ikke-lineær (Carbonneau et al., 2008; Schmid et al., 2025).
 
-Innen maritim sektor har datadrevne metoder de siste årene særlig vært brukt til prediktivt vedlikehold, markedsprediksjoner og andre operasjonelle beslutningsproblemer. Forskning som direkte sammenligner tradisjonelle tidsseriemodeller og KI-baserte modeller for prognostisering av offhire på fartøynivå er derimot mer begrenset. Dette gjør det faglig relevant å undersøke hvordan ulike modellfamilier presterer i akkurat denne konteksten (Chu et al., 2024; Kalafatelis et al., 2025; Kjeldsberg & Munim, 2024).
-
-## Bruk av kunstig intelligens
-
-I arbeidet med denne oppgaven er generative KI-verktøy brukt som et støtteverktøy i avgrensede deler av prosessen. KI er primært brukt til idéutvikling, språklig bearbeiding av tekstutkast, strukturering av innhold og forslag til presisering av formuleringer. Verktøyene er ikke brukt til å generere eller validere datagrunnlaget, gjennomføre modelltrening, produsere resultattabeller eller trekke faglige konklusjoner uten manuell kontroll. Alle analyser, modellvalg, tolkninger og endelige formuleringer er gjennomgått, vurdert og kvalitetssikret av forfatteren. Bruken av KI må derfor forstås som støtte i skrive- og arbeidsprosessen, ikke som en erstatning for selvstendig faglig arbeid.
+Innen maritim sektor har maskinlæringsmodeller de siste årene særlig vært brukt til prediktivt vedlikehold, markedsprediksjoner og andre operasjonelle beslutningsproblemer. Forskning som direkte sammenligner tradisjonelle tidsseriemodeller og KI-baserte modeller for prognostisering av nedetid på fartøynivå er derimot mer begrenset. Dette gjør det faglig relevant å undersøke hvordan ulike modellfamilier presterer i akkurat denne konteksten (Chu et al., 2024; Kalafatelis et al., 2025; Kjeldsberg & Munim, 2024).
 
 ## Problemstilling
 
-Formålet med denne studien er å undersøke hvordan modellvalg påvirker prognostisering av månedlig offhire-prosent i offshorenæringen. På bakgrunn av behovet for mer presis beslutningsstøtte i et volatilt marked formuleres følgende problemstilling:
+Formålet med denne studien er å undersøke hvordan modellvalg påvirker prognostisering av månedlig nedetid i prosent i offshorenæringen. På bakgrunn av behovet for mer presis beslutningsstøtte i et volatilt marked blir problemstillingen:
 
-*Hvordan påvirker valg av prognosemodell prediksjonsnøyaktigheten for månedlig offhire-prosent for fartøy innenfor samme offshoresegment, når maskinlæringsmodeller sammenlignes med tradisjonelle tidsseriemodeller?*
+*Hvordan påvirker valg av prognosemodell prediksjonsnøyaktigheten for månedlig nedetid for fartøy innenfor samme offshoresegment, når maskinlæringsmodeller sammenlignes med tradisjonelle tidsseriemodeller?*
 
 For å presisere hva prognoseproblemet faktisk består i, deles problemstillingen videre inn i to delspørsmål:
 
-1. Hvilken modell predikerer størrelsen på neste måneds offhire mest presist?
-2. I hvilken grad kan de samme nivåprognosene også indikere om neste fartøy-måned blir en nullmåned eller en måned med positiv offhire?
+1. Hvilken modell predikerer størrelsen på neste måneds nedetid mest presist?
+2. I hvilken grad kan de samme nivåprognosene også indikere om neste fartøy-måned blir en nullmåned eller en måned med positiv nedetid?
 
-Disse delspørsmålene peker mot at timing og størrelse i prinsippet kan forstås som to ulike prediksjonsproblemer. I denne oppgaven analyseres de likevel innenfor ett felles månedlig prognoseoppsett, der modellene predikerer offhire-prosent for neste fartøy-måned. I praksis betyr det at størrelsen modelleres direkte, mens tidspunktet for neste nedetid bare tolkes indirekte på månedsnivå gjennom om prognosen holder seg ved null eller går over null.
+Disse delspørsmålene peker mot at timing og størrelse i prinsippet kan forstås som to ulike prediksjonsproblemer. I denne oppgaven analyseres de likevel innenfor ett felles månedlig prognoseoppsett, der modellene predikerer nedetid i prosent for neste fartøy-måned. I praksis betyr det at størrelsen modelleres direkte, mens tidspunktet for neste nedetid bare tolkes indirekte på månedsnivå gjennom prognosen holder seg ved null eller går over null.
 
 ## Avgrensninger
 
 Studien avgrenses til 16 anonymiserte fartøy som opererer innenfor samme offshoresegment. Fartøy utenfor dette segmentet inngår ikke i analysen. Avgrensningen er valgt for å sikre størst mulig sammenlignbarhet i operasjonelle rammebetingelser og kontraktsforhold, selv om fartøyene ikke nødvendigvis tilhører én og samme fartøytype.
 
-Analysen er videre avgrenset til prediksjon av månedlig offhire-prosent, operasjonalisert som andel dager uten kontrakt i hver fartøy-måned. Målet brukes som en praktisk indikator på operasjonell nedetid og redusert kontraktsutnyttelse. Det skilles ikke videre mellom ulike årsakskategorier innen offhire, fordi formålet er å evaluere modellenes prediktive ytelse og ikke å analysere årsakssammenhenger.
+Analysen er videre avgrenset til prediksjon av månedlig nedetid i prosent, operasjonalisert som andel dager uten kontrakt i hver fartøy måned. Målet brukes som en praktisk indikator på operasjonell nedetid og redusert kontraktsutnyttelse. Det skilles ikke videre mellom ulike årsakskategorier innen nedetid, fordi formålet er å evaluere modellenes prediktive ytelse og ikke å analysere årsakssammenhenger.
 
 Studien bygger på historiske operasjonelle data innen en definert tidsperiode. Eksterne forhold som energipriser, geopolitisk risiko og bredere markedsendringer modelleres ikke eksplisitt, men inngår bare i den grad de er indirekte reflektert i observasjonene.
 
-Fokus ligger på sammenligning av modelltyper med hensyn til prediksjonsnøyaktighet. Implementeringskostnader, organisatoriske endringer og teknologisk integrasjon inngår ikke i analysen. Modellutvalget er avgrenset til fire modeller: to tradisjonelle metoder, `SARIMA` og `eksponentiell glatting`, og to KI-baserte modeller, `XGBoost` og `LSTM`.
+Fokus ligger på sammenligning av modelltyper med hensyn til prediksjonsnøyaktighet. Implementeringskostnader, organisatoriske endringer og teknologisk integrasjon inngår ikke i analysen. Modellutvalget er avgrenset til fire modeller: to tradisjonelle metoder, SARIMA og eksponentiell glatting, og to KI-baserte modeller, XGBoost og LSTM. Modellene representerer ulike metodiske tilnærminger til prognostisering, fra statistiske modeller med eksplisitt tidsseriestuktur til maskinlæringsmodeller som kan håndtere mer komplekse og ikke-lineære mønstre. Utvalget er valgt for å belyse hvordan ulike modellfamilier presterer under samme operasjonelle og datamessige rammebetingelser (Rob J Hyndman and George Athanasopoulos, 2019; Chen & Guestrin, 2016; Hochreiter & Schmidhuber, 1997).
 
 ## Antakelser
 
-**Definisjon av offhire**
+**Definisjon av Nedetid**
 
-Det antas at målet for offhire er konsistent gjennom hele datamaterialet. I denne studien måles offhire som månedlig prosentandel dager registrert uten kontrakt, og dette brukes som en operasjonell indikator på nedetid og redusert kontraktsutnyttelse. Antakelsen er nødvendig for at variasjon i datasettet skal kunne tolkes som uttrykk for reelle operasjonelle forhold og ikke som følge av endrede registreringsrutiner. Eventuelle strukturelle brudd i rapporteringspraksis fanges derfor ikke eksplisitt opp i analysen.
+Det antas at målet for nedetid er konsistent gjennom hele datamaterialet. I denne studien måles nedetid som månedlig prosentandel dager registrert uten kontrakt, og dette brukes som en operasjonell indikator på nedetid og redusert kontraktsutnyttelse. Antakelsen er nødvendig for at variasjon i datasettet skal kunne tolkes som uttrykk for reelle operasjonelle forhold og ikke som følge av endrede registreringsrutiner. Eventuelle strukturelle brudd i rapporteringspraksis fanges derfor ikke eksplisitt opp i analysen.
 
 **Historiske mønstre inneholder prediktiv informasjon**
 
-Det antas at historiske operasjonelle data inneholder mønstre som kan brukes til å predikere framtidig månedlig offhire-prosent. Denne antakelsen ligger til grunn for både tidsseriemodeller og maskinlæringsmodeller. Analysen vurderer derfor modellenes evne til å utnytte eksisterende historisk struktur, men ikke deres evne til å forutsi strukturelle brudd utenfor datagrunnlaget.
+Det antas at historiske operasjonelle data inneholder mønstre som kan brukes til å predikere fremtidig månedlig nedetid. Denne antakelsen ligger til grunn for både tidsseriemodeller og maskinlæringsmodeller. Analysen vurderer derfor modellenes evne til å utnytte eksisterende historisk struktur, men ikke deres evne til å forutsi strukturelle brudd utenfor datagrunnlaget.
 
 **Uavhengighet mellom fartøy**
 
@@ -150,11 +192,15 @@ Det antas at observasjoner kan behandles som tilnærmet uavhengige mellom fartø
 
 **Markedsusikkerhet reflekteres i historiske data**
 
-Det antas at markedsmessig usikkerhet, herunder svingninger i aktivitet og rater, indirekte er reflektert i de historiske dataene. Studien modellerer ikke slike forhold eksplisitt, men forutsetter at deler av effekten er synlig i observerte offhire-mønstre. Modellene evalueres derfor under historisk observerte markedsforhold, men ikke mot hypotetiske ekstreme scenarier.
+Det antas at markedsmessig usikkerhet, herunder svingninger i aktivitet og rater, indirekte er reflektert i de historiske dataene. Studien modellerer ikke slike forhold eksplisitt, men forutsetter at deler av effekten er synlig i observerte nedetid mønstre. Modellene evalueres derfor under historisk observerte markedsforhold, men ikke mot hypotetiske ekstreme scenarier.
 
 **Prediktiv fremfor kausal analyse**
 
-Det antas at formålet med analysen er prediksjon og ikke kausal forklaring. Modellenes prestasjon vurderes derfor ut fra prediktiv nøyaktighet og ikke ut fra om variablene representerer direkte årsakssammenhenger. Konsekvensen er at studien kan sammenligne modeller på likt grunnlag, men ikke trekke kausale konklusjoner om hvilke forhold som skaper offhire.
+Det antas at formålet med analysen er prediksjon og ikke kausal forklaring. Modellenes prestasjon vurderes derfor ut fra prediktiv nøyaktighet og ikke ut fra om variablene representerer direkte årsakssammenhenger. Konsekvensen er at studien kan sammenligne modeller på likt grunnlag, men ikke trekke kausale konklusjoner om hvilke forhold som skaper nedetid.
+
+## Bruk av kunstig intelligens
+
+I arbeidet med denne oppgaven er generative KI-verktøy brukt som et støtteverktøy i prosessen. KI er brukt til idéutvikling, språklig bearbeiding av tekstutkast, strukturering av innhold og forslag til presisering av formuleringer. Verktøyene er også brukt til å gjennomføre modelltrening og produsere resultattabeller. Alle analyser, modellvalg, tolkninger og endelige formuleringer er gjennomgått, vurdert og kvalitetssikret av forfatteren. Bruken av KI må derfor forstås som støtte i skrive- og arbeidsprosessen, ikke som en erstatning for selvstendig faglig arbeid.
 
 # Litteratur
 
@@ -172,13 +218,13 @@ Det er derfor fortsatt et tydelig forskningsgap knyttet til prognostisering av o
 
 ## Prognostisering som beslutningsstøtte
 
-Prognostisering er sentralt i logistikk og operasjonsstyring fordi beslutninger om ressursbruk, vedlikehold, kontrakter og kapasitet må tas før framtidige utfall er kjent. En prognose er derfor ikke bare et estimat av en framtidig verdi, men et beslutningsverktøy som reduserer usikkerhet under operasjonelle begrensninger. I denne studien er dette viktig fordi formålet er prediksjon av månedlig offhire-prosent og ikke kausal forklaring av hvorfor variasjonen oppstår. Modellenes verdi vurderes dermed ut fra hvor godt de kan omsette historiske mønstre til praktisk beslutningsstøtte for framtidige perioder (Carbonneau et al., 2008; Fildes et al., 2022).
+Prognostisering er sentralt i logistikk og operasjonsstyring fordi beslutninger om ressursbruk, vedlikehold, kontrakter og kapasitet må tas før framtidige utfall er kjent. En prognose er derfor ikke bare et estimat av en framtidig verdi, men et beslutningsverktøy som reduserer usikkerhet under operasjonelle begrensninger. I denne studien er dette viktig fordi formålet er prediksjon av månedlig nedetid i prosent og ikke kausal forklaring av hvorfor variasjonen oppstår. Modellenes verdi vurderes dermed ut fra hvor godt de kan omsette historiske mønstre til praktisk beslutningsstøtte for framtidige perioder (Carbonneau et al., 2008; Fildes et al., 2022).
 
 ## Tidsserier og sentrale komponenter
 
 En tidsserie er en sekvens av observasjoner $y_t$ ordnet i tid, der rekkefølgen er analytisk meningsbærende. Observasjoner som ligger nær hverandre i tid vil ofte være statistisk avhengige, og denne avhengigheten er selve grunnlaget for prognostisering. I klassisk tidsserieanalyse dekomponeres serien gjerne i fire hovedkomponenter: nivå, trend, sesong og et irregulært restledd. Nivå beskriver seriens typiske størrelse, trend beskriver en mer langsiktig utvikling, sesong beskriver gjentakende mønstre med fast periode, og restleddet representerer variasjon som ikke fanges av den systematiske strukturen.
 
-For offhire-data er denne dekomponeringen relevant fordi materialet kan inneholde både perioder med stabilt lavt nivå, episodiske topper og kalendermessige mønstre knyttet til drift og kontraktsforhold. Samtidig er det viktig å skille mellom modellfamiliene i hvordan de bruker slik struktur. Klassiske tidsseriemodeller forsøker å spesifisere den direkte gjennom differensiering, glatting og autokorrelasjon, mens maskinlæringsmodeller og sekvensmodeller i større grad forsøker å lære mønstrene indirekte fra data. Like fullt er begrepene nivå, trend, sesong og støy et nyttig felles språk for å forstå prognoseproblemet på tvers av modelltyper (Gardner, 1985; Hyndman & Khandakar, 2008).
+For data om nedetid er denne dekomponeringen relevant fordi materialet kan inneholde både perioder med stabilt lavt nivå, episodiske topper og kalendermessige mønstre knyttet til drift og kontraktsforhold. Samtidig er det viktig å skille mellom modellfamiliene i hvordan de bruker slik struktur. Klassiske tidsseriemodeller forsøker å spesifisere den direkte gjennom differensiering, glatting og autokorrelasjon, mens maskinlæringsmodeller og sekvensmodeller i større grad forsøker å lære mønstrene indirekte fra data. Like fullt er begrepene nivå, trend, sesong og støy et nyttig felles språk for å forstå prognoseproblemet på tvers av modelltyper (Gardner, 1985; Hyndman & Khandakar, 2008).
 
 ## Klassiske tidsseriemodeller
 
@@ -198,7 +244,7 @@ $$
 
 **Forklaring av symbolene**
 
-Her er $y_t$ observert offhire-prosent i måned $t$, og $B$ er backshift-operatoren, slik at $By_t = y_{t-1}$. Videre er $\phi(B)$ og $\theta(B)$ henholdsvis ikke-sesong autoregressivt og glidende gjennomsnittspolynom av orden $p$ og $q$, mens $\Phi(B^{12})$ og $\Theta(B^{12})$ er sesongpolynomer av orden $P$ og $Q$. Parameterne $d$ og $D$ angir ordinær og sesongmessig differensiering, $\varepsilon_t$ er et tilfeldig feilledd, og sesonglengden er satt til `12` fordi dataseriene er månedlige.
+Her er $y_t$ observert nedetid i prosent i måned $t$, og $B$ er backshift-operatoren, slik at $By_t = y_{t-1}$. Videre er $\phi(B)$ og $\theta(B)$ henholdsvis ikke-sesong autoregressivt og glidende gjennomsnittspolynom av orden $p$ og $q$, mens $\Phi(B^{12})$ og $\Theta(B^{12})$ er sesongpolynomer av orden $P$ og $Q$. Parameterne $d$ og $D$ angir ordinær og sesongmessig differensiering, $\varepsilon_t$ er et tilfeldig feilledd, og sesonglengden er satt til `12` fordi dataseriene er månedlige.
 
 Ligning `(3.1)` viser at `SARIMA` kan kombinere kortsiktig dynamikk og et mulig årlig sesongsignal i samme modell. At sesongleddet skrives med `B^{12}` betyr konkret at modellen kan hente informasjon fra samme måned året før, altså fra observasjonen `y_{t-12}`.
 
@@ -228,13 +274,13 @@ $$
 
 **Forklaring av symbolene**
 
-Her er $y_t$ observert offhire-prosent i måned $t$, $\ell_t$ nivåkomponenten, $b_t$ trendkomponenten og $s_t$ sesongkomponenten. Parametrene $\alpha$, $\beta$ og $\gamma$ er glattingsparametere mellom `0` og `1` som styrer hvor raskt nivå, trend og sesong reagerer på ny informasjon. Prognosen $\hat y_{t+1|t}$ uttrykker forventet verdi neste måned gitt informasjon tilgjengelig ved tid $t$.
+Her er $y_t$ observert nedetid i prosent i måned $t$, $\ell_t$ nivåkomponenten, $b_t$ trendkomponenten og $s_t$ sesongkomponenten. Parametrene $\alpha$, $\beta$ og $\gamma$ er glattingsparametere mellom `0` og `1` som styrer hvor raskt nivå, trend og sesong reagerer på ny informasjon. Prognosen $\hat y_{t+1|t}$ uttrykker forventet verdi neste måned gitt informasjon tilgjengelig ved tid $t$.
 
 Ligningene `(3.2)` til `(3.5)` viser hvordan nivå, trend, sesong og én-stegsprognose oppdateres rekursivt. Også her representerer `t-12` samme måned året før, slik at modellen kan teste om et årlig mønster faktisk tilfører informasjon utover det løpende nivået.
 
 For additive modeller blir prognosen et uttrykk for den løpende estimerte tilstanden i serien, snarere enn for en eksplisitt autokorrelasjonsstruktur. I praksis gjør dette `ETS`-modeller godt egnet som transparente og robuste benchmarker, særlig når formålet er å sammenligne enkle nivå-, trend- og sesongrepresentasjoner mot mer komplekse modeller.
 
-I denne studien er eksponentiell glatting teoretisk relevant fordi modellfamilien representerer en parsimonisk mellomposisjon: den er mindre strukturert enn `SARIMA`, men langt mer transparent enn `XGBoost` og `LSTM`. Dersom nyere offhire-observasjoner faktisk bærer mest relevant informasjon om den nære framtiden, kan modellen gi konkurransedyktige prognoser med få parametere. Dersom datasettet derimot domineres av episodiske sprang og høy heterogenitet mellom fartøy, vil modellfamilien lettere bli for konservativ og underreagere på ekstreme utslag (Gardner, 1985; Hyndman et al., 2002).
+I denne studien er eksponentiell glatting teoretisk relevant fordi modellfamilien representerer en parsimonisk mellomposisjon: den er mindre strukturert enn `SARIMA`, men langt mer transparent enn `XGBoost` og `LSTM`. Dersom nyere observasjoner av nedetid faktisk bærer mest relevant informasjon om den nære framtiden, kan modellen gi konkurransedyktige prognoser med få parametere. Dersom datasettet derimot domineres av episodiske sprang og høy heterogenitet mellom fartøy, vil modellfamilien lettere bli for konservativ og underreagere på ekstreme utslag (Gardner, 1985; Hyndman et al., 2002).
 
 ## Maskinlæring og dyp læring i prognostisering
 
@@ -262,13 +308,13 @@ $$
 
 **Forklaring av symbolene**
 
-Her er $y_i$ observert offhire-prosent for observasjon $i$, $\hat y_i$ modellens prediksjon, og $x_i$ feature-vektoren som beskriver observasjonen. Hvert $f_k$ representerer et beslutningstre, $K$ er antall trær, og $\mathcal{F}$ er rommet av mulige regresjonstrær. Tapsfunksjonen $l(y_i,\hat y_i)$ måler prediksjonsfeil, mens regulariseringsleddet $\Omega(f_k)$ straffer unødvendig komplekse trær gjennom antall terminale noder $T_k$ og bladvekter $w_k$, styrt av parametrene $\gamma$ og $\lambda$.
+Her er $y_i$ observert nedetid i prosent for observasjon $i$, $\hat y_i$ modellens prediksjon, og $x_i$ feature-vektoren som beskriver observasjonen. Hvert $f_k$ representerer et beslutningstre, $K$ er antall trær, og $\mathcal{F}$ er rommet av mulige regresjonstrær. Tapsfunksjonen $l(y_i,\hat y_i)$ måler prediksjonsfeil, mens regulariseringsleddet $\Omega(f_k)$ straffer unødvendig komplekse trær gjennom antall terminale noder $T_k$ og bladvekter $w_k$, styrt av parametrene $\gamma$ og $\lambda$.
 
 Ligningene `(3.6)` til `(3.8)` tydeliggjør at `XGBoost` ikke modellerer tidsserien gjennom én eksplisitt serieformel, men gjennom en additiv prediksjonsfunksjon med regularisering. Tidsavhengigheten må derfor legges inn via features som blant annet kan peke ett år tilbake gjennom `lag_12`.
 
-Chen og Guestrin (2016) viser at `XGBoost` kombinerer høy prediksjonsstyrke med regularisering, effektiv trebygging og håndtering av sparsitet. Regulariseringsleddet i objektfunksjonen gjør at modellen ikke bare forsøker å minimere treningsfeil, men også straffer unødig komplekse trær.
+Chen og Guestrin (2016) viser at `XGBoost` kombinerer høy prediksjonsstyrke med regularisering, effektiv trebygging og god håndtering av datasett med mange nullverdier. Regulariseringsleddet i objektfunksjonen gjør at modellen ikke bare forsøker å minimere treningsfeil, men også straffer unødig komplekse trær.
 
-I tidsserieprognoser er `XGBoost` teoretisk interessant fordi modellen ikke er sekvensiell i seg selv. Den må få all tidsinformasjon gjennom eksplisitt feature engineering, for eksempel laggede verdier, rullerende mål og kalenderrepresentasjoner. Dette betyr at modellens styrke ligger i evnen til å utnytte ikke-lineariteter og interaksjoner i et konstruert feature-rom, ikke i en innebygd tidsserieforståelse. I denne studien gjør dette `XGBoost` til en relevant kontrast til både `SARIMA` og `eksponentiell glatting`: dersom offhire best forstås som et ikke-lineært panelproblem med fartøyspesifikke effekter, bør modellen ha et teoretisk fortrinn. Dersom den relevante strukturen først og fremst ligger i hver seriers interne dynamikk, kan behovet for eksplisitt feature engineering bli en begrensning (Chen & Guestrin, 2016).
+I denne studien er `XGBoost` en relevant kontrast til både `SARIMA` og `eksponentiell glatting`: dersom nedetid best forstås som et ikke-lineært panelproblem med fartøyspesifikke effekter, bør modellen ha et teoretisk fortrinn. Dersom den relevante strukturen først og fremst ligger i den interne dynamikken i hver tidsserie, kan behovet for eksplisitt feature engineering bli en begrensning (Chen & Guestrin, 2016).
 
 ## LSTM
 
@@ -306,13 +352,11 @@ $$
 
 **Forklaring av symbolene**
 
-Her er $x_t$ inputvektoren ved tid $t$, $f_t$ forget gate, $i_t$ input gate, $\tilde c_t$ kandidat for ny celletilstand, $c_t$ celletilstanden, $o_t$ output gate og $h_t$ den skjulte tilstanden. Symbolene $\sigma(\cdot)$ og $\tanh(\cdot)$ betegner aktiveringsfunksjoner, $\odot$ er elementvis multiplikasjon, og $W_\cdot$ samt $b_\cdot$ er vekter og biasledd som estimeres i treningen. Prognosen $\hat y_{t+1}$ uttrykker forventet offhire-prosent i neste måned gitt sekvensinformasjonen fram til tid $t$.
+Her er $x_t$ inputvektoren ved tid $t$, $f_t$ forget gate, $i_t$ input gate, $\tilde c_t$ kandidat for ny celletilstand, $c_t$ celletilstanden, $o_t$ output gate og $h_t$ den skjulte tilstanden. Symbolene $\sigma(\cdot)$ og $\tanh(\cdot)$ betegner aktiveringsfunksjoner, $\odot$ er elementvis multiplikasjon, og $W_\cdot$ samt $b_\cdot$ er vekter og biasledd som estimeres i treningen. Prognosen $\hat y_{t+1}$ uttrykker forventet nedetid i prosent i neste måned gitt sekvensinformasjonen fram til tid $t$.
 
 Ligningene `(3.9)` til `(3.15)` viser portmekanismen som gjør at `LSTM` kan bevare, oppdatere og filtrere historisk informasjon over tid. I denne oppgaven skjer dette over et observasjonsvindu på `12` måneder, slik at modellen alltid ser ett helt år bakover før den predikerer neste måned.
 
-Portene regulerer hvilken informasjon som beholdes, oppdateres og eksponeres videre i sekvensen. Denne strukturen gjør modellen fundamentalt forskjellig fra feature-baserte maskinlæringsmodeller: tidsavhengigheten læres i selve nettverket og trenger ikke kodes fullt ut manuelt som laggede features.
-
-I denne oppgaven er `LSTM` teoretisk relevant fordi modellen representerer den mest fleksible og sekvensorienterte måten å lære mønstre i offhire-data på. Dersom fartøyenes historikk inneholder lange eller sammensatte avhengigheter som ikke lett lar seg beskrive gjennom eksplisitte lagg og lineære parametere, bør `LSTM` i prinsippet kunne fange dette. Samtidig kommer denne fleksibiliteten med klare kostnader i form av større datakrav, høyere treningssensitivitet og lavere tolkbarhet enn både klassiske modeller og `XGBoost`. Modellen er derfor faglig interessant nettopp fordi den utfordrer spørsmålet om hvor mye kompleksitet datasettet faktisk bærer (Hochreiter & Schmidhuber, 1997).
+Portene regulerer hvilken informasjon som beholdes, oppdateres og eksponeres videre i sekvensen. Dette gjør `LSTM` fundamentalt forskjellig fra feature-baserte maskinlæringsmodeller, fordi tidsavhengigheten læres direkte i nettverket i stedet for å måtte spesifiseres gjennom manuelle laggede variabler. I denne oppgaven er `LSTM` teoretisk relevant fordi modellen representerer den mest fleksible og sekvensorienterte måten å lære mønstre i nedetidsdata på. Dersom fartøyenes historikk inneholder lange eller sammensatte avhengigheter som ikke lett lar seg beskrive gjennom eksplisitte lagg og lineære parametere, bør `LSTM` kunne fange dette. Samtidig kommer denne fleksibiliteten med klare kostnader i form av større datakrav, høyere treningssensitivitet og lavere tolkbarhet enn både klassiske modeller og `XGBoost`. Modellen er derfor faglig interessant nettopp fordi den utfordrer spørsmålet om hvor mye kompleksitet datasettet faktisk bærer (Hochreiter & Schmidhuber, 1997).
 
 ## Modellvalg og sammenligningskriterier
 
@@ -324,11 +368,11 @@ I prognosestudier brukes ofte flere feilmål samtidig fordi de fanger ulike egen
 
 Denne studien tar utgangspunkt i Simon Møkster Shipping AS, et rederi som opererer innenfor offshoresegmentet. I denne konteksten er fartøyene en sentral del av verdikjeden fordi de understøtter aktivitetene på norsk sokkel gjennom løpende operasjoner, kontrakter og leveranser. For et rederi i dette segmentet er høy operasjonell tilgjengelighet avgjørende, siden fartøyenes verdi i stor grad er knyttet til evnen til å opprettholde kontrakter og levere stabile tjenester over tid.
 
-Et sentralt problem i denne sammenhengen er offhire. I denne oppgaven måles offhire som prosentandel dager per måned registrert uten kontrakt, og dette brukes som en operasjonell indikator på nedetid og redusert kontraktsutnyttelse. Målet kan påvirkes av tekniske feil, vedlikehold, sertifikatforhold, operasjonelle avvik eller perioder uten kontrakt. For Simon Møkster Shipping AS innebærer slike perioder ikke bare direkte økonomiske konsekvenser, men også økt usikkerhet i planlegging, ressursutnyttelse, vedlikeholdsvurderinger og kontraktsoppfølging. Mer presise prognoser kan derfor ha praktisk verdi som beslutningsstøtte.
+Et sentralt problem i denne sammenhengen er nedetid. I denne oppgaven måles nedetid som prosentandel dager per måned registrert uten kontrakt, og dette brukes som en operasjonell indikator på nedetid og redusert kontraktsutnyttelse. Målet kan påvirkes av tekniske feil, vedlikehold, sertifikatforhold, operasjonelle avvik eller perioder uten kontrakt. For Simon Møkster Shipping AS innebærer slike perioder ikke bare direkte økonomiske konsekvenser, men også økt usikkerhet i planlegging, ressursutnyttelse, vedlikeholdsvurderinger og kontraktsoppfølging. Mer presise prognoser kan derfor ha praktisk verdi som beslutningsstøtte.
 
-Studien er avgrenset til 16 fartøy innenfor samme segment i rederiet. Dette er gjort for å sikre at analysen bygger på observasjoner fra fartøy med relativt like operasjonelle rammebetingelser, selv om fartøyene ikke nødvendigvis er av samme type. Et viktig trekk ved caset er samtidig at offhire sjelden skyldes én enkelt faktor. Teknisk tilstand, driftsmønster, kontraktssituasjon og markedsforhold kan virke sammen, noe som gjør caset relevant for å sammenligne både tradisjonelle tidsseriemodeller og KI-baserte prognosemodeller.
+Studien er avgrenset til 16 fartøy innenfor samme segment i rederiet. Dette er gjort for å sikre at analysen bygger på observasjoner fra fartøy med relativt like operasjonelle rammebetingelser, selv om fartøyene ikke nødvendigvis er av samme type. Et viktig trekk ved caset er samtidig at nedetid sjelden skyldes én enkelt faktor. Teknisk tilstand, driftsmønster, kontraktssituasjon og markedsforhold kan virke sammen, noe som gjør caset relevant for å sammenligne både tradisjonelle tidsseriemodeller og KI-baserte prognosemodeller.
 
-Casebedriften opererer samtidig i et marked preget av betydelig volatilitet. Offshoreaktivitet påvirkes ikke bare av tekniske og operative forhold, men også av svingninger i energipriser, investeringsnivå, kontraktsaktivitet og globale markedsforhold. Dette gjør planlegging av fartøyutnyttelse og tilgjengelighet mer krevende, og øker den praktiske verdien av prognoser for offhire. Studien modellerer ikke slike eksterne forhold eksplisitt, men de utgjør en viktig del av konteksten som gjør prognoseproblemet beslutningsmessig relevant (Menon Economics, 2026).
+Samtidig opererer rederiet i et marked preget av betydelig volatilitet. Offshoreaktivitet påvirkes ikke bare av tekniske og operative forhold, men også av svingninger i energipriser, investeringsnivå, kontraktsaktivitet og globale markedsforhold. Dette gjør planlegging av fartøyutnyttelse og tilgjengelighet mer krevende, og øker den praktiske verdien av prognoser for nedetid. Studien modellerer ikke slike eksterne forhold eksplisitt, men de utgjør en viktig del av konteksten som gjør prognoseproblemet beslutningsmessig relevant (Menon Economics, 2026).
 
 Figur 1 viser samlet offhire per måned aggregert på tvers av alle fartøy. Figuren gir et første bilde av hvor stabilt eller ujevnt materialet faktisk er over tid.
 
@@ -336,7 +380,7 @@ Figur 1 viser samlet offhire per måned aggregert på tvers av alle fartøy. Fig
 
 *Figur 1. Samlet offhire per måned fra april 2021 til mars 2026, målt som summen av offhire i prosentpoeng på tvers av alle fartøy.*
 
-Den samlede tidsserien viser tydelige topper og rolige perioder, heller enn en jevn utvikling. Den høyeste enkeltmåneden i datasettet er januar 2022 med 283 summerte prosentpoeng, mens det også finnes to måneder der samlet offhire er null. Dette understøtter at caset ikke dreier seg om en stabil serie, men om et fenomen som opptrer episodisk og ujevnt.
+Den samlede tidsserien viser tydelige topper og rolige perioder, heller enn en jevn utvikling. Den høyeste enkeltmåneden i datasettet er januar 2022 med 283 summerte prosentpoeng, mens det også finnes to måneder der samlet nedetid er null. Dette viser at caset ikke dreier seg om en stabil serie, men om et fenomen som opptrer episodisk og ujevnt.
 
 Mens figur 1 viser totalnivået i materialet, viser figur 2 hvordan variasjonen fordeler seg mellom fartøyene og over tid.
 
@@ -344,39 +388,39 @@ Mens figur 1 viser totalnivået i materialet, viser figur 2 hvordan variasjonen 
 
 *Figur 2. Heatmap som viser offhire per fartøy og måned. Mørkere farger indikerer høyere offhire, mens lyse felt indikerer lave eller null registreringer.*
 
-Heatmapet viser at offhire i liten grad er jevnt fordelt mellom fartøyene. Enkelte fartøy har gjentatte og tydelige topper over flere perioder, mens andre i hovedsak har nullregistreringer. Særlig skiller `Fartøy 10`, `Fartøy 8` og `Fartøy 2` seg ut med flere markerte utslag. Figuren synliggjør også at 2021 er et oppstartsår fra april og at 2026 foreløpig bare dekker årets tre første måneder. Samlet viser casebeskrivelsen dermed et konkret operasjonelt beslutningsproblem der prognostisering kan være verdifullt, men også metodisk krevende.
+Heatmapet viser at nedetid i liten grad er jevnt fordelt mellom fartøyene. Enkelte fartøy har gjentatte og tydelige topper over flere perioder, mens andre i hovedsak har nullregistreringer. Særlig skiller `Fartøy 10`, `Fartøy 8` og `Fartøy 2` seg ut med flere markerte utslag. Figuren synliggjør også at 2021 er et oppstartsår fra april og at 2026 foreløpig bare dekker årets tre første måneder. Samlet viser casebeskrivelsen dermed et konkret operasjonelt beslutningsproblem der prognostisering kan være verdifullt, men også metodisk krevende.
 
 # Metode og data
 
 ## Metode
 
-Oppgaven bruker en kvantitativ, casebasert tilnærming der historiske offhire-data analyseres for å undersøke hvordan valg av prognosemodell påvirker prediksjonsnøyaktigheten for fartøy innenfor samme offshoresegment. Simon Møkster Shipping AS brukes som casekontekst, men fartøyene er anonymisert i analysen og omtales derfor som `Fartøy 1` til `Fartøy 16`. Formålet med metoden er ikke å forklare kausale sammenhenger, men å sammenligne hvor godt ulike modeller kan predikere framtidig månedlig offhire-prosent på grunnlag av historiske mønstre.
+Studien bygger på en kvantitativ og casebasert forskningsdesign der historiske nedetidsdata analyseres for å undersøke hvordan ulike prognosemodeller påvirker prediksjonsnøyaktigheten for fartøy innenfor samme offshoresegment. Simon Møkster Shipping AS brukes som casekontekst, men fartøyene er anonymisert i analysen og omtales derfor som `Fartøy 1` til `Fartøy 16`. Formålet med metoden er ikke å identifisere kausale sammenhenger, men å sammenligne hvor godt ulike modelltyper kan predikere fremtidig månedlig nedetid i prosent basert på historiske observasjoner.
 
-Studien bygger på kvantitative sekundærdata, og analyseenheten er ett fartøy i én bestemt måned. Dette gjør opplegget egnet både for tradisjonelle tidsseriemodeller og KI-baserte modeller, fordi samme datastruktur kan brukes til å sammenligne modellene på like vilkår. Arbeidet er lagt opp som en etterprøvbar analyseprosess bestående av dataklargjøring, deskriptiv analyse av datasettet, eksplisitt train/test-splitt, modellering, historisk validering og framtidsprognoser.
+Studien bygger på kvantitative sekundærdata, der analyseenheten er ett fartøy i én bestemt måned. Forskningsdesignet er valgt fordi samme datastruktur kan brukes til å evaluere både klassiske tidsseriemodeller og KI-baserte modeller under samme evalueringsoppsett. Arbeidet består av dataklargjøring, deskriptiv analyse av datasettet, eksplisitt train/test-splitt, modellering, historisk validering og fremtidsprognoser.
 
 ### Modellutvalg og evalueringsoppsett
 
-Valget av modeller bygger på at studien skal sammenligne to klassiske og to KI-baserte modelltradisjoner under samme betingelser. `SARIMA` og `eksponentiell glatting` representerer parsimoniske modeller som i hovedsak henter prognoseinformasjon fra seriens egen historikk og en relativt enkel struktur for nivå, sesong og avhengighet. `XGBoost` og `LSTM` representerer mer fleksible tilnærminger som kan håndtere ikke-linearitet, heterogenitet og mer komplekse mønstre, men som samtidig stiller høyere krav til feature-konstruksjon, treningsoppsett og datamengde. Ved å sammenligne disse fire modellene blir det mulig å teste om offhire-data i denne casen best beskrives av eksplisitt tidsseriedynamikk eller av mer fleksible datadrevne representasjoner.
+Valget av modeller bygger på at studien skal sammenligne to klassiske og to KI-baserte modelltradisjoner under samme betingelser. `SARIMA` og `eksponentiell glatting` representerer mer strukturerte modeller som i hovedsak henter prognoseinformasjon fra seriens egen historikk, nivå, sesong og tidsavhengighet. `XGBoost` og `LSTM` representerer mer fleksible tilnærminger som kan håndtere ikke-linearitet, heterogenitet og mer komplekse mønstre, men som samtidig stiller høyere krav til feature-konstruksjon, treningsoppsett og datamengde. Sammenligningen gjør det mulig å undersøke om datastrukturen i caset best beskrives gjennom eksplisitt tidsseriedynamikk eller gjennom mer fleksible datadrevne modeller.
 
-For å sikre en rettferdig sammenligning estimeres og evalueres alle modellene på samme historiske tidsvindu og med samme ekspanderende `1`-stegs prognoselogikk. Dermed får ingen modell tilgang til mer framtidsinformasjon enn de andre, og forskjeller i resultater kan i større grad tilskrives modellstruktur fremfor ulik testdesign. `MAE` brukes som hovedmål fordi metrikken er lett å tolke i samme skala som målvariabelen og mindre dominert av enkeltmåneder med svært store feil enn `RMSE`. `RMSE` brukes som støttemål fordi den tydeliggjør hvor hardt modellene straffes for store bommerter, mens `sMAPE` brukes som et prosentbasert supplement. `MASE` brukes som et ekstra skalert støttemål, der feilene sammenlignes med en naiv `lag-1`-prognose beregnet fra treningshistorikken. Siden datasettet er nulltungt og inneholder flere nær-nullverdier, tolkes `sMAPE` med forsiktighet og brukes ikke som eneste grunnlag for modellrangering. Hyperparametere og modelloppsett for `XGBoost` og `LSTM` ble samtidig holdt bevisst moderate og faste gjennom sammenligningen. Målet er derfor en sammenlignbar modellstudie, ikke en full optimaliseringsstudie av hver enkelt modellfamilie.
+For å sikre en rettferdig sammenligning estimeres og evalueres alle modellene på samme historiske tidsvindu og med samme ekspanderende én-stegs prognoselogikk. Ingen av modellene får dermed tilgang til mer fremtidsinformasjon enn de andre. Forskjeller i resultatene kan derfor i større grad knyttes til modellstruktur enn til ulikt testdesign. `MAE` brukes som hovedmål fordi metrikken er lett å tolke i samme skala som målvariabelen og mindre dominert av enkeltmåneder med svært store feil enn `RMSE`. `RMSE` brukes som støttemål fordi den tydeliggjør hvor hardt modellene straffes for store bommerter, mens `sMAPE` brukes som et prosentbasert supplement. `MASE` brukes som et ekstra skalert støttemål, der feilene sammenlignes med en naiv `lag-1`-prognose beregnet fra treningshistorikken. Siden datasettet er nulltungt og inneholder flere nær-nullverdier, tolkes `sMAPE` med forsiktighet og brukes ikke som eneste grunnlag for modellrangering. Hyperparametere og modelloppsett for `XGBoost` og `LSTM` ble holdt relativt moderate og faste gjennom hele sammenligningen. Målet er derfor en sammenlignbar modellstudie, ikke en full optimaliseringsstudie av hver enkelt modellfamilie.
 
 På tvers av modellene ble en `12`-månedersmekanisme inkludert fordi datasettet består av månedlige observasjoner, og ett år derfor er den mest naturlige kandidaten for eventuell sesongvariasjon. I `SARIMA` og eksponentiell glatting betyr dette at modeller med periode `12` kan vurderes, mens det i `XGBoost` kommer inn gjennom `lag_12` og `rolling_mean_12`, og i `LSTM` gjennom et sekvensvindu på `12` måneder. Valget innebærer ikke at sterk og stabil sesong ble antatt på forhånd, men at modellene skulle få mulighet til å utnytte et årlig mønster dersom det faktisk fantes i dataene.
 
-De to delspørsmålene om når neste nedetid kommer og hvor stor den blir er heller ikke behandlet som to helt separate modelleringsoppgaver i denne studien. I stedet er oppgaven implementert som en månedlig regresjonsoppgave på offhire-prosent. Det betyr at analysen svarer mest direkte på størrelsesspørsmålet, mens timingaspektet leses indirekte gjennom om neste fartøy-måned prognostiseres til null eller positiv offhire.
+De to delspørsmålene om når neste nedetid kommer og hvor stor den blir er heller ikke behandlet som to helt separate modelleringsoppgaver i denne studien. I stedet er oppgaven implementert som en månedlig regresjonsoppgave på nedetid i prosent. Analysen svarer derfor mest direkte på hvor stor neste måneds nedetid blir, mens timing tolkes indirekte gjennom om prognosen er null eller positiv.
 
-Datasettet renses først og omstruktureres til long-format før det deles i et treningssett for perioden `2021-04` til `2024-12` og et testsett for perioden `2025-01` til `2026-03`. Deretter estimeres fire modeller, `SARIMA`, `Eksponentiell glatting`, `XGBoost` og `LSTM`, på historiske data og evalueres mot usette observasjoner i testperioden. Sammenligningen bygger på samme ekspanderende `1`-stegs evalueringslogikk for alle modellene og vurderes ved hjelp av `MAE`, `RMSE`, `sMAPE` og `MASE`. Etter den historiske testfasen brukes hele datasettet som grunnlag for framtidsprognoser med horisonter på `1`, `3`, `6` og `12` måneder.
+Datasettet renses først og omstruktureres til long-format før det deles i et treningssett for perioden `2021-04` til `2024-12` og et testsett for perioden `2025-01` til `2026-03`. Deretter estimeres fire modeller, `SARIMA`, `Eksponentiell glatting`, `XGBoost` og `LSTM`, på historiske data og evalueres mot usette observasjoner i testperioden. Alle modellene evalueres med samme ekspanderende én-stegs prognoselogikk og vurderes ved hjelp av `MAE`, `RMSE`, `sMAPE` og `MASE`. Etter den historiske testfasen brukes hele datasettet som grunnlag for fremtidsprognoser med horisonter på `1`, `3`, `6` og `12` måneder.
 
-Denne metoden er valgt fordi den gir et transparent og sammenlignbart grunnlag for å vurdere modellvalg på samme problem og samme datagrunnlag. Ved å holde testperioden utenfor den historiske evalueringsfasen blir det mulig å vurdere modellenes generaliseringsevne, ikke bare deres tilpasning til treningsdataene. Samtidig har opplegget klare begrensninger. Datamaterialet består av sekundærdata som ikke kan verifiseres fullt ut eksternt, dataserien er relativt kort, og materialet er preget av mange nullperioder og betydelig variasjon mellom fartøyene. Funnene bør derfor tolkes som case-spesifikke for det aktuelle segmentet hos Simon Møkster Shipping AS, og ikke som direkte generaliserbare til hele offshoremarkedet.
+Denne metoden er valgt fordi den gir et transparent og sammenlignbart grunnlag for å vurdere modellvalg på samme problem og samme datagrunnlag. Ved å holde testperioden utenfor den historiske evalueringsfasen blir det mulig å vurdere modellenes generaliseringsevne, ikke bare deres tilpasning til treningsdataene. Samtidig har opplegget klare begrensninger. Datamaterialet består av sekundærdata som ikke kan verifiseres fullt ut eksternt, dataserien er relativt kort, og materialet er preget av mange nullperioder og betydelig variasjon mellom fartøyene. Funnene bør derfor primært forstås som case-spesifikke for dette segmentet, og ikke som direkte generaliserbare til hele offshoremarkedet.
 
 ## Data
 
 ### Datagrunnlag
 
-Datagrunnlaget i denne studien består av kvantitative sekundærdata mottatt som et anonymisert uttrekk fra Simon Møkster Shipping AS. Datasettet er lagret som en CSV-fil og inneholder månedlige registreringer av offhire uttrykt som prosentandel dager uten kontrakt for 16 fartøy som opererer innenfor samme segment i offshorenæringen. I oppgaven brukes dette målet som en indikator på operasjonell nedetid og redusert kontraktsutnyttelse. I tillegg inneholder datasettet en tekstkolonne for spesielle behov eller krav knyttet til de enkelte fartøyene. Siden datasettet er anonymisert, omtales fartøyene i oppgaven som `Fartøy 1` til `Fartøy 16`.
+Datagrunnlaget i denne studien består av kvantitative sekundærdata mottatt som et anonymisert uttrekk fra Simon Møkster Shipping AS. Datasettet er lagret som en CSV-fil og inneholder månedlige registreringer av nedetid uttrykt som prosentandel dager uten kontrakt for 16 fartøy som opererer innenfor samme segment i offshorenæringen. I oppgaven brukes dette målet som en indikator på operasjonell nedetid og redusert kontraktsutnyttelse. I tillegg inneholder datasettet en tekstkolonne for spesielle behov eller krav knyttet til de enkelte fartøyene. Siden datasettet er anonymisert, omtales fartøyene i oppgaven som `Fartøy 1` til `Fartøy 16`.
 
 Tidsperioden i datasettet strekker seg fra april 2021 til mars 2026. Materialet er organisert i seks årsblokker, én for hvert år fra 2021 til 2026, og dekker totalt 16 fartøy. Råfilen består av 125 rader inkludert årsrader, kolonneoverskrifter og tomme skillerader. Etter rensing og omstrukturering til long-format, der hver rad representerer ett fartøy i én bestemt måned, består analysegrunnlaget av 902 observasjoner. Fordelingen over tid er 135 observasjoner i 2021, 180 observasjoner per år i 2022, 2023, 2024 og 2025, samt 47 observasjoner i 2026. At 2021 og 2026 har færre observasjoner skyldes at dataserien starter i april 2021 og foreløpig bare går til og med mars 2026.
 
-Databehandlingen har bestått av flere trinn. Først ble tomme rader, overskriftsrader og verdier markert som `N/A` fjernet fra analysegrunnlaget. Deretter ble prosentverdier standardisert til numeriske verdier, blant annet ved å omforme komma til punktum i desimaltall. Til slutt ble datasettet gjort om fra et bredt årsformat til et analyseklar long-format med variablene fartøy, måned, dato, offhire-verdi og eventuelle spesielle behov eller krav. Denne omstruktureringen var nødvendig for å kunne bruke både tradisjonelle tidsseriemodeller og maskinlæringsmodeller på samme datagrunnlag.
+Databehandlingen har bestått av flere trinn. Først ble tomme rader, overskriftsrader og verdier markert som `N/A` fjernet fra analysegrunnlaget. Deretter ble prosentverdier standardisert til numeriske verdier, blant annet ved å omforme komma til punktum i desimaltall. Til slutt ble datasettet gjort om fra et bredt årsformat til et analyseklar long-format med variablene fartøy, måned, dato, nedetid-verdi og eventuelle spesielle behov eller krav. Denne omstruktureringen var nødvendig for å kunne bruke både tradisjonelle tidsseriemodeller og maskinlæringsmodeller på samme datagrunnlag.
 
 For selve modelleringen ble datasettet i tillegg delt i et eksplisitt trenings- og testsett. Treningsdelen dekker perioden fra april 2021 til desember 2024, mens testdelen dekker januar 2025 til mars 2026. Denne tidsbaserte splitten er valgt for å sikre at modellene evalueres på observasjoner som ligger etter treningsperioden i tid, og dermed ikke får tilgang til informasjon fra framtiden under evalueringen. I det rensede analysegrunnlaget gir dette 675 observasjoner i treningssettet og 227 observasjoner i testsettet. Av disse 227 testobservasjonene tilhører to `Fartøy 16`, som først kommer inn helt mot slutten av dataserien og derfor ikke har tilstrekkelig treningshistorikk til å inngå i en rettferdig sammenligning på tvers av alle modellene. Hovedtesten bygger derfor på 225 fartøy-måneder fordelt på 15 fartøy.
 
@@ -402,21 +446,21 @@ Tabell 1 oppsummerer hovedtrekkene i datagrunnlaget. Tabellen tydeliggjør at da
 
 ### Deskriptiv analyse av datasettet
 
-De overordnede figurene i casebeskrivelsen viser at offhire varierer både over tid og mellom fartøy. I denne delen utdypes derfor datastrukturen mer detaljert for å vise hvilke trekk ved materialet som er særlig relevante før modellering. Formålet er ikke å evaluere prognosemodeller, men å beskrive datagrunnlaget på en måte som gjør det tydelig hvorfor sammenligning av ulike modelltyper er metodisk relevant.
+De overordnede figurene i casebeskrivelsen viser at nedetid varierer både over tid og mellom fartøy. I denne delen utdypes derfor datastrukturen mer detaljert for å vise hvilke trekk ved materialet som er særlig relevante før modellering. Formålet er ikke å evaluere prognosemodeller, men å beskrive datagrunnlaget på en måte som gjør det tydelig hvorfor ulike modellfamilier kan forventes å prestere forskjellig.
 
 #### Variasjon mellom fartøy
 
-Figur 3 rangerer fartøyene etter gjennomsnittlig månedlig offhire i hele observasjonsperioden. Fordi 2021 og 2026 er ufullstendige år, er gjennomsnittlig månedlig nivå et mer informativt mål enn rene totalsummer.
+Figur 3 rangerer fartøyene etter gjennomsnittlig månedlig nedetid i hele observasjonsperioden. Fordi 2021 og 2026 er ufullstendige år, er gjennomsnittlig månedlig nivå et mer informativt mål enn rene totalsummer.
 
 ![](<../004 data/visualization/outputs/figures/gjennomsnitt_offhire_per_fartoy.png>)
 
 *Figur 3. Gjennomsnittlig månedlig offhire per fartøy for hele perioden april 2021 til mars 2026.*
 
-Figuren viser at offhire i stor grad er konsentrert rundt et mindre antall fartøy. `Fartøy 10` har høyest gjennomsnittlig offhire med 16,86 prosent, tett fulgt av `Fartøy 8` med 15,53 prosent og `Fartøy 2` med 15,43 prosent. Samtidig viser figuren at flere fartøy ligger svært lavt gjennom hele perioden, og at `Fartøy 13` og `Fartøy 16` ikke har registrert positiv offhire i datagrunnlaget.
+Figuren viser at nedetid i stor grad er konsentrert rundt et mindre antall fartøy. `Fartøy 10` har høyest gjennomsnittlig nedetid med 16,86 prosent, tett fulgt av `Fartøy 8` med 15,53 prosent og `Fartøy 2` med 15,43 prosent. Samtidig viser figuren at flere fartøy ligger svært lavt gjennom hele perioden, og at `Fartøy 13` og `Fartøy 16` ikke har registrert positiv nedetid i datagrunnlaget.
 
-Tabell 2 oppsummerer de fem fartøyene med høyest gjennomsnittlig offhire og viser samtidig hvor stor andel av månedene som likevel er nullmåneder. Tabellen illustrerer at selv fartøyene med høyest nivå preges av betydelig uregelmessighet.
+Tabell 2 oppsummerer de fem fartøyene med høyest gjennomsnittlig nedetid og viser samtidig hvor stor andel av månedene som likevel er nullmåneder. Tabellen viser at selv fartøyene med høyest gjennomsnittlig nivå har mange måneder uten registrert nedetid.
 
-| Tabell 2. Fartøy med høyest gjennomsnittlig offhire | Gjennomsnittlig offhire (%) | Maks offhire (%) | Andel nullmåneder (%) |
+| Tabell 2. Fartøy med høyest gjennomsnittlig nedetid | Gjennomsnittlig offhire (%) | Maks offhire (%) | Andel nullmåneder (%) |
 | --- | ---: | ---: | ---: |
 | Fartøy 10 | 16.86 | 100.00 | 56.67 |
 | Fartøy 8 | 15.53 | 93.00 | 58.33 |
@@ -430,27 +474,27 @@ Figur 4 utdyper denne variasjonen ved å vise fordelingen av offhire for hvert f
 
 *Figur 4. Boksplott som viser median, kvartiler og ekstreme observasjoner for offhire per fartøy.*
 
-Boksplottet viser at datasettet er tydelig nulltungt og høyreskjevt. For de fleste fartøy ligger medianen på eller svært nær null, mens noen få måneder trekker nivået kraftig opp. Dette betyr at gjennomsnitt alene ikke gir et fullstendig bilde av datastrukturen. Offhire fremstår i stedet som et fenomen med mange nullperioder kombinert med enkelte markerte topper, noe som er viktig å ta hensyn til i senere modellvalg.
+Boksplottet viser at datasettet er tydelig nulltungt og høyreskjevt. For de fleste fartøy ligger medianen på eller svært nær null, mens noen få måneder trekker nivået kraftig opp. Dette betyr at gjennomsnitt alene ikke gir et fullstendig bilde av datastrukturen. Nedetid fremstår i stedet som et fenomen med mange nullperioder kombinert med enkelte markerte topper, noe som er viktig å ta hensyn til i senere modellvalg.
 
-#### Tidsutvikling for fartøy med høyest offhire
+#### Tidsutvikling for fartøy med høyest nedetid
 
-For å undersøke om fartøyene med høyest gjennomsnittlig offhire følger like eller ulike mønstre over tid, viser figur 5 de fem fartøyene med høyest gjennomsnittsnivå som fem separate delpaneler.
+For å undersøke om fartøyene med høyest gjennomsnittlig nedetid følger like eller ulike mønstre over tid, viser figur 5 de fem fartøyene med høyest gjennomsnittsnivå som fem separate delpaneler.
 
 ![](<../004 data/visualization/outputs/figures/top5_fartoy_tidsserie.png>)
 
-*Figur 5. Historiske tidsserier vist som fem separate delpaneler for fartøyene med høyest gjennomsnittlig månedlig offhire i datasettet.*
+*Figur 5. Historiske tidsserier vist som fem separate delpaneler for fartøyene med høyest gjennomsnittlig månedlig nedetid i datasettet.*
 
-Figuren viser at selv de mest aktive fartøyene ikke følger et jevnt eller stabilt mønster. Offhire opptrer heller i klynger eller som enkeltstående topper, og nivåene varierer betydelig mellom perioder. `Fartøy 10` og `Fartøy 8` har flere kraftige utslag gjennom perioden, mens `Fartøy 5` i større grad preges av sporadiske topper adskilt av lange perioder med null. Samlet peker den deskriptive analysen dermed mot at datasettet er preget av både sterk heterogenitet mellom fartøy og betydelig tidsmessig uregelmessighet. Dette gjør sammenligning av ulike prognosemodeller metodisk relevant.
+Figuren viser at selv de mest aktive fartøyene ikke følger et jevnt eller stabilt mønster. Nedetid opptrer i perioder med konsentrerte topper, avbrutt av lange intervaller med lave eller null registreringer. `Fartøy 10` og `Fartøy 8` har flere kraftige utslag gjennom perioden, mens `Fartøy 5` i større grad preges av sporadiske topper adskilt av lange perioder med null. Samlet peker dette dermed mot at datasettet er preget av både sterk heterogenitet mellom fartøy og betydelig tidsmessig uregelmessighet.
 
 # Modellering
 
-I denne delen bygges, testes og verifiseres modellene kun på historiske data. Selve framtidsprognosene behandles i en egen senere seksjon og inngår derfor ikke i modellbeskrivelsen nedenfor. For å gjøre modellene sammenlignbare er alle testet på samme historiske periode med samme evalueringslogikk: ekspanderende `1`-stegs prognoser måned for måned.
+I denne delen bygges, testes og evalueres modellene kun på historiske data. Fremtidsprognosene behandles i en egen seksjon og inngår derfor ikke i modellbeskrivelsene nedenfor. For å sikre en sammenlignbar evaluering testes alle modellene på samme historiske periode og med samme ekspanderende én-stegs prognoselogikk måned for måned.
 
-Den felles teststrukturen er oppsummert i tabell 3. `Fartøy 16` inngår ikke i hovedsammenligningen fordi fartøyet ikke har tilstrekkelig treningshistorikk før testperioden. Utelatelsen er metodisk begrunnet og gjort for å sikre at alle fire modellene evalueres på samme informasjonsgrunnlag, ikke fordi fartøyet er uten betydning i casen. Konsekvensen er at resultatene må leses som en sammenligning av modellprestasjon for den delen av datasettet der alle modellene kan testes på like vilkår. Dermed bygger hovedsammenligningen på `15` fartøy og `225` fartøy-måneder i testsettet.
+Det felles evalueringsoppsettet er oppsummert i tabell 3. `Fartøy 16` inngår ikke i hoved sammenligningen fordi fartøyet ikke har tilstrekkelig treningshistorikk før testperioden. Resultatene må derfor forstås som en sammenligning av modellprestasjon for den delen av datasettet der alle modellene kan evalueres under samme betingelser. Hoved sammenligningen bygger dermed på 15 fartøy og totalt 225 fartøy-måneder i testsettet.
 
 | Tabell 3. Felles evalueringsoppsett | Verdi |
 | --- | --- |
-| Målvariabel | Månedlig offhire-prosent per fartøy |
+| Målvariabel | Månedlig nedetid i prosent per fartøy |
 | Treningsperiode | `2021-04` til `2024-12` |
 | Testperiode | `2025-01` til `2026-03` |
 | Prognosehorisont i test | `1` måned per steg |
@@ -462,13 +506,13 @@ Den felles teststrukturen er oppsummert i tabell 3. `Fartøy 16` inngår ikke i 
 
 ## SARIMA
 
-I denne studien brukes `SARIMA` fartøyvis, slik at hver tidsserie modelleres som en egen månedlig serie for offhire-prosent. Modellen skal fange opp treghet i fartøyets historiske utvikling, eventuelle sesongmønstre over året og kortsiktige avvik som ikke kan forklares av nivå alene. Den er derfor særlig egnet når neste måneds offhire kan forstås som avhengig av både tidligere måneder og gjentakende sesongstruktur. Konkret modelleres den månedlige offhire-serien som en kombinasjon av autoregressive ledd, differensiering, glidende gjennomsnitt og eventuelle sesongkomponenter med periode `12`.
+I denne studien brukes `SARIMA` fartøyvis, slik at hver tidsserie modelleres som en egen månedlig serie for nedetid. Modellen skal fange opp treghet i fartøyets historiske utvikling, eventuelle sesongmønstre over året og kortsiktige avvik som ikke kan forklares av nivå alene. Den er derfor særlig egnet når neste måneds nedetid kan forstås som avhengig av både tidligere måneder og gjentakende sesongstruktur. Konkret modelleres den månedlige nedetidsserien gjennom autoregressive ledd, differensiering, glidende gjennomsnitt og eventuelle sesongkomponenter med periode 12.
 
-`SARIMA` bygger på den etablerte Box-Jenkins-tradisjonen for tidsseriemodellering, men anvendes her på fartøynivå fremfor på aggregert flåtenivå. For hvert fartøy ble det først kontrollert at tidsserien hadde tilstrekkelig historikk og variasjon. Deretter ble `ADF` brukt som støtte for differensieringsvalg, før et begrenset parameterrom for `ARIMA/SARIMA`-modeller ble estimert og rangert med `AIC`, `BIC` og parsimoni. Sesongledd med periode `12` ble tillatt der det ga mening, men ikke tvunget frem kun fordi dataene er månedlige. Når et slikt ledd er med, peker det eksplisitt tilbake på observasjonen `y_{t-12}`, altså samme måned året før. Dersom denne informasjonen er svak eller ofte null, vil også sesongbidraget naturlig bli lite.
+`SARIMA` bygger på den etablerte Box-Jenkins-tradisjonen for tidsseriemodellering, men anvendes her på fartøynivå fremfor på aggregert flåtenivå. For hvert fartøy ble det først kontrollert at tidsserien hadde tilstrekkelig historikk og variasjon. Deretter ble `ADF` brukt som støtte for differensieringsvalg, før et begrenset parameterrom for `ARIMA/SARIMA`-modeller ble estimert og rangert med `AIC`, `BIC` og parsimoni. Sesongledd med periode 12 ble inkludert der datastrukturen tydet på at det var relevant, men ikke tvunget frem kun fordi dataene er månedlige. Når et slikt ledd er med, peker det eksplisitt tilbake på observasjonen `y_{t-12}`, altså samme måned året før. Dersom observasjonen fra samme måned året før inneholder lite informasjon eller ofte er null, vil sesongbidraget også bli begrenset.
 
-`Fartøy 13` hadde en konstant nullserie i treningsperioden og ble derfor håndtert som en eksplisitt konstant-baseline innen samme evalueringsramme. De øvrige `14` fartøyene fikk estimerte `ARIMA/SARIMA`-modeller. For et representativt fartøy med høy historisk offhire, `Fartøy 2`, viser tabell 4 de beste kandidatmodellene. Den valgte modellen for dette fartøyet ble `SARIMA(2,0,0)(1,0,0,12)`.
+`Fartøy 13` hadde en konstant nullserie i treningsperioden og ble derfor håndtert som en eksplisitt konstant-baseline innen samme evalueringsramme. De øvrige `14` fartøyene fikk estimerte `ARIMA/SARIMA`-modeller. For et representativt fartøy med høy historisk nedetid, `Fartøy 2`, viser tabell 4 de beste kandidatmodellene. Den valgte modellen for dette fartøyet ble `SARIMA(2,0,0)(1,0,0,12)`.
 
-`Fartøy 2` er brukt som representativt eksempel i figurer og modelltabeller, men modellene er ikke trent utelukkende på dette fartøyet. For `SARIMA` og `eksponentiell glatting` estimeres egne modeller for hvert fartøy i datasettet, mens `XGBoost` og `LSTM` trenes på det samlede fartøy-måned-panelet. Valget av `Fartøy 2` gjelder derfor kun presentasjonen av ett illustrativt eksempel, og ble gjort fordi dette fartøyet hadde høyest gjennomsnittlig offhire i treningsgrunnlaget.
+`Fartøy 2` er brukt som representativt eksempel i figurer og modelltabeller, men modellene er ikke trent utelukkende på dette fartøyet. For `SARIMA` og `eksponentiell glatting` estimeres egne modeller for hvert fartøy i datasettet, mens `XGBoost` og `LSTM` trenes på det samlede fartøy-måned-panelet. `Fartøy 2` brukes derfor kun som et illustrativt eksempel i presentasjonen av modellene.
 
 | Tabell 4. Beste kandidatmodeller for representativt fartøy (`Fartøy 2`) | AIC | BIC |
 | --- | ---: | ---: |
@@ -500,11 +544,11 @@ Figur 9 viser hvordan den valgte modellen treffer i testperioden for det represe
 
 ## Eksponentiell glatting
 
-I denne oppgaven brukes modellen fartøyvis på månedlig offhire-prosent. Nivå, trend og sesong oppdateres fortløpende når nye månedsobservasjoner blir tilgjengelige, slik at nyere observasjoner får større vekt enn eldre observasjoner. Dette gjør modellen relevant som en konservativ, men responsiv benchmark i et datasett der flere serier har lange nullperioder avbrutt av mer uregelmessige utslag. Eksponentiell glatting modellerer dermed den månedlige offhire-serien gjennom separate komponenter for nivå, trend og sesong, uten å kreve like eksplisitte strukturvalg som `SARIMA`.
+I denne oppgaven estimeres eksponentiell glatting fartøyvis på månedlig nedetid i prosent. Nivå, trend og sesong oppdateres fortløpende når nye månedsobservasjoner blir tilgjengelige, slik at nyere observasjoner får større vekt enn eldre observasjoner. Dette gjør modellen relevant som en relativt konservativ, men samtidig responsiv benchmark i et datasett der flere serier har lange nullperioder avbrutt av mer uregelmessige utslag. Modellen beskriver den månedlige nedetiden gjennom separate komponenter for nivå, trend og sesong, uten å kreve samme grad av eksplisitt modellstruktur som `SARIMA`.
 
-Eksponentiell glatting ble brukt som den mest konservative klassiske benchmarken. Også denne modellen ble estimert per fartøy. I stedet for å tvinge én spesifikasjon på alle serier ble et lite og bevisst begrenset sett av additive `ETS`-varianter vurdert: nivåmodell (`ANN`), nivå med trend (`AAN`) og nivå med trend og sesong (`AAA`). For konstante serier ble det brukt en eksplisitt konstant-baseline. At bare ett fartøy endte med en eksplisitt `AAA`-modell tyder samtidig på at et sterkt og stabilt årlig sesongsignal med periode `12` har begrenset empirisk støtte i store deler av datasettet.
+Eksponentiell glatting fungerte i denne studien som den mest konservative klassiske benchmarkmodellen. Også denne modellen ble estimert per fartøy. I stedet for å tvinge én spesifikasjon på alle serier ble et lite og bevisst begrenset sett av additive `ETS`-varianter vurdert: nivåmodell (`ANN`), nivå med trend (`AAN`) og nivå med trend og sesong (`AAA`). For konstante serier ble det brukt en eksplisitt konstant baseline. At bare ett fartøy endte med en eksplisitt `AAA`-modell, tyder på at sterke og stabile sesongmønstre med periode 12 har begrenset empirisk støtte i store deler av datasettet.
 
-Tabell 5 oppsummerer hvilke spesifikasjoner som faktisk ble valgt. Resultatet viser at datasettet i liten grad støtter kompliserte glattemodeller: `13` fartøy endte med `ANN`, `1` fartøy med `AAA`, og `1` fartøy med konstant-baseline. Det ble ikke valgt noen `AAN`-modeller i analysen.
+Tabell 5 oppsummerer hvilke spesifikasjoner som faktisk ble valgt. Resultatet viser at datasettet i liten grad støtter mer komplekse glattemodeller: `13` fartøy endte med `ANN`, `1` fartøy med `AAA`, og `1` fartøy med konstant-baseline. Det ble ikke valgt noen `AAN`-modeller i analysen.
 
 | Tabell 5. Valgt ETS-spesifikasjon i analysen | Antall fartøy |
 | --- | ---: |
@@ -520,11 +564,11 @@ Residualdiagnostikken viser at `ETS` fungerer rimelig godt for mange fartøy, me
 
 ## XGBoost
 
-I denne studien er `XGBoost` ikke en klassisk univariat tidsseriemodell, men en feature-basert panelmodell på fartøy-måned-nivå. Feature-vektoren $x_i$ består av laggede observasjoner, rullerende gjennomsnitt, rullerende standardavvik, kalenderkomponenter og fartøyspesifikke trekk. Modellen predikerer dermed neste måneds offhire-prosent ved å lære mønstre i konstruerte tidsserie-features, heller enn å spesifisere tidsavhengigheten eksplisitt i én serieformel. Prognoseproblemet formuleres som en supervisert regresjonsoppgave der prediksjonen uttrykkes som summen av flere beslutningstrær.
+I denne studien brukes `XGBoost` som en feature-basert panelmodell på fartøy-måned-nivå, snarere enn som en klassisk univariat tidsseriemodell. Modellens inputvariabler består av laggede observasjoner, rullerende gjennomsnitt, rullerende standardavvik, kalenderkomponenter og fartøyspesifikke trekk. Modellen predikerer dermed neste måneds nedetid ved å lære mønstre i konstruerte tidsserie-features, heller enn å spesifisere tidsavhengigheten eksplisitt i én serieformel. Prognoseproblemet behandles som en supervisert regresjonsoppgave der prediksjonen uttrykkes som summen av flere beslutningstrær.
 
-`XGBoost` ble satt opp som én global modell på fartøy-måned-paneldata. Modellen fikk et eksplisitt feature-set som bare brukte informasjon tilgjengelig før hver testmåned. Dermed følger også denne modellen samme ekspanderende `1`-stegs logikk som de klassiske modellene.
+`XGBoost` ble satt opp som én global modell på fartøy-måned-paneldata. Modellen fikk et eksplisitt feature-set som bare brukte informasjon tilgjengelig før hver testmåned. Dermed følger også denne modellen samme ekspanderende én-stegs prognoselogikk som de klassiske modellene.
 
-Feature-settet er oppsummert i tabell 6. Poenget var å gi modellen både kortsiktig historikk, glattet historikk og kalenderinformasjon, samtidig som fartøyspesifikke forskjeller kunne fanges gjennom `vessel` og `special_flag`. Det er derfor misvisende å beskrive denne modellen som om den bare tar et gjennomsnitt av nullmåneder. `XGBoost` bruker samtidig korte lags, `lag_12`, rullerende gjennomsnitt, rullerende standardavvik og fartøyspesifikke indikatorer. Likevel kan den observerte amplituden bli dempet i et nulltungt datasett fordi flere av disse feature-ene ofte får moderate verdier når historikken domineres av lange nullperioder og få ekstreme topper.
+Feature-settet er oppsummert i tabell 6. Poenget var å gi modellen både kortsiktig historikk, glattet historikk og kalenderinformasjon, samtidig som fartøyspesifikke forskjeller kunne fanges gjennom `vessel` og `special_flag`. Modellen kan derfor ikke forstås som et enkelt gjennomsnitt av tidligere nullmåneder. `XGBoost` bruker samtidig korte lags, `lag_12`, rullerende gjennomsnitt, rullerende standardavvik og fartøyspesifikke indikatorer. I et nulltungt datasett kan amplituden likevel bli dempet, fordi flere av feature-ene får moderate verdier når historikken domineres av lange nullperioder og få ekstreme topper.
 
 | Tabell 6. XGBoost-featuregrupper | Innhold |
 | --- | --- |
@@ -534,7 +578,7 @@ Feature-settet er oppsummert i tabell 6. Poenget var å gi modellen både kortsi
 | Kalender | `month_num`, `quarter_num`, `year_num`, `time_idx`, `month_sin`, `month_cos` |
 | Kategoriske trekk | `vessel`, `special_flag` |
 
-Hyperparametrene ble holdt faste gjennom hele testoppsettet, som vist i tabell 7. Dette er et bevisst valg for å prioritere sammenlignbarhet mellom modellfamiliene fremfor maksimal tuning av `XGBoost` isolert sett.
+Hyperparametrene ble holdt faste gjennom hele testoppsettet, som vist i tabell 7. Dette er et bevisst valg for å prioritere sammenlignbarhet mellom modellfamiliene fremfor maksimal optimalisering av `XGBoost` isolert sett.
 
 | Tabell 7. XGBoost-hyperparametre | Verdi |
 | --- | ---: |
@@ -558,9 +602,7 @@ Figur 12 viser den historiske testytelsen for det representative fartøyet. Samm
 
 ## LSTM
 
-I denne studien brukes `LSTM` som en global sekvensmodell på fartøy-måned-data, der et observasjonsvindu på `12` måneder brukes for å predikere neste måned. Inputvektoren $x_t$ inneholder den historiske målvariabelen samt kalender- og fartøyrelatert informasjon, slik at modellen kan lære tidsavhengigheter uten at disse må spesifiseres manuelt. Den skjulte tilstanden $h_t$ representerer kortsiktig informasjon fra sekvensen, mens celletilstanden $c_t$ fungerer som modellens mer langvarige hukommelse. Modellen er derfor relevant fordi den kan lære mønstre over flere måneder uten at tidsavhengigheten må spesifiseres eksplisitt på forhånd.
-
-`LSTM` ble bygget som én global sekvensmodell på fartøy-måned-data. Hver observasjon ble representert som en sekvens på `12` måneder, med fire inputfeatures per tidssteg: den historiske målvariabelen (`offhire_days` i kodegrunnlaget, tilsvarende månedlig offhire-prosent i analysefilen), `month_sin`, `month_cos` og `special_flag`. All skalering ble estimert på treningsdata. Modellen ble deretter re-trent måned for måned i samme ekspanderende testoppsett som de øvrige modellene. Også her betyr `12`-månedersmekanismen at modellen får se ett helt års historikk, men ikke at samme måned året før automatisk gis størst vekt. Hvis store deler av sekvensen består av nuller eller rolige perioder, kan resultatet bli et mer dempet prognosenivå.
+I denne studien brukes `LSTM` som en global sekvensmodell på fartøy-måned-data, der et observasjonsvindu på `12` måneder brukes til å predikere neste måned. Inputvariablene inneholder historisk nedetid samt kalender- og fartøyrelatert informasjon. Den skjulte tilstanden representerer kortsiktig informasjon fra sekvensen, mens celletilstanden fungerer som modellens mer langvarige hukommelse. `LSTM` er derfor relevant fordi modellen kan lære tidsavhengigheter over flere måneder uten at disse må spesifiseres manuelt gjennom laggede variabler. I det konkrete modelloppsettet ble hver observasjon representert som en sekvens på 12 måneder, med fire inputfeatures per tidssteg: den historiske målvariabelen, som i kodegrunnlaget er kalt `offhire_days`, men som i analysefilen representerer månedlig offhire-prosent, `month_sin`, `month_cos` og `special_flag`. All skalering ble estimert på treningsdata. Modellen ble deretter re-trent måned for måned i samme ekspanderende testoppsett som de øvrige modellene. Også her betyr 12-månedersvinduet at modellen får se ett helt års historikk, men ikke at samme måned året før automatisk gis størst vekt. Hvis store deler av sekvensen består av nuller eller rolige perioder, kan resultatet bli et mer dempet prognosenivå.
 
 Det konkrete oppsettet er vist i tabell 8.
 
@@ -589,23 +631,23 @@ Figur 14 viser testforløpet for det representative fartøyet. Som for `XGBoost`
 
 Samlet viser modelleringskapitlet at alle fire modellfamiliene er bygget og testet innenfor samme historiske evalueringsramme. Forskjellen mellom modellene ligger derfor ikke i testdesignet, men i hvordan de håndterer samme datastruktur under samme betingelser.
 
-## Oppsett for framtidsprognoser
+## Oppsett for fremtidsprognoser
 
-Etter at modellene var evaluert på den historiske testperioden, ble framtidsprognosene kjørt som en egen fase. I denne fasen ble hele datasettet til og med `2026-03` brukt som treningsgrunnlag, og første prognosemåned ble dermed `2026-04`. For alle fire modellene ble det generert prognoser `1`, `3`, `6` og `12` måneder fram i tid.
+Etter at modellene var evaluert på den historiske testperioden, ble fremtidsprognosene gjennomført som en egen fase. I denne fasen ble hele datasettet til og med `2026-03` brukt som treningsgrunnlag, og første prognosemåned ble dermed `2026-04`. For alle fire modellene ble det generert prognoser med horisonter på `1`, `3`, `6` og `12` måneder.
 
-For de klassiske modellene ble prognosene laget per fartøy med fler-stegsprognoser direkte fra den estimerte modellen. For `XGBoost` og `LSTM` ble prognosene generert iterativt måned for måned, slik at predikert verdi fra ett steg inngår som historisk input i neste steg. Dette gjør at alle modellene kan sammenlignes på samme framtidige datovindu, samtidig som de beholder sin opprinnelige modellstruktur.
+For de klassiske modellene ble prognosene generert fartøyvis som fler-stegsprognoser direkte fra den estimerte modellen. For `XGBoost` og `LSTM` ble prognosene generert iterativt måned for måned, slik at predikert verdi fra ett steg inngår som historisk input i neste prognosesteg. Dette gjør at alle modellene kan sammenlignes på samme fremtidige datovindu, samtidig som de beholder sin opprinnelige modellstruktur.
 
-Den iterative logikken er viktig for tolkningen av amplituden i framtidsprognosene. Når modeller mates med sine egne tidligere prediksjoner, kan banene enten bli dempet eller forsterket avhengig av hvor sterke signaler de siste prognosene gir. I et nulltungt datasett vil dette ofte trekke modellene mot moderate nivåer, men for enkelte fartøy kan samme mekanisme også forsterke positive prognoser dersom rekursive features begynner å bygge på hverandre.
+Den iterative logikken er viktig for hvordan nivå og utslag i fremtidsprognosene tolkes. Når modellene bruker sine egne tidligere prediksjoner som input, kan prognosebanene enten dempes eller forsterkes avhengig av signalene i de foregående stegene. I et nulltungt datasett vil dette ofte trekke modellene mot moderate nivåer, men for enkelte fartøy kan samme mekanisme også forsterke positive prognoser dersom rekursive features begynner å bygge på hverandre.
 
-Framtidsprognosene evalueres ikke med `MAE`, `RMSE` eller `sMAPE`, fordi faktiske observasjoner ikke finnes ennå. I stedet brukes de som modellbaserte scenariobeskrivelser. Prognosene er punktprognoser uten usikkerhetsintervaller, og de bør derfor tolkes med økende forsiktighet jo lengre horisonten blir. For å gjøre resultatene sporbare ble det lagret egne prognosefiler både samlet og per horisont, samt figurer som summerer forventet offhire per måned og modell.
+Fremtidsprognosene evalueres ikke med `MAE`, `RMSE`, `sMAPE` eller `MASE`, fordi faktiske observasjoner ikke finnes ennå. I stedet brukes de som modellbaserte indikasjoner på mulig fremtidig utvikling. Prognosene er punktprognoser uten usikkerhetsintervaller, og de bør derfor tolkes med økende forsiktighet jo lengre horisonten blir. For å gjøre resultatene sporbare ble det lagret egne prognosefiler både samlet og per horisont, samt figurer som summerer forventet nedetid per måned og modell.
 
 # Resultater
 
-Resultatdelen er delt i to. Først presenteres resultatene fra den historiske modelltesten, som viser hvordan modellene presterer på kjente holdout-data. Deretter presenteres framtidsprognosene for `1`, `3`, `6` og `12` måneder fram i tid. Denne todelingen er viktig fordi historisk test kan evalueres med feilmetrikker, mens framtidsprognoser bare kan tolkes som modellbaserte estimater.
+Resultatdelen er delt i to. Først presenteres resultatene fra den historiske modelltesten, som viser hvordan modellene presterer på historiske holdout-data. Deretter presenteres fremtidsprognosene for `1`, `3`, `6` og `12` måneder frem i tid. Denne todelingen er viktig fordi historisk test kan evalueres med feilmetrikker, mens fremtidsprognoser bare kan tolkes som modellbaserte estimater.
 
 ## Resultater fra historisk modelltesting
 
-Alle modeller er evaluert på de samme `225` fartøy-månedene i testperioden fra januar 2025 til mars 2026. `MAE` brukes som hovedmål, mens `RMSE`, `sMAPE` og `MASE` brukes som støttemål. `MASE` er her skalert mot en naiv `lag-1`-baseline beregnet fra treningshistorikken per fartøy. Siden datasettet er svært nulltungt, må `sMAPE` tolkes med forsiktighet; metrikken blir høy når både faktiske og predikerte verdier ligger nær null.
+Alle modeller er evaluert på de samme `225` fartøy-månedene i testperioden fra januar 2025 til mars 2026. `MAE` brukes som hovedmål, mens `RMSE`, `sMAPE` og `MASE` brukes som støttemål. `MASE` er skalert mot en naiv `lag-1`-referanse beregnet fra treningshistorikken per fartøy. Siden datasettet er svært nulltungt, må `sMAPE` tolkes med forsiktighet; metrikken kan bli ustabil eller svært høy når faktiske og predikerte verdier ligger nær null.
 
 Tabell 9 viser det samlede testresultatet. `ARIMA/SARIMA` oppnår lavest `MAE`, lavest `RMSE` og lavest `MASE` i den historiske testen. `XGBoost` og `LSTM` ligger fortsatt svært nær hverandre på `MAE` og `RMSE`, mens `eksponentiell glatting` er svakest på disse to målene. `MASE` nyanserer likevel rangeringen bak vinneren ved at `eksponentiell glatting` kommer bedre ut enn både `XGBoost` og `LSTM` når feilen skaleres mot en enkel naiv referanse.
 
@@ -616,7 +658,7 @@ Tabell 9 viser det samlede testresultatet. `ARIMA/SARIMA` oppnår lavest `MAE`, 
 | `LSTM` | 225 | 7.57 | 17.41 | 178.77 | 1.32 |
 | `Eksponentiell glatting` | 225 | 8.37 | 17.95 | 168.62 | 1.18 |
 
-`MASE` støtter dermed hovedfunnet om at `ARIMA/SARIMA` er den mest treffsikre modellen samlet sett, men viser også at bildet bak førsteplassen er mer sammensatt enn `MAE` alene antyder. En `MASE` under `1` for `ARIMA/SARIMA` betyr at modellen i gjennomsnitt slår den naive `lag-1`-referansen, mens de øvrige modellene ligger over `1` og dermed ikke forbedrer denne enkle baselinen like tydelig i testperioden.
+`MASE` støtter dermed hovedfunnet om at `ARIMA/SARIMA` er den mest treffsikre modellen samlet sett, men viser også at bildet bak førsteplassen er mer sammensatt enn `MAE` alene antyder. En `MASE` under `1` for `ARIMA/SARIMA` betyr at modellen i gjennomsnitt slår den naive `lag-1`-referansen. De øvrige modellene ligger over `1` og forbedrer dermed ikke denne enkle referansen i samme grad i testperioden.
 
 Figur 15 visualiserer de samme `MAE`-resultatene som en samlet sammenligning. Figuren tydeliggjør at forskjellen mellom de tre beste modellene er relativt liten, men at `ARIMA/SARIMA` likevel kommer best ut i den historiske testen.
 
@@ -624,27 +666,27 @@ Figur 15 visualiserer de samme `MAE`-resultatene som en samlet sammenligning. Fi
 
 *Figur 15. Samlet `MAE` for de fire modellene i testperioden. Lavere verdi indikerer bedre prediksjonsnøyaktighet.*
 
-Figur 16 viser hvordan `MAE` varierer mellom testmånedene. Ingen modell dominerer alle måneder fullstendig, men `ARIMA/SARIMA` er gjennomgående sterk og særlig stabil i flere av månedene med mer moderate nivåer. Samtidig viser figuren at alle modellene får høyere feil i måneder der offhire-nivået er preget av store hopp og episoder.
+Figur 16 viser hvordan `MAE` varierer mellom testmånedene. Ingen modell dominerer alle måneder fullstendig, men `ARIMA/SARIMA` er gjennomgående sterk og særlig stabil i flere av månedene med mer moderate nivåer. Samtidig viser figuren at alle modellene får høyere feil i måneder der nedetiden preges av store hopp eller episodiske utslag.
 
 ![](<../004 data/modeling/outputs/shared/figures/mae_by_month.png>)
 
 *Figur 16. `MAE` per måned i testperioden for de fire modellene. Figuren viser hvordan modellytelsen varierer over tid, ikke bare samlet.*
 
-Figur 17 viser `MAE` per fartøy og modell som heatmap. Figuren tydeliggjør at de største feilene er konsentrert rundt noen få fartøy, særlig `Fartøy 10`, `Fartøy 9` og `Fartøy 8`, mens flere fartøy med lav eller null offhire er enklere å predikere for alle modellene. Dette betyr at samlet modellrangering i stor grad påvirkes av hvor godt modellene håndterer de mest krevende fartøyene.
+Figur 17 viser `MAE` per fartøy og modell som heatmap. Figuren tydeliggjør at de største feilene er konsentrert rundt noen få fartøy, særlig `Fartøy 10`, `Fartøy 9` og `Fartøy 8`, mens flere fartøy med lav eller null nedetid er enklere å predikere for alle modellene. Dette betyr at samlet modellrangering i stor grad påvirkes av hvor godt modellene håndterer de mest krevende fartøyene.
 
 ![](<../004 data/modeling/outputs/shared/figures/mae_heatmap_by_vessel.png>)
 
 *Figur 17. Heatmap som viser `MAE` per fartøy og modell i testperioden. Mørkere felt indikerer høyere prediksjonsfeil.*
 
-Resultatene fra den historiske modelltesten peker mot tre hovedobservasjoner. For det første fungerer klassiske tidsseriemodeller fortsatt svært godt i dette datasettet, særlig når `ARIMA/SARIMA` får modelleres per fartøy og verifiseres med residualdiagnostikk. For det andre presterer `XGBoost` og `LSTM` konkurransedyktig, men uten å gi en tydelig gevinst over den beste klassiske modellen. For det tredje er forskjellene mellom modellene mindre enn forskjellene mellom fartøyene, noe som understreker at problemet er like mye et spørsmål om datakarakter som om modellvalg.
+Resultatene fra den historiske modelltesten peker mot tre hovedobservasjoner. For det første har `ARIMA/SARIMA` best samlet testytelse i dette datasettet. For det andre presterer `XGBoost` og `LSTM` konkurransedyktig, men uten å gi en tydelig gevinst over den beste klassiske modellen. For det tredje varierer feilene mer mellom fartøy enn mellom modeller, noe som viser at samlet modellrangering i stor grad påvirkes av de mest krevende fartøyseriene.
 
-## Resultater fra framtidsprognoser
+## Resultater fra fremtidsprognoser
 
-Etter at modellene var testet historisk, ble alle fire modellene kjørt på hele historikken til og med `2026-03`. Prognosevinduet dekker dermed perioden `2026-04` til `2027-03`. For å holde hovedteksten lesbar presenteres tabellene nedenfor som samlet prognostisert offhire per måned på tvers av de `15` fartøyene som fikk framtidsprognoser. De detaljerte fartøyvise prognosene er utelatt fra hovedteksten av hensyn til lesbarhet, men hovedmønstrene på fartøynivå omtales i diskusjonen.
+Etter den historiske testfasen ble alle fire modellene estimert på hele datasettet til og med `2026-03`. Prognosevinduet dekker dermed perioden `2026-04` til `2027-03`. For å holde hovedteksten lesbar presenteres tabellene nedenfor som samlet prognostisert nedetid per måned på tvers av de `15` fartøyene som inngår i prognosegrunnlaget. De detaljerte fartøyvise prognosene er utelatt fra hovedteksten av hensyn til lesbarhet, men hovedmønstrene på fartøynivå omtales i diskusjonen.
 
-### Prognose 1 måned fram
+### Prognose 1 måned frem
 
-Tabell 10 viser prognosen for april `2026`, altså én måned fram i tid. Allerede på denne korte horisonten er det tydelig at modellene ikke er helt samstemte. `XGBoost` gir høyest samlet prognose med `102.19`, mens eksponentiell glatting ligger lavest med `53.37`. På fartøynivå peker tre av fire modeller sterkest mot `Fartøy 10`, mens `ARIMA/SARIMA` har den høyeste enkeltprognosen på `Fartøy 9` med `42.93`.
+Tabell 10 viser prognosen for april `2026`, altså én måned frem i tid. Allerede på denne korte horisonten gir modellene ulike nivåestimater. `XGBoost` gir høyest samlet prognose med `102.19`, mens eksponentiell glatting ligger lavest med `53.37`. På fartøynivå gir tre av fire modeller høyest prognose for `Fartøy 10`, mens `ARIMA/SARIMA` har den høyeste enkeltprognosen på `Fartøy 9` med `42.93`.
 
 | Tabell 10. Samlet prognostisert offhire 1 måned fram | Eksponentiell glatting | LSTM | ARIMA/SARIMA | XGBoost |
 | --- | ---: | ---: | ---: | ---: |
@@ -654,9 +696,9 @@ Tabell 10 viser prognosen for april `2026`, altså én måned fram i tid. Allere
 
 *Figur 18. Samlet prognostisert offhire i april `2026` for de fire modellene.*
 
-### Prognose 3 måneder fram
+### Prognose 3 måneder frem
 
-Tabell 11 viser at forskjellene øker raskt når horisonten forlenges til tre måneder. `Eksponentiell glatting` ligger nærmest flatt gjennom hele vinduet, mens `LSTM` beveger seg moderat nedover. `ARIMA/SARIMA` og særlig `XGBoost` estimerer langt høyere nivåer i mai og juni. Ved utgangen av juni `2026` er forskjellen mellom høyeste og laveste modell over `180` prognostiserte offhire-enheter. Allerede her blir det tydelig at lav amplitude ikke er en generell egenskap ved alle modellene, men en modellspesifikk konsekvens av hvordan historikk, sesong og rekursjon kombineres.
+Tabell 11 viser at forskjellene øker raskt når horisonten forlenges til tre måneder. `Eksponentiell glatting` ligger nærmest flatt gjennom hele vinduet, mens `LSTM` beveger seg moderat nedover. `ARIMA/SARIMA` og særlig `XGBoost` estimerer langt høyere nivåer i mai og juni. Ved utgangen av juni `2026` er forskjellen mellom høyeste og laveste modell over `180` prognostiserte nedetid. Resultatene viser dermed at modellene utvikler ulike prognosebaner allerede på tre måneders horisont.
 
 | Tabell 11. Samlet prognostisert offhire 3 måneder fram | Eksponentiell glatting | LSTM | ARIMA/SARIMA | XGBoost |
 | --- | ---: | ---: | ---: | ---: |
@@ -668,9 +710,9 @@ Tabell 11 viser at forskjellene øker raskt når horisonten forlenges til tre m�
 
 *Figur 19. Samlet prognostisert offhire fra april til juni `2026` for de fire modellene.*
 
-### Prognose 6 måneder fram
+### Prognose 6 måneder frem
 
-Tabell 12 viser prognosene fra april til september `2026`, altså seks måneder fram i tid. Også her fremstår eksponentiell glatting som den mest konservative modellen, med et nesten uendret totalnivå fra måned til måned. `LSTM` faller tydelig utover sommeren, mens `ARIMA/SARIMA` varierer mer og beholder flere markerte topper. `XGBoost` ligger gjennomgående høyest og holder seg over `150` i alle måneder unntatt april. Resultatet understøtter at `ETS` og delvis `LSTM` reagerer mer dempet når de ikke finner et sterkt og stabilt signal, mens `XGBoost` i større grad kan slå ut når rekursive feature-verdier begynner å bygge opp høyere nivåer for enkelte fartøy.
+Tabell 12 viser prognosene fra april til september `2026`, altså seks måneder frem i tid. Også her fremstår eksponentiell glatting som den mest konservative modellen, med et nesten uendret totalnivå fra måned til måned. `LSTM` faller tydelig utover sommeren, mens `ARIMA/SARIMA` varierer mer og beholder flere markerte topper. `XGBoost` ligger gjennomgående høyest og holder seg over `150` i alle måneder unntatt april. Resultatet viser at `ETS` og delvis `LSTM` gir mer dempede prognosebaner, mens `XGBoost` gir høyere nivåer gjennom store deler av seksmånedersvinduet.
 
 | Tabell 12. Samlet prognostisert offhire 6 måneder fram | Eksponentiell glatting | LSTM | ARIMA/SARIMA | XGBoost |
 | --- | ---: | ---: | ---: | ---: |
@@ -685,9 +727,9 @@ Tabell 12 viser prognosene fra april til september `2026`, altså seks måneder 
 
 *Figur 20. Samlet prognostisert offhire fra april til september `2026` for de fire modellene.*
 
-### Prognose 12 måneder fram
+### Prognose 12 måneder frem
 
-Tabell 13 viser det fulle tolvmånedersvinduet fram til mars `2027`. Her blir modellforskjellene svært tydelige. `Eksponentiell glatting` holder seg nesten helt flatt mellom `53.37` og `56.84`, mens `LSTM` først faller og deretter stiger moderat igjen mot slutten av perioden. `ARIMA/SARIMA` beholder et mer bølgende og sesongpreget forløp med tydelige topper i mai-juni `2026` og januar-februar `2027`. `XGBoost` skiller seg klart ut som den mest aggressive modellen, med en topp på `547.73` i februar `2027`. Dette viser også at forklaringen på modellatferden ikke kan reduseres til at alle modellene glatter mot null: noen blir flate, noen blir dempet, og noen kan bli klart forsterkende over lengre horisonter.
+Tabell 13 viser det fulle tolvmånedersvinduet frem til mars `2027`. Her blir modellforskjellene svært tydelige. `Eksponentiell glatting` holder seg nesten helt flatt mellom `53.37` og `56.84`, mens `LSTM` først faller og deretter stiger moderat igjen mot slutten av perioden. `ARIMA/SARIMA` beholder et mer bølgende og sesongpreget forløp med tydelige topper i mai-juni `2026` og januar-februar `2027`. `XGBoost` skiller seg klart ut med de høyeste prognosenivåene, med en topp på `547.73` i februar `2027`. Dette viser også at forklaringen på modellatferden ikke kan reduseres til at alle modellene glatter mot null: noen blir flate, noen blir dempet, og noen kan bli klart forsterkende over lengre horisonter.
 
 | Tabell 13. Samlet prognostisert offhire 12 måneder fram | Eksponentiell glatting | LSTM | ARIMA/SARIMA | XGBoost |
 | --- | ---: | ---: | ---: | ---: |
@@ -708,63 +750,63 @@ Tabell 13 viser det fulle tolvmånedersvinduet fram til mars `2027`. Her blir mo
 
 *Figur 21. Samlet prognostisert offhire fra april `2026` til mars `2027` for de fire modellene.*
 
-Samlet viser framtidsprognosene at modellene gir ganske ulike framtidsbilder, spesielt når horisonten blir lengre. På kort sikt peker de alle mot at offhire fortsatt vil være konsentrert rundt noen få fartøy, men på lengre sikt varierer både nivå og utviklingsform betydelig. Dette betyr at de historiske testresultatene blir viktige som tolkningsramme: prognosene bør ikke leses isolert, men i lys av hvilken modell som faktisk presterte best på kjent historikk. Det er også her det blir viktig å skille mellom spørsmålet om når neste nedetid kommer og hvor stor den blir. Modellene gir først og fremst punktprognoser for nivået i neste fartøy-måned, mens timingdimensjonen må leses ut av om nivået er null eller positivt.
+Samlet viser fremtidsprognosene at modellene gir ulike fremtidsbilder, særlig på lengre horisonter. På kort sikt peker modellene mot at nedetid fortsatt vil være konsentrert rundt noen få fartøy, men på lengre sikt varierer både nivå og utviklingsform betydelig. De historiske testresultatene blir derfor en viktig tolkningsramme: prognosene bør ikke leses isolert, men i lys av hvilke modeller som faktisk presterte best på historiske holdout-data. Dette er også viktig for skillet mellom spørsmålet om når neste nedetid kommer og hvor stor den blir. Modellene gir først og fremst punktprognoser for nivået i neste fartøy-måned, mens tidsdimensjonen må tolkes indirekte gjennom om prognosen er null eller positiv.
 
 # Diskusjon
 
-Diskusjonsdelen tolker her funnene opp mot problemstillingen, tidligere forskning og studiens metodiske forutsetninger. Formålet er ikke å gjenta resultatene, men å vurdere hva de faktisk betyr for modellvalg, praktisk beslutningsstøtte og hvor langt funnene kan strekkes utover den konkrete casen.
+Diskusjonsdelen tolker funnene opp mot problemstillingen, tidligere forskning og studiens metodiske forutsetninger. Formålet er ikke å gjenta resultatene, men å vurdere hva de faktisk betyr for modellvalg, praktisk beslutningsstøtte og i hvilken grad funnene kan generaliseres utover den konkrete casen.
 
 ## Modellvalg og prediksjonsnøyaktighet
 
-Det tydeligste hovedfunnet i studien er at valg av prognosemodell faktisk påvirker prediksjonsnøyaktigheten, men ikke på en måte som gir automatisk fordel til de mest komplekse modellene. I den historiske testen er `ARIMA/SARIMA` best samlet sett på `MAE`, `RMSE` og `MASE`, mens `XGBoost` og `LSTM` følger nærmest og `eksponentiell glatting` fungerer som en mer konservativ benchmark. Dette er viktig, men sier ikke i seg selv hvor modellforskjellene faktisk oppstår.
+Det tydeligste hovedfunnet i studien er at valg av prognosemodell har betydning for prediksjonsnøyaktigheten, men ikke på en måte som gir automatisk fordel til de mest komplekse modellene. I den historiske testen er `ARIMA/SARIMA` best samlet sett på `MAE`, `RMSE` og `MASE`, mens `XGBoost` og `LSTM` følger nærmest, mens `eksponentiell glatting` fungerer som en mer konservativ referansemodell. Dette hovedfunnet må likevel nyanseres, fordi de samlede feilmålene ikke alene viser hvor modellforskjellene oppstår.
 
-Ser vi på fartøynivå, ser fordelene til `ARIMA/SARIMA` særlig ut til å komme i seriene som er mest krevende for hele oppsettet. Modellen er tydelig sterkere enn de andre på blant annet `Fartøy 9`, `Fartøy 10` og `Fartøy 2`, altså fartøy der feilene også får stor betydning for samlet `MAE` og `RMSE`. Samtidig er bildet ikke entydig. `XGBoost` er best på enkelte serier som `Fartøy 11` og svakt bedre enn `ARIMA/SARIMA` på `Fartøy 8`, mens `LSTM` er konkurransedyktig på flere fartøy med lavere eller mer stabil offhire. Poenget er derfor ikke at én modell dominerer overalt, men at `ARIMA/SARIMA` håndterer de mest utslagsgivende fartøyene noe bedre i denne casen.
+På fartøynivå ser fordelene til `ARIMA/SARIMA` særlig ut til å komme i seriene som er mest krevende for modellene. Modellen er tydelig sterkere enn de andre på blant annet `Fartøy 9`, `Fartøy 10` og `Fartøy 2`, altså fartøy der feilene også får stor betydning for samlet `MAE` og `RMSE`. Samtidig er bildet ikke entydig. `XGBoost` er best på enkelte serier som `Fartøy 11` og marginalt bedre enn `ARIMA/SARIMA` på `Fartøy 8`, mens `LSTM` er konkurransedyktig på flere fartøy med lavere eller mer stabil nedetid. Poenget er derfor ikke at én modell dominerer overalt, men at `ARIMA/SARIMA` håndterer de mest utslagsgivende fartøyene noe bedre i denne casen.
 
-Dette er i tråd med Schmid et al. (2025), som viser at modellprestasjon i stor grad avhenger av problemstruktur og ikke bare av modelltype. Funnene støtter også Kolassa (2022), som argumenterer for at høy modellkompleksitet ikke automatisk gir størst praktisk verdi. Samtidig viser resultatene at maskinlærings- og dyp læringsmodeller ikke bør avskrives. At `XGBoost` og `LSTM` ligger relativt nær `ARIMA/SARIMA`, viser at de faktisk fanger vesentlige deler av mønsteret i datasettet. Studien gir derfor ikke grunnlag for å hevde at klassiske modeller alltid er best, men den viser at de i denne konkrete casen framstår som det mest forsvarlige førstevalget.
+Dette er i tråd med Schmid et al. (2025), som viser at modellprestasjon i stor grad avhenger av problemstruktur og ikke bare av modelltype. Funnene støtter også Kolassa (2022), som argumenterer for at høy modellkompleksitet ikke automatisk gir størst praktisk verdi. Samtidig viser resultatene at maskinlærings- og dyp læringsmodeller ikke bør avskrives. At `XGBoost` og `LSTM` ligger relativt nær `ARIMA/SARIMA`, viser at de faktisk fanger vesentlige deler av mønsteret i datasettet. Studien gir derfor ikke grunnlag for å hevde at klassiske modeller generelt er best, men viser at `ARIMA/SARIMA` i denne konkrete casen fremstår som det mest forsvarlige førstevalget.
 
-## Datastruktur, marked og hvorfor resultatene ble som de ble
+## Datastruktur, markedskontekst og modellprestasjon
 
-En sentral forklaring på resultatene ligger i selve datamaterialet. Den deskriptive analysen viste at datasettet er nulltungt, høyreskjevt og preget av store forskjeller mellom fartøyene. I tillegg opptrer offhire ofte som episodiske topper snarere enn som jevne mønstre over tid. Dette betyr at modellene ikke bare konkurrerer om å lære et nivå eller en trend, men om å håndtere et problem der lange perioder med nullverdier avbrytes av enkelte kraftige utslag. Når forskjellene mellom fartøyene samtidig er store, blir modellprestasjon også et spørsmål om hvor godt hver modell håndterer heterogenitet, ikke bare tidsavhengighet.
+En sentral forklaring på resultatene ligger i selve datamaterialet. Den deskriptive analysen viste at datasettet er nulltungt, høyreskjevt og preget av store forskjeller mellom fartøyene. I tillegg opptrer nedetid ofte som episodiske topper snarere enn som jevne mønstre over tid. Dette betyr at modellene ikke bare konkurrerer om å lære et nivå eller en trend, men om å håndtere et problem der lange perioder med nullverdier avbrytes av enkelte kraftige utslag. Når forskjellene mellom fartøyene samtidig er store, blir modellprestasjon også et spørsmål om heterogenitet, ikke bare tidsavhengighet.
 
-Dette bidrar til å forklare hvorfor `ARIMA/SARIMA` kom best ut historisk. Ved å estimeres per fartøy og verifiseres med residualdiagnostikk kan modellen i større grad tilpasses hver enkelt series struktur. Samtidig kan dette også forklare hvorfor `XGBoost` og `LSTM` ikke fikk en tydelig fordel, til tross for større fleksibilitet. Det relativt korte datagrunnlaget og den store andelen nullmåneder kan ha begrenset hvor mye ekstra kompleksitet disse modellene faktisk kunne utnytte på en robust måte.
+Dette bidrar til å forklare hvorfor `ARIMA/SARIMA` kom best ut historisk. Fordi `ARIMA/SARIMA` estimeres per fartøy og kontrolleres med residualdiagnostikk, kan modellen i større grad tilpasses strukturen i hver enkelt tidsserie. Samtidig kan dette også forklare hvorfor `XGBoost` og `LSTM` ikke fikk en tydelig fordel, til tross for større fleksibilitet. Det relativt korte datagrunnlaget og den store andelen nullmåneder kan ha begrenset hvor mye ekstra kompleksitet disse modellene faktisk kunne utnytte på en robust måte.
 
-Den felles `12`-månedersmekanismen er også viktig i denne tolkningen. Fordi dataene er månedlige, er ett år det mest naturlige stedet å lete etter sesong. Samtidig er det ikke gitt at samme måned året før faktisk inneholder mye relevant informasjon i et datasett der lange nullperioder brytes av uregelmessige topper. Når `y_{t-12}` eller tilsvarende årshistorikk ofte er null eller lite informativ, blir bidraget fra autokorrelasjon og sesongledd naturlig svakt. Dette er en viktig forklaring på hvorfor flere modeller får lave eller moderate amplituder i deler av prognoseforløpet, selv om de er metodisk fornuftige gitt datasettet.
+Den felles `12`-månedersstrukturen er også viktig i denne tolkningen. Fordi dataene er månedlige, er ett år den mest naturlige perioden å undersøke for mulig sesongvariasjon. Samtidig er det ikke gitt at samme måned året før faktisk inneholder mye relevant informasjon i et datasett der lange nullperioder brytes av uregelmessige topper. Når `y_{t-12}` eller tilsvarende årshistorikk ofte er null eller lite informativ, blir bidraget fra autokorrelasjon og sesongledd naturlig svakt. Dette er en viktig forklaring på hvorfor flere modeller får lave eller moderate amplituder i deler av prognoseforløpet, selv om de er metodisk fornuftige gitt datasettet.
 
 Resultatene må også forstås i lys av at offshoresegmentet opererer i et volatilt marked. Rederier i olje- og gassrelatert aktivitet påvirkes indirekte av svingninger i energipriser, investeringsnivå, kontraktsaktivitet og globale forhold (Menon Economics, 2026). Studien modellerer ikke slike drivere eksplisitt, men de er en viktig del av bakgrunnen for at operasjonell tilgjengelighet ikke nødvendigvis utvikler seg jevnt over tid. Det betyr at datasettets uregelmessighet ikke bare er et teknisk dataproblem, men også et uttrykk for at fartøyene opererer i en usikker og skiftende kontekst.
 
-## Framtidsprognoser og praktisk tolkning
+## Fremtidsprognoser og praktisk tolkning
 
-Framtidsprognosene må tolkes annerledes enn den historiske testen. I testperioden finnes en kjent fasit, og modellene kan rangeres etter faktisk prediksjonsfeil. For prognoseperioden finnes ingen observasjoner ennå, og resultatene blir derfor scenariobeskrivelser snarere enn verifiserte utfall. Det viktigste poenget er at modellene spriker betydelig mer jo lengre prognosehorisonten blir. Dette gjelder særlig `XGBoost`, som genererer et markant høyere langtidsforløp enn de andre modellene, mens eksponentiell glatting forblir nærmest flat gjennom hele perioden.
+Fremtidsprognosene må tolkes annerledes enn den historiske testen. I testperioden finnes en kjent fasit, og modellene kan rangeres etter faktisk prediksjonsfeil. For prognoseperioden finnes ingen observasjoner ennå, og resultatene må derfor forstås som modellbaserte fremoverskrivninger snarere enn verifiserte utfall. Det mest sentrale funnet er at modellene spriker mer jo lengre prognosehorisonten blir. Dette gjelder særlig `XGBoost`, som genererer et markant høyere langtidsforløp enn de andre modellene, mens eksponentiell glatting forblir nærmest flat gjennom hele perioden.
 
-Her blir det også tydelig at kommentaren om lav amplitude må forstås nyansert. Den lave amplituden gjelder særlig eksponentiell glatting og deler av `LSTM`-forløpet, der `12`-månedershistorikken og den nulltunge datastrukturen trekker prognosene mot mer moderate nivåer. For `XGBoost` er bildet annerledes: modellen er ikke et enkelt gjennomsnitt av nuller, men en kombinasjon av flere lags, glidende mål, variasjonsmål og fartøyeffekter. I fler-stegsprognoser kan disse feature-ene, sammen med rekursive prediksjoner, gjøre at enkelte fartøy får stadig høyere nivåer og dermed trekker samlet prognose kraftig opp.
+Fremtidsprognosene viser også at amplituden må tolkes modellspesifikt. Den lave amplituden gjelder særlig eksponentiell glatting og deler av `LSTM`-forløpet, der `12`-månedershistorikken og den nulltunge datastrukturen trekker prognosene mot mer moderate nivåer. For `XGBoost` er bildet annerledes. Modellen bygger på flere laggede variabler, rullerende mål, variasjonsmål og fartøyspesifikke effekter. I fler-stegsprognoser kan slike variabler, sammen med rekursive prediksjoner, bidra til at enkelte fartøy får økende prognosenivåer og dermed trekker samlet prognose opp.
 
-Dette spriket betyr ikke nødvendigvis at én modell er feil og de andre riktige. Det viser først og fremst at usikkerheten øker når prognosehorisonten forlenges. I en næring preget av stor markedsmessig volatilitet blir dette særlig viktig. Rammebetingelsene kan endre seg raskt, og studien inkluderer ikke eksterne drivere som kan fange opp slike skift direkte. Derfor framstår de kortere prognosehorisontene på `1` og `3` måneder som mer praktisk anvendelige enn `12`-månedersprognosene. For Simon Møkster Shipping AS betyr dette at prognosene først og fremst bør brukes som beslutningsstøtte for kortsiktig kapasitetsplanlegging, oppfølging av fartøy med høy historisk offhire og prioritering av operasjonell oppmerksomhet mot fartøy som gjentatte ganger peker seg ut som høyrisikofartøy, ikke som et automatisk beslutningsgrunnlag.
+Dette spriket betyr ikke nødvendigvis at én modell er feil og de andre riktige. Det viser først og fremst at usikkerheten øker når prognosehorisonten forlenges. I en næring preget av stor markedsmessig volatilitet blir dette særlig viktig. Rammebetingelsene kan endre seg raskt, og studien inkluderer ikke eksterne drivere som kan fange opp slike skift direkte. Derfor fremstår de kortere prognosehorisontene på `1` og `3` måneder som mer praktisk anvendelige enn `12`-månedersprognosene. For Simon Møkster Shipping AS betyr dette at prognosene først og fremst bør brukes som beslutningsstøtte for kortsiktig kapasitetsplanlegging og oppfølging av fartøy med høy historisk nedetid. Prognosene kan også bidra til å prioritere operasjonell oppmerksomhet mot fartøy som gjentatte ganger peker seg ut med høy risiko, men de bør ikke brukes som et automatisk beslutningsgrunnlag.
 
-Sett opp mot delspørsmålene betyr dette også at studien er sterkest på spørsmålet om hvor stor neste nedetid kan bli innenfor en månedlig planleggingshorisont. Spørsmålet om nøyaktig når neste nedetid inntreffer blir bare delvis besvart, fordi timing her er bundet til den månedlige oppløsningen og til om modellen predikerer null eller positiv verdi for neste periode.
+Sett opp mot delspørsmålene betyr dette også at studien er sterkest på spørsmålet hvor stor neste måneds nedetid kan bli innenfor en månedlig planleggingshorisont. Spørsmålet om nøyaktig når neste nedetidsperiode inntreffer, besvares bare delvis, fordi timing her er bundet til den månedlige oppløsningen og til om modellen predikerer null eller positiv verdi for neste periode.
 
 ## Metodiske styrker og svakheter
 
-Studien har flere metodiske styrker. For det første sammenlignes alle modellene på samme historiske tidsvindu og med samme ekspanderende `1`-stegs evalueringslogikk. Dette styrker den interne sammenlignbarheten og gjør at forskjeller i ytelse i større grad kan tilskrives modellene selv. For det andre kombinerer studien to klassiske og to KI-baserte modeller, noe som gir et bredere og mer faglig interessant sammenligningsgrunnlag enn om bare én modellfamilie var vurdert. For det tredje er den historiske testen holdt atskilt fra framtidsprognosene, noe som tydeliggjør skillet mellom verifiserbar modellprestasjon og ikke-verifiserte framtidsestimater.
+Studien har flere metodiske styrker. For det første sammenlignes alle modellene på samme historiske tidsvindu og med samme ekspanderende én-stegs evalueringslogikk. Dette styrker den interne sammenlignbarheten og gjør at forskjeller i ytelse i større grad kan knyttes til modellstruktur enn til ulikt testdesign. For det andre kombinerer studien to klassiske og to KI-baserte modeller, noe som gir et bredere og mer faglig interessant sammenligningsgrunnlag enn om bare én modellfamilie var vurdert. For det tredje er den historiske testen holdt atskilt fra fremtidsprognosene, noe som tydeliggjør skillet mellom verifiserbar modellprestasjon og ikke-verifiserte fremtidsestimater.
 
-Samtidig er svakhetene reelle. Dataserien er relativt kort, og materialet er preget av mange nullperioder og enkelte ekstreme topper. Dette gjør både modelltrening og evaluering mer krevende. Datagrunnlaget består også av sekundærdata som ikke kan verifiseres fullt ut eksternt. I tillegg er studien avgrenset til ett rederi og ett offshoresegment, noe som begrenser den statistiske generaliserbarheten. En annen viktig begrensning er at eksterne drivere som energipriser, kontraktsmarked og geopolitisk uro ikke er eksplisitt modellert. De kan bare fanges indirekte gjennom historiske observasjoner. Dette er særlig relevant for langtidsprognosene, der usikkerheten naturlig blir større. Studien er derfor best forstått som en prediktiv, casebasert sammenligning og ikke som en kausal analyse av hva som skaper offhire.
+Samtidig har studien flere begrensninger. Datamaterialet er relativt begrenset, og flere av tidsseriene er preget av mange nullperioder og enkelte ekstreme topper. Dette gjør både modelltrening og evaluering mer krevende. Datagrunnlaget består også av sekundærdata som ikke kan verifiseres fullt ut eksternt. I tillegg er studien avgrenset til ett rederi og ett segment, noe som begrenser muligheten for statistisk generalisering til andre rederier og segmenter. En annen viktig begrensning er at eksterne drivere som energipriser, kontraktsmarked og geopolitisk uro ikke er eksplisitt modellert. Slike forhold kan derfor bare fanges indirekte i den grad de allerede er reflektert i historiske observasjoner. Dette er særlig relevant for langtidsprognosene, der usikkerheten naturlig blir større. Studien er derfor best forstått som en prediktiv, casebasert sammenligning og ikke som en kausal analyse av hva som skaper nedetid.
 
 ## Betydning for bedriften og samlet vurdering
 
-For Simon Møkster Shipping AS har funnene først og fremst verdi fordi de viser at modellvalg bør være et eksplisitt beslutningsspørsmål og ikke bare et teknisk implementeringsvalg. Resultatene tyder på at en klassisk tidsseriemodell, særlig `ARIMA/SARIMA`, per nå er det mest forsvarlige hovedverktøyet for historisk prediksjon av offhire i denne casen. Samtidig viser de konkurransedyktige resultatene til `XGBoost` og `LSTM` at det er faglig relevant å videreutvikle slike modeller dersom datagrunnlaget blir rikere eller mer omfattende over tid.
+For Simon Møkster Shipping AS har funnene først og fremst verdi fordi de viser at modellvalg bør være et eksplisitt beslutningsspørsmål og ikke bare et teknisk implementeringsvalg. Resultatene tyder på at en klassisk tidsseriemodell, særlig `ARIMA/SARIMA`, basert på den historiske testen fremstår som det mest forsvarlige hovedverktøyet. Samtidig viser de konkurransedyktige resultatene til `XGBoost` og `LSTM` at det er faglig relevant å videreutvikle slike modeller dersom datagrunnlaget blir rikere eller mer omfattende over tid.
 
-Opp mot problemstillingen gir studien et tydelig svar. Valg av prognosemodell påvirker prediksjonsnøyaktigheten for månedlig offhire-prosent, men effekten av modellvalget må forstås i lys av datastruktur og kontekst. I dette datasettet presterer klassiske tidsseriemodeller best, mens KI-baserte modeller ikke gir en tydelig merverdi i historisk test. Samtidig viser framtidsprognosene at modellene produserer ulike framtidsbilder, noe som understreker behovet for å bruke prognoser med faglig skjønn i et marked preget av betydelig usikkerhet.
+Opp mot problemstillingen gir studien et tydelig svar. Valg av prognosemodell påvirker prediksjonsnøyaktigheten for månedlig nedetid, men effekten av modellvalget må forstås i lys av datastruktur og kontekst. I dette datasettet presterer `ARIMA/SARIMA` best blant modellene som er testet, mens KI-baserte modeller ikke gir en tydelig merverdi i historisk test. Samtidig viser fremtidsprognosene at modellene produserer ulike fremtidsbilder, noe som understreker behovet for å bruke prognoser med faglig skjønn i et marked preget av betydelig usikkerhet.
 
 # Konklusjon
 
-I denne oppgaven ble det undersøkt hvordan valg av prognosemodell påvirker prediksjonsnøyaktigheten for månedlig offhire-prosent for fartøy innenfor samme offshoresegment. Med utgangspunkt i historiske data fra Simon Møkster Shipping AS ble to klassiske tidsseriemodeller, `ARIMA/SARIMA` og `eksponentiell glatting`, sammenlignet med to KI-baserte modeller, `XGBoost` og `LSTM`.
+I denne oppgaven ble det undersøkt hvordan valg av prognosemodell påvirker prediksjonsnøyaktigheten for månedlig nedetid i prosent for fartøy innenfor samme offshoresegment. Med utgangspunkt i historiske data fra Simon Møkster Shipping AS ble to klassiske tidsseriemodeller, `ARIMA/SARIMA` og `eksponentiell glatting`, sammenlignet med to KI-baserte modeller, `XGBoost` og `LSTM`.
 
 Hovedfunnene viser at modellvalg faktisk påvirker prediksjonsnøyaktigheten, men ikke på en måte som gir automatisk fordel til de mest komplekse modellene. I denne studien presterte `ARIMA/SARIMA` best i den historiske testen, målt ved `MAE`, `RMSE` og `MASE`. `XGBoost` og `LSTM` var konkurransedyktige på absolutt feil, men ga ikke tydelig bedre resultater enn den beste klassiske modellen, mens `eksponentiell glatting` fungerte som en nyttig benchmark og kom noe bedre ut enn disse to på `MASE`. Problemstillingen kan dermed besvares med at valg av modell har betydning, og at klassiske tidsseriemodeller i dette datasettet ga høyest prediksjonsnøyaktighet.
 
-Sett opp mot delspørsmålene betyr dette at oppgaven gir det tydeligste svaret på hvor stor neste nedetid kan bli på månedlig nivå, mens spørsmålet om nøyaktig når neste nedetid kommer bare kan besvares indirekte gjennom om neste periode prognostiseres til null eller positiv offhire.
+Sett opp mot delspørsmålene betyr dette at oppgaven gir det tydeligste svaret på hvor stor neste nedetid kan bli på månedlig nivå, mens spørsmålet om nøyaktig når neste nedetid kommer bare kan besvares indirekte gjennom om neste periode prognostiseres til null eller positiv nedetid.
 
-For casebedriften betyr dette at `ARIMA/SARIMA` per nå framstår som det mest forsvarlige hovedverktøyet for historisk prediksjon av offhire på månedlig nivå. Samtidig viser framtidsprognosene at modellene gir ulike framtidsbilder, særlig på lengre horisonter. Prognoser bør derfor brukes som beslutningsstøtte og ikke som et automatisk beslutningsgrunnlag, spesielt i et marked preget av betydelig volatilitet og usikre rammebetingelser. Den praktiske verdien ligger særlig i kortsiktig planlegging og i å identifisere fartøy og perioder der oppfølgingen bør skjerpes.
+For casebedriften betyr dette at `ARIMA/SARIMA` per nå fremstår som det mest forsvarlige hovedverktøyet for historisk prediksjon av nedetid på månedlig nivå. Samtidig viser fremtidsprognosene at modellene gir ulike fremtidsbilder, særlig på lengre horisonter. Prognoser bør derfor brukes som beslutningsstøtte og ikke som et automatisk beslutningsgrunnlag, spesielt i et marked preget av betydelig volatilitet og usikre rammebetingelser. Den praktiske verdien ligger særlig i kortsiktig planlegging og i å identifisere fartøy og perioder der oppfølging bør prioriteres.
 
-Videre forskning bør undersøke om resultatene endrer seg når modellene testes på lengre tidsserier, rikere datagrunnlag og flere forklaringsvariabler, som kontraktsdata, tekniske indikatorer eller markedsforhold. Det vil også være relevant å evaluere framtidsprognosene når nye observasjoner foreligger, for å se om de samme modellforskjellene består over tid.
+Videre forskning bør undersøke om resultatene endrer seg når modellene testes på lengre tidsserier, rikere datagrunnlag og flere forklaringsvariabler, som kontraktsdata, tekniske indikatorer eller markedsforhold. Det vil også være relevant å evaluere fremtidsprognosene når nye observasjoner foreligger, for å se om de samme modellforskjellene består over tid.
 
 # Bibliografi
 
@@ -812,7 +854,7 @@ Tabell 14 gir en samlet oversikt over figurene som er brukt i rapporten, hva de 
 | Figur 2 | Heatmap for offhire per fartøy og måned | Viser variasjon mellom fartøy og over tid | `4.0 Casebeskrivelse` |
 | Figur 3 | Gjennomsnittlig månedlig offhire per fartøy | Rangerer fartøy etter gjennomsnittlig nivå | `5.2.2 Deskriptiv analyse av datasettet` |
 | Figur 4 | Boksplott for offhire per fartøy | Viser fordeling, median og ekstreme utslag | `5.2.2 Deskriptiv analyse av datasettet` |
-| Figur 5 | Tidsserier for fartøy med høyest gjennomsnittlig offhire | Viser utviklingen for de mest utsatte fartøyene i fem delpaneler | `5.2.2 Deskriptiv analyse av datasettet` |
+| Figur 5 | Tidsserier for fartøy med høyest gjennomsnittlig nedetid | Viser utviklingen for de mest utsatte fartøyene i fem delpaneler | `5.2.2 Deskriptiv analyse av datasettet` |
 | Figur 6 | ACF for representativ ARIMA/SARIMA-serie | Støtter identifikasjon av representativ SARIMA-modell | `6.1 SARIMA` |
 | Figur 7 | PACF for representativ ARIMA/SARIMA-serie | Støtter identifikasjon av representativ SARIMA-modell | `6.1 SARIMA` |
 | Figur 8 | Residualdiagnostikk for representativ ARIMA/SARIMA-modell | Viser residualforløp og residualfordeling | `6.1 SARIMA` |
@@ -825,10 +867,10 @@ Tabell 14 gir en samlet oversikt over figurene som er brukt i rapporten, hva de 
 | Figur 15 | MAE per modell i testperioden | Samlet sammenligning av modellene på `MAE` | `7.1 Resultater fra historisk modelltesting` |
 | Figur 16 | MAE per testmåned og modell | Viser hvordan prediksjonsfeilen varierer over tid | `7.1 Resultater fra historisk modelltesting` |
 | Figur 17 | Heatmap for MAE per fartøy og modell | Viser feilfordeling mellom fartøy og modeller | `7.1 Resultater fra historisk modelltesting` |
-| Figur 18 | Samlet prognostisert offhire 1 måned fram | Viser én-månedsprognosen på modellnivå | `7.2 Resultater fra framtidsprognoser` |
-| Figur 19 | Samlet prognostisert offhire 3 måneder fram | Viser tre-månedersprognosen på modellnivå | `7.2 Resultater fra framtidsprognoser` |
-| Figur 20 | Samlet prognostisert offhire 6 måneder fram | Viser seks-månedersprognosen på modellnivå | `7.2 Resultater fra framtidsprognoser` |
-| Figur 21 | Samlet prognostisert offhire 12 måneder fram | Viser tolv-månedersprognosen på modellnivå | `7.2 Resultater fra framtidsprognoser` |
+| Figur 18 | Samlet prognostisert offhire 1 måned fram | Viser én-månedsprognosen på modellnivå | `7.2 Resultater fra fremtidsprognoser` |
+| Figur 19 | Samlet prognostisert offhire 3 måneder fram | Viser tre-månedersprognosen på modellnivå | `7.2 Resultater fra fremtidsprognoser` |
+| Figur 20 | Samlet prognostisert offhire 6 måneder fram | Viser seks-månedersprognosen på modellnivå | `7.2 Resultater fra fremtidsprognoser` |
+| Figur 21 | Samlet prognostisert offhire 12 måneder fram | Viser tolv-månedersprognosen på modellnivå | `7.2 Resultater fra fremtidsprognoser` |
 
 ## Oversikt over tabeller
 
@@ -837,7 +879,7 @@ Tabell 15 gir en samlet oversikt over tabellene som er brukt i rapporten, hva de
 | Tabell | Tittel | Kort beskrivelse | Plassering i rapporten |
 | --- | --- | --- | --- |
 | Tabell 1 | Datadekning | Oppsummerer tidsperiode, antall observasjoner og datadekning | `5.2.1 Datagrunnlag` |
-| Tabell 2 | Fartøy med høyest gjennomsnittlig offhire | Viser topp fem fartøy etter gjennomsnittlig offhire | `5.2.2 Deskriptiv analyse av datasettet` |
+| Tabell 2 | Fartøy med høyest gjennomsnittlig nedetid | Viser topp fem fartøy etter gjennomsnittlig nedetid | `5.2.2 Deskriptiv analyse av datasettet` |
 | Tabell 3 | Felles evalueringsoppsett | Oppsummerer felles testdesign for modellene | `6.0 Modellering` |
 | Tabell 4 | Beste kandidatmodeller for representativt fartøy (`Fartøy 2`) | Viser SARIMA-kandidater rangert etter `AIC` og `BIC` | `6.1 SARIMA` |
 | Tabell 5 | Valgt ETS-spesifikasjon i analysen | Viser fordeling av valgte ETS-varianter | `6.2 Eksponentiell glatting` |
@@ -845,10 +887,10 @@ Tabell 15 gir en samlet oversikt over tabellene som er brukt i rapporten, hva de
 | Tabell 7 | XGBoost-hyperparametre | Oppsummerer sentrale hyperparametre | `6.3 XGBoost` |
 | Tabell 8 | LSTM-oppsett i analysen | Oppsummerer sekvenslengde, inputfeatures og arkitektur | `6.4 LSTM` |
 | Tabell 9 | Samlet testresultat for modellene | Viser `MAE`, `RMSE`, `sMAPE` og `MASE` for alle modeller | `7.1 Resultater fra historisk modelltesting` |
-| Tabell 10 | Samlet prognostisert offhire 1 måned fram | Viser én-månedsprognosen for alle modeller | `7.2 Resultater fra framtidsprognoser` |
-| Tabell 11 | Samlet prognostisert offhire 3 måneder fram | Viser tre-månedersprognosen for alle modeller | `7.2 Resultater fra framtidsprognoser` |
-| Tabell 12 | Samlet prognostisert offhire 6 måneder fram | Viser seks-månedersprognosen for alle modeller | `7.2 Resultater fra framtidsprognoser` |
-| Tabell 13 | Samlet prognostisert offhire 12 måneder fram | Viser tolv-månedersprognosen for alle modeller | `7.2 Resultater fra framtidsprognoser` |
+| Tabell 10 | Samlet prognostisert offhire 1 måned fram | Viser én-månedsprognosen for alle modeller | `7.2 Resultater fra fremtidsprognoser` |
+| Tabell 11 | Samlet prognostisert offhire 3 måneder fram | Viser tre-månedersprognosen for alle modeller | `7.2 Resultater fra fremtidsprognoser` |
+| Tabell 12 | Samlet prognostisert offhire 6 måneder fram | Viser seks-månedersprognosen for alle modeller | `7.2 Resultater fra fremtidsprognoser` |
+| Tabell 13 | Samlet prognostisert offhire 12 måneder fram | Viser tolv-månedersprognosen for alle modeller | `7.2 Resultater fra fremtidsprognoser` |
 
 ## Kodevedlegg
 
