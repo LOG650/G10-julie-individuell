@@ -8,7 +8,7 @@ En sammenligning av SARIMA, Eksponentiell Glatting, XGBoost og LSTM
 
 **Forfatter(e):** Julie Bjørheim
 
-**Totalt antall sider inkludert forsiden:** 82
+**Totalt antall sider inkludert forsiden:** 59
 
 **Molde, innleveringsdato:** 31.05.2026
 
@@ -86,9 +86,7 @@ Julie Bjørheim, 31.05.2026
 
 <div class="pdf-page-break"></div>
 
-::: {custom-style="Heading 4"}
-Forord
-:::
+**Forord**
 
 Denne oppgaven er skrevet som avslutning på studiet ved Høgskolen i Molde. I arbeidet med oppgaven ønsker jeg å takke forelesere og veiledere ved Høgskolen i Molde for faglige innspill, konstruktive tilbakemeldinger og veiledning gjennom hele prosessen.
 
@@ -102,9 +100,7 @@ Jeg ønsker å rette en takk til Simon Møkster Shipping AS for tilgang til data
 
 <div class="pdf-page-break"></div>
 
-::: {custom-style="Heading 4"}
-Sammendrag
-:::
+**Sammendrag**
 
 Denne oppgaven undersøker hvordan valg av prognosemodell påvirker prediksjonsnøyaktigheten for månedlig nedetid i prosent for fartøy innenfor samme offshoresegment. I studien operasjonaliseres nedetid som prosentandel dager per måned registrert uten kontrakt, brukt som en indikator på operasjonell nedetid og redusert kontraktsutnyttelse. Studien er gjennomført som en kvantitativ, casebasert sammenligning av fire prognosemodeller: ARIMA/SARIMA, eksponentiell glatting, XGBoost og LSTM.
 
@@ -118,9 +114,7 @@ Fremtidsprognosene for 1, 3, 6 og 12 måneder frem viste samtidig at modellene g
 
 <div class="pdf-page-break"></div>
 
-::: {custom-style="Heading 4"}
-Abstract
-:::
+**Abstract**
 
 This thesis examines how the choice of forecasting model affects prediction accuracy for monthly vessel downtime within the same offshore segment. In the study, downtime is operationalized as the monthly percentage of days registered without contract, used as an indicator of operational downtime and reduced contract utilization. The study is designed as a quantitative, case-based comparison of four forecasting models: ARIMA/SARIMA, exponential smoothing, XGBoost, and LSTM.
 
@@ -174,7 +168,7 @@ Analysen er videre avgrenset til prediksjon av månedlig nedetid i prosent, oper
 
 Studien bygger på historiske operasjonelle data innen en definert tidsperiode. Eksterne forhold som energipriser, geopolitisk risiko og bredere markedsendringer modelleres ikke eksplisitt, men inngår bare i den grad de er indirekte reflektert i observasjonene.
 
-Fokus ligger på sammenligning av modelltyper med hensyn til prediksjonsnøyaktighet. Implementeringskostnader, organisatoriske endringer og teknologisk integrasjon inngår ikke i analysen. Modellutvalget er avgrenset til fire modeller: to tradisjonelle metoder, SARIMA og eksponentiell glatting, og to KI-baserte modeller, XGBoost og LSTM. Modellene representerer ulike metodiske tilnærminger til prognostisering, fra statistiske modeller med eksplisitt tidsseriestuktur til maskinlæringsmodeller som kan håndtere mer komplekse og ikke-lineære mønstre. Utvalget er valgt for å belyse hvordan ulike modellfamilier presterer under samme operasjonelle og datamessige rammebetingelser (Rob J Hyndman and George Athanasopoulos, 2019; Chen & Guestrin, 2016; Hochreiter & Schmidhuber, 1997).
+Fokus ligger på sammenligning av modelltyper med hensyn til prediksjonsnøyaktighet. Implementeringskostnader, organisatoriske endringer og teknologisk integrasjon inngår ikke i analysen. Modellutvalget er avgrenset til fire modeller: to tradisjonelle metoder, SARIMA og eksponentiell glatting, og to KI-baserte modeller, XGBoost og LSTM. Modellene representerer ulike metodiske tilnærminger til prognostisering, fra statistiske modeller med eksplisitt tidsseriestuktur til maskinlæringsmodeller som kan håndtere mer komplekse og ikke-lineære mønstre. Utvalget er valgt for å belyse hvordan ulike modellfamilier presterer under samme operasjonelle og datamessige rammebetingelser (Hyndman & Athanasopoulos, 2021; Chen & Guestrin, 2016; Hochreiter & Schmidhuber, 1997).
 
 ## Antakelser
 
@@ -824,6 +818,8 @@ Gardner, E. S., Jr. (1985). Exponential smoothing: The state of the art. *Journa
 
 Hochreiter, S., & Schmidhuber, J. (1997). Long short-term memory. *Neural Computation, 9*(8), 1735-1780. https://doi.org/10.1162/neco.1997.9.8.1735
 
+Hyndman, R. J., & Athanasopoulos, G. (2021). *Forecasting: principles and practice* (3rd ed.). OTexts. https://otexts.com/fpp3/
+
 Hyndman, R. J., & Khandakar, Y. (2008). Automatic time series forecasting: The forecast package for R. *Journal of Statistical Software, 27*(3), 1-22. https://doi.org/10.18637/jss.v027.i03
 
 Hyndman, R. J., Koehler, A. B., Snyder, R. D., & Grose, S. (2002). A state space framework for automatic forecasting using exponential smoothing methods. *International Journal of Forecasting, 18*(3), 439-454. https://doi.org/10.1016/S0169-2070(01)00110-8
@@ -838,7 +834,7 @@ Ljung, G. M., & Box, G. E. P. (1978). On a measure of lack of fit in time series
 
 Makridakis, S., Spiliotis, E., & Assimakopoulos, V. (2022). M5 accuracy competition: Results, findings, and conclusions. *International Journal of Forecasting, 38*(4), 1346-1364. https://doi.org/10.1016/j.ijforecast.2021.11.013
 
-Menon Economics. (2026). *Maritim verdiskapingsrapport 2026* [Report].
+Menon Economics. (2026). *Maritim verdiskapingsrapport 2026*. https://menon.no/prosjekter/maritim-verdiskapingsrapport-2026
 
 Schmid, L., Roidl, M., Kirchheim, A., & Pauly, M. (2025). Comparing statistical and machine learning methods for time series forecasting in data-driven logistics: A simulation study. *Entropy, 27*(1), 25. https://doi.org/10.3390/e27010025
 
@@ -892,13 +888,291 @@ Tabell 15 gir en samlet oversikt over tabellene som er brukt i rapporten, hva de
 | Tabell 12 | Samlet prognostisert offhire 6 måneder fram | Viser seks-månedersprognosen for alle modeller | `7.2 Resultater fra fremtidsprognoser` |
 | Tabell 13 | Samlet prognostisert offhire 12 måneder fram | Viser tolv-månedersprognosen for alle modeller | `7.2 Resultater fra fremtidsprognoser` |
 
+## Datagrunnlag og train/test-splitt
+
+Vedleggene under dokumenterer hvilke data som er brukt, uten å gjengi hele månedsmatrisen i rapporten. Fullstendige numeriske verdier ligger i prosjektfilene som er oppgitt i tabellene. Dette gjør vedlegget kortere og mer lesbart ved utskrift og PDF-eksport.
+
+*Vedleggstabell A1. Oppsummering av datagrunnlag og splitten.*
+
+| Element | Verdi |
+| --- | --- |
+| Primærkilde | `004 data/raw/Data som skal brukes Anonymisert.csv` |
+| Treningsfil | `004 data/processed/train.csv` |
+| Testfil | `004 data/processed/test.csv` |
+| Observasjonsperiode i rådata | 2021-04 til 2026-03 |
+| Treningsperiode for modelltest | 2021-04 til 2024-12 |
+| Testperiode for modelltest | 2025-01 til 2026-03 |
+| Fartøy i anonymisert rådata | 16 |
+| Fartøy i historisk modellsammenligning | 15 |
+| Historiske testprediksjoner per modell | 225 |
+| Fremtidsprognoser per modell | 180 |
+
+*Vedleggstabell A2. Filregister for datagrunnlag, modellresultater og prognoser.*
+
+| Kategori | Fil | GitHub-lenke | Innhold |
+| --- | --- | --- | --- |
+| Datagrunnlag | `004 data/raw/Data som skal brukes Anonymisert.csv` | [GitHub](https://github.com/LOG650/G10-julie-individuell/blob/main/004%20data/raw/Data%20som%20skal%20brukes%20Anonymisert.csv) | Full anonymisert månedsmatrise slik den ble mottatt. |
+| Datagrunnlag | `004 data/processed/train.csv` | [GitHub](https://github.com/LOG650/G10-julie-individuell/blob/main/004%20data/processed/train.csv) | Treningsgrunnlaget brukt til modelltilpasning. |
+| Datagrunnlag | `004 data/processed/test.csv` | [GitHub](https://github.com/LOG650/G10-julie-individuell/blob/main/004%20data/processed/test.csv) | Testgrunnlaget brukt til historisk evaluering. |
+| Samlede resultater | `004 data/modeling/outputs/shared/model_comparison_summary.csv` | [GitHub](https://github.com/LOG650/G10-julie-individuell/blob/main/004%20data/modeling/outputs/shared/model_comparison_summary.csv) | Samlet modellrangering med MAE, RMSE, sMAPE og MASE. |
+| Samlede resultater | `004 data/modeling/outputs/shared/metrics_by_vessel.csv` | [GitHub](https://github.com/LOG650/G10-julie-individuell/blob/main/004%20data/modeling/outputs/shared/metrics_by_vessel.csv) | Metrikker per modell og fartøy. |
+| Samlede resultater | `004 data/modeling/outputs/shared/predictions.csv` | [GitHub](https://github.com/LOG650/G10-julie-individuell/blob/main/004%20data/modeling/outputs/shared/predictions.csv) | Historiske prediksjoner samlet per modell, fartøy og måned. |
+| Samlede prognoser | `004 data/modeling/outputs/shared/future_predictions.csv` | [GitHub](https://github.com/LOG650/G10-julie-individuell/blob/main/004%20data/modeling/outputs/shared/future_predictions.csv) | Fremtidsprognoser samlet per modell, fartøy, horisont og måned. |
+| Samlede prognoser | `004 data/modeling/outputs/shared/future_predictions_12m_pivot.csv` | [GitHub](https://github.com/LOG650/G10-julie-individuell/blob/main/004%20data/modeling/outputs/shared/future_predictions_12m_pivot.csv) | Bred 12-måneders prognosetabell per modell og fartøy. |
+| SARIMA | `004 data/modeling/outputs/models/SARIMA/predictions.csv` | [GitHub](https://github.com/LOG650/G10-julie-individuell/blob/main/004%20data/modeling/outputs/models/SARIMA/predictions.csv) | Historiske SARIMA-prediksjoner per fartøy og måned. |
+| SARIMA | `004 data/modeling/outputs/models/SARIMA/future_predictions.csv` | [GitHub](https://github.com/LOG650/G10-julie-individuell/blob/main/004%20data/modeling/outputs/models/SARIMA/future_predictions.csv) | SARIMA-fremtidsprognoser per fartøy og måned. |
+| SARIMA | `004 data/modeling/outputs/models/SARIMA/modellvalg_per_fartoy.csv` | [GitHub](https://github.com/LOG650/G10-julie-individuell/blob/main/004%20data/modeling/outputs/models/SARIMA/modellvalg_per_fartoy.csv) | Valgt SARIMA-spesifikasjon per fartøy. |
+| SARIMA | `004 data/modeling/outputs/models/SARIMA/stasjonaritet.csv` | [GitHub](https://github.com/LOG650/G10-julie-individuell/blob/main/004%20data/modeling/outputs/models/SARIMA/stasjonaritet.csv) | Stasjonaritetstester brukt i SARIMA-modelleringen. |
+| Eksponentiell glatting | `004 data/modeling/outputs/models/Eksponentiell glatting/predictions.csv` | [GitHub](https://github.com/LOG650/G10-julie-individuell/blob/main/004%20data/modeling/outputs/models/Eksponentiell%20glatting/predictions.csv) | Historiske ETS-prediksjoner per fartøy og måned. |
+| Eksponentiell glatting | `004 data/modeling/outputs/models/Eksponentiell glatting/future_predictions.csv` | [GitHub](https://github.com/LOG650/G10-julie-individuell/blob/main/004%20data/modeling/outputs/models/Eksponentiell%20glatting/future_predictions.csv) | ETS-fremtidsprognoser per fartøy og måned. |
+| Eksponentiell glatting | `004 data/modeling/outputs/models/Eksponentiell glatting/modellvalg_per_fartoy.csv` | [GitHub](https://github.com/LOG650/G10-julie-individuell/blob/main/004%20data/modeling/outputs/models/Eksponentiell%20glatting/modellvalg_per_fartoy.csv) | Valgt ETS-spesifikasjon per fartøy. |
+| XGBoost | `004 data/modeling/outputs/models/XGBoost/predictions.csv` | [GitHub](https://github.com/LOG650/G10-julie-individuell/blob/main/004%20data/modeling/outputs/models/XGBoost/predictions.csv) | Historiske XGBoost-prediksjoner per fartøy og måned. |
+| XGBoost | `004 data/modeling/outputs/models/XGBoost/future_predictions.csv` | [GitHub](https://github.com/LOG650/G10-julie-individuell/blob/main/004%20data/modeling/outputs/models/XGBoost/future_predictions.csv) | XGBoost-fremtidsprognoser per fartøy og måned. |
+| XGBoost | `004 data/modeling/outputs/models/XGBoost/feature_importance.csv` | [GitHub](https://github.com/LOG650/G10-julie-individuell/blob/main/004%20data/modeling/outputs/models/XGBoost/feature_importance.csv) | Feature importance fra XGBoost-modellen. |
+| LSTM | `004 data/modeling/outputs/models/LSTM/predictions.csv` | [GitHub](https://github.com/LOG650/G10-julie-individuell/blob/main/004%20data/modeling/outputs/models/LSTM/predictions.csv) | Historiske LSTM-prediksjoner per fartøy og måned. |
+| LSTM | `004 data/modeling/outputs/models/LSTM/future_predictions.csv` | [GitHub](https://github.com/LOG650/G10-julie-individuell/blob/main/004%20data/modeling/outputs/models/LSTM/future_predictions.csv) | LSTM-fremtidsprognoser per fartøy og måned. |
+| LSTM | `004 data/modeling/outputs/models/LSTM/training_history.csv` | [GitHub](https://github.com/LOG650/G10-julie-individuell/blob/main/004%20data/modeling/outputs/models/LSTM/training_history.csv) | Trenings- og valideringstap per epoch. |
+
+GitHub-lenkene peker til `main`-branchen i prosjektets repo og krever tilgang dersom repoet er privat.
+
+*Vedleggstabell A3. Train/test-splitt per fartøy.*
+
+| Fartøy | Trening | Treningsobs. | Test | Testobs. | Modelltest |
+| --- | --- | --- | --- | --- | --- |
+| Fartøy 1 | 2021-04 til 2024-12 | 45 | 2025-01 til 2026-03 | 15 | Ja |
+| Fartøy 2 | 2021-04 til 2024-12 | 45 | 2025-01 til 2026-03 | 15 | Ja |
+| Fartøy 3 | 2021-04 til 2024-12 | 45 | 2025-01 til 2026-03 | 15 | Ja |
+| Fartøy 4 | 2021-04 til 2024-12 | 45 | 2025-01 til 2026-03 | 15 | Ja |
+| Fartøy 5 | 2021-04 til 2024-12 | 45 | 2025-01 til 2026-03 | 15 | Ja |
+| Fartøy 6 | 2021-04 til 2024-12 | 45 | 2025-01 til 2026-03 | 15 | Ja |
+| Fartøy 7 | 2021-04 til 2024-12 | 45 | 2025-01 til 2026-03 | 15 | Ja |
+| Fartøy 8 | 2021-04 til 2024-12 | 45 | 2025-01 til 2026-03 | 15 | Ja |
+| Fartøy 9 | 2021-04 til 2024-12 | 45 | 2025-01 til 2026-03 | 15 | Ja |
+| Fartøy 10 | 2021-04 til 2024-12 | 45 | 2025-01 til 2026-03 | 15 | Ja |
+| Fartøy 11 | 2021-04 til 2024-12 | 45 | 2025-01 til 2026-03 | 15 | Ja |
+| Fartøy 12 | 2021-04 til 2024-12 | 45 | 2025-01 til 2026-03 | 15 | Ja |
+| Fartøy 13 | 2021-04 til 2024-12 | 45 | 2025-01 til 2026-03 | 15 | Ja |
+| Fartøy 14 | 2021-04 til 2024-12 | 45 | 2025-01 til 2026-03 | 15 | Ja |
+| Fartøy 15 | 2021-04 til 2024-12 | 45 | 2025-01 til 2026-03 | 15 | Ja |
+| Fartøy 16 | Ikke tilgjengelig | 0 | 2026-02 til 2026-03 | 2 | Nei |
+
+Fartøy 16 er med i rådatafilen, men er ikke brukt i den historiske modellsammenligningen fordi fartøyet ikke har tilstrekkelig historikk i treningsperioden.
+
+## Historiske modellresultater per modell
+
+Denne delen beholder modellresultatene som trengs for etterprøvbarhet, men fjerner de fullstendige måned-for-måned-prediksjonstabellene per fartøy. De fullstendige prediksjonene ligger i `004 data/modeling/outputs/shared/predictions.csv` og i hver modellmappe under `004 data/modeling/outputs/models/`.
+
+*Vedleggstabell B1. Samlet historisk resultat per modell.*
+
+| Modell | Testprediksjoner | MAE | RMSE | sMAPE | MASE |
+| --- | --- | --- | --- | --- | --- |
+| SARIMA | 225 | 6.1521 | 16.7823 | 100.4363 | 0.9098 |
+| Eksponentiell glatting | 225 | 8.3676 | 17.9544 | 168.6203 | 1.1775 |
+| XGBoost | 225 | 7.3487 | 17.401 | 182.9827 | 1.2042 |
+| LSTM | 225 | 7.5722 | 17.4062 | 178.7664 | 1.3198 |
+
+### SARIMA
+
+*Vedleggstabell B2. Historiske testmetrikker per fartøy for SARIMA.*
+
+| Fartøy | Antall prediksjoner | MAE | RMSE | sMAPE | MASE |
+| --- | --- | --- | --- | --- | --- |
+| Fartøy 1 | 15 | 2.2272 | 3.5343 | 106.6667 | 0.1892 |
+| Fartøy 2 | 15 | 1.2727 | 3.2025 | 93.3333 | 0.0764 |
+| Fartøy 3 | 15 | 2.6236 | 9.2528 | 133.3333 | 1.0809 |
+| Fartøy 4 | 15 | 5.3334 | 20.6559 | 106.6667 | 0.6241 |
+| Fartøy 5 | 15 | 1.2787 | 3.5347 | 53.3333 | 0.0878 |
+| Fartøy 6 | 15 | 0.9297 | 3.5511 | 93.3333 | 0.1515 |
+| Fartøy 7 | 15 | 1.1455 | 1.584 | 152.0805 | 0.15 |
+| Fartøy 8 | 15 | 14.9288 | 24.0346 | 142.836 | 1.046 |
+| Fartøy 9 | 15 | 16.5092 | 32.6134 | 71.9397 | 3.363 |
+| Fartøy 10 | 15 | 27.8226 | 36.3378 | 149.2944 | 1.641 |
+| Fartøy 11 | 15 | 15.5412 | 25.6978 | 111.0294 | 2.4687 |
+| Fartøy 12 | 15 | 0.1154 | 0.4328 | 93.3333 | 0.0465 |
+| Fartøy 13 | 15 | 0 | 0 | 0 |  |
+| Fartøy 14 | 15 | 0 | 0 | 93.3333 | 0 |
+| Fartøy 15 | 15 | 2.5539 | 6.3041 | 106.0307 | 1.8124 |
+
+### Eksponentiell glatting
+
+*Vedleggstabell B3. Historiske testmetrikker per fartøy for Eksponentiell glatting.*
+
+| Fartøy | Antall prediksjoner | MAE | RMSE | sMAPE | MASE |
+| --- | --- | --- | --- | --- | --- |
+| Fartøy 1 | 15 | 0.3942 | 0.4994 | 200 | 0.0335 |
+| Fartøy 2 | 15 | 10.7607 | 16.5932 | 106.6667 | 0.6459 |
+| Fartøy 3 | 15 | 1.2654 | 1.2895 | 188.3989 | 0.5213 |
+| Fartøy 4 | 15 | 9.507 | 20.1255 | 198.6892 | 1.1125 |
+| Fartøy 5 | 15 | 7.1328 | 7.3454 | 185.0956 | 0.4896 |
+| Fartøy 6 | 15 | 2.9241 | 2.9344 | 200 | 0.4765 |
+| Fartøy 7 | 15 | 4.7339 | 4.8222 | 184.9898 | 0.6199 |
+| Fartøy 8 | 15 | 16.3055 | 24.3851 | 172.9675 | 1.1424 |
+| Fartøy 9 | 15 | 22.6011 | 39.0425 | 175.3113 | 4.6039 |
+| Fartøy 10 | 15 | 31.7437 | 37.2145 | 149.0037 | 1.8723 |
+| Fartøy 11 | 15 | 14.219 | 23.1754 | 169.7775 | 2.2587 |
+| Fartøy 12 | 15 | 1.0583 | 1.062 | 200 | 0.426 |
+| Fartøy 13 | 15 | 0 | 0 | 0 |  |
+| Fartøy 14 | 15 | 0.2517 | 0.2526 | 200 | 0.426 |
+| Fartøy 15 | 15 | 2.6166 | 5.016 | 198.4034 | 1.857 |
+
+### XGBoost
+
+*Vedleggstabell B4. Historiske testmetrikker per fartøy for XGBoost.*
+
+| Fartøy | Antall prediksjoner | MAE | RMSE | sMAPE | MASE |
+| --- | --- | --- | --- | --- | --- |
+| Fartøy 1 | 15 | 0.9596 | 1.0964 | 200 | 0.0815 |
+| Fartøy 2 | 15 | 1.7336 | 2.6006 | 200 | 0.1041 |
+| Fartøy 3 | 15 | 2.8578 | 8.4898 | 178.9069 | 1.1774 |
+| Fartøy 4 | 15 | 10.2205 | 21.8763 | 199.6813 | 1.196 |
+| Fartøy 5 | 15 | 6.0572 | 7.9921 | 187.3662 | 0.4158 |
+| Fartøy 6 | 15 | 0.9593 | 1.137 | 200 | 0.1563 |
+| Fartøy 7 | 15 | 3.6708 | 9.1184 | 175.483 | 0.4807 |
+| Fartøy 8 | 15 | 13.9513 | 21.9551 | 157.6849 | 0.9775 |
+| Fartøy 9 | 15 | 24.0603 | 39.2209 | 182.8467 | 4.9012 |
+| Fartøy 10 | 15 | 29.1458 | 37.7376 | 130.3543 | 1.7191 |
+| Fartøy 11 | 15 | 11.2642 | 18.7156 | 147.2948 | 1.7893 |
+| Fartøy 12 | 15 | 1.0624 | 1.1872 | 200 | 0.4277 |
+| Fartøy 13 | 15 | 0.5865 | 0.7619 | 200 |  |
+| Fartøy 14 | 15 | 0.8196 | 0.9574 | 200 | 1.387 |
+| Fartøy 15 | 15 | 2.8822 | 6.1128 | 185.1222 | 2.0454 |
+
+### LSTM
+
+*Vedleggstabell B5. Historiske testmetrikker per fartøy for LSTM.*
+
+| Fartøy | Antall prediksjoner | MAE | RMSE | sMAPE | MASE |
+| --- | --- | --- | --- | --- | --- |
+| Fartøy 1 | 15 | 2.3676 | 3.0475 | 133.3333 | 0.2011 |
+| Fartøy 2 | 15 | 2.0218 | 2.5961 | 186.6667 | 0.1214 |
+| Fartøy 3 | 15 | 2.4692 | 3.1395 | 186.7381 | 1.0173 |
+| Fartøy 4 | 15 | 6.8672 | 20.6693 | 186.5655 | 0.8036 |
+| Fartøy 5 | 15 | 3.3521 | 4.4112 | 183.3148 | 0.2301 |
+| Fartøy 6 | 15 | 1.6981 | 2.0003 | 200 | 0.2767 |
+| Fartøy 7 | 15 | 1.5084 | 1.7677 | 171.4157 | 0.1975 |
+| Fartøy 8 | 15 | 14.8762 | 22.1322 | 181.3943 | 1.0423 |
+| Fartøy 9 | 15 | 25.8024 | 40.8796 | 175.6155 | 5.256 |
+| Fartøy 10 | 15 | 30.1263 | 37.0148 | 153.1417 | 1.7769 |
+| Fartøy 11 | 15 | 15.1522 | 22.3986 | 167.1112 | 2.4069 |
+| Fartøy 12 | 15 | 1.5317 | 1.8253 | 186.6667 | 0.6166 |
+| Fartøy 13 | 15 | 1.4924 | 1.7786 | 186.6667 |  |
+| Fartøy 14 | 15 | 1.4924 | 1.7786 | 186.6667 | 2.5255 |
+| Fartøy 15 | 15 | 2.8255 | 4.7479 | 196.2 | 2.0052 |
+
+### Teknisk modelldokumentasjon
+
+Tabellene under er forkortede støttetabeller for modellvalg og diagnostikk. Fullstendige tekniske resultater ligger i modellmappene under `004 data/modeling/outputs/models/`.
+
+*Vedleggstabell B6. Valgt SARIMA-spesifikasjon per fartøy.*
+
+| Fartøy | Valgt modell | AIC | BIC |
+| --- | --- | --- | --- |
+| Fartøy 1 | SARIMA(1,1,2)(0,0,1)[12] | 249.1615 | 255.998 |
+| Fartøy 2 | SARIMA(2,0,0)(1,0,0)[12] | 291.4288 | 297.1648 |
+| Fartøy 3 | SARIMA(2,1,0)(1,0,0)[12] | 123.86 | 129.4648 |
+| Fartøy 4 | SARIMA(0,0,2)(0,0,1)[12] | 258.1341 | 263.7388 |
+| Fartøy 5 | SARIMA(2,0,1)(0,0,1)[12] | 221.95 | 229.12 |
+| Fartøy 6 | SARIMA(0,0,2)(1,0,1)[12] | 181.0161 | 188.0221 |
+| Fartøy 7 | SARIMA(0,1,2)(1,0,1)[12] | 225.4706 | 232.3071 |
+| Fartøy 8 | SARIMA(2,0,1)(1,0,0)[12] | 285.8702 | 293.0402 |
+| Fartøy 9 | SARIMA(0,0,2)(0,0,1)[12] | 186.5862 | 192.191 |
+| Fartøy 10 | SARIMA(2,0,2)(1,0,0)[12] | 299.8027 | 308.4066 |
+| Fartøy 11 | SARIMA(2,0,0)(1,0,0)[12] | 261.0565 | 266.7924 |
+| Fartøy 12 | SARIMA(0,0,2)(1,0,1)[12] | 196.9529 | 203.9589 |
+| Fartøy 13 | Ikke estimert |  |  |
+| Fartøy 14 | SARIMA(0,0,2)(0,0,1)[12] | 144.9974 | 150.6021 |
+| Fartøy 15 | SARIMA(0,0,2)(0,0,1)[12] | 198.2601 | 203.8649 |
+
+*Vedleggstabell B7. Oppsummert SARIMA-stasjonaritetstest.*
+
+| Testvariant | Stasjonære | Ikke stasjonære | Antall tester |
+| --- | --- | --- | --- |
+| Ingen differensiering | 11 | 3 | 14 |
+| Første differense | 14 | 0 | 14 |
+| Sesongdifferense (12) | 11 | 3 | 14 |
+| Første + sesongdifferense | 12 | 2 | 14 |
+
+*Vedleggstabell B8. Oppsummert SARIMA-residualdiagnostikk.*
+
+| Diagnostikk | Antall fartøy | Tolkning |
+| --- | --- | --- |
+| Ljung-Box p-verdi >= 0,05 | 14 | Ingen tydelig restautokorrelasjon etter valgt grense. |
+| Ljung-Box p-verdi < 0,05 | 0 | Indikerer mulig restautokorrelasjon. |
+| Ikke estimert | 1 | Manglende modellgrunnlag for fartøyet. |
+
+*Vedleggstabell B9. Valgt eksponentiell glatting-spesifikasjon per fartøy.*
+
+| Fartøy | Valgt modell | AIC | BIC |
+| --- | --- | --- | --- |
+| Fartøy 1 | ANN | 250.6617 | 254.275 |
+| Fartøy 2 | AAA | 299.2254 | 328.132 |
+| Fartøy 3 | ANN | 163.315 | 166.9284 |
+| Fartøy 4 | ANN | 245.305 | 248.9183 |
+| Fartøy 5 | ANN | 281.109 | 284.7223 |
+| Fartøy 6 | ANN | 245.2361 | 248.8495 |
+| Fartøy 7 | ANN | 269.8291 | 273.4424 |
+| Fartøy 8 | ANN | 284.787 | 288.4003 |
+| Fartøy 9 | ANN | 232.9739 | 236.5872 |
+| Fartøy 10 | ANN | 294.2332 | 297.8465 |
+| Fartøy 11 | ANN | 230.2082 | 233.8215 |
+| Fartøy 12 | ANN | 141.6678 | 145.2811 |
+| Fartøy 13 | CONST |  |  |
+| Fartøy 14 | ANN | 62.5344 | 66.1477 |
+| Fartøy 15 | ANN | 163.6983 | 167.3116 |
+
+*Vedleggstabell B10. Topp 10 XGBoost-feature importance.*
+
+| Feature | Importance |
+| --- | --- |
+| num__lag_1 | 0.1065 |
+| cat__vessel_Fartøy 2 | 0.0753 |
+| num__rolling_mean_12 | 0.0639 |
+| num__rolling_mean_6 | 0.0583 |
+| num__rolling_mean_3 | 0.0581 |
+| num__time_idx | 0.0496 |
+| num__lag_6 | 0.045 |
+| num__rolling_std_6 | 0.0436 |
+| cat__vessel_Fartøy 5 | 0.0401 |
+| num__rolling_std_12 | 0.0395 |
+
+*Vedleggstabell B11. Kompakt LSTM-treningshistorikk.*
+
+| Punkt | Epoch | Loss | Val_loss |
+| --- | --- | --- | --- |
+| Første epoch | 1 | 0.9635 | 1.1229 |
+| Beste valideringstap | 4 | 0.8789 | 1.0326 |
+| Siste epoch | 14 | 0.785 | 1.2213 |
+
+## Fremtidsprognoser
+
+Fremtidsprognosene i rapporten er punktprognoser for `2026-04` til `2027-03`. Vedlegget viser en kompakt total per måned og modell. Fullstendige prognoser per fartøy beholdes som CSV-filer i modellutdataene, ikke som lange Word-tabeller.
+
+*Vedleggstabell C1. Samlet 12-måneders fremtidsprognose per måned og modell.*
+
+| Dato | SARIMA | Eksponentiell glatting | XGBoost | LSTM |
+| --- | --- | --- | --- | --- |
+| 2026-04 | 76.35 | 53.37 | 102.19 | 91.6 |
+| 2026-05 | 138.96 | 53.69 | 181.85 | 77.58 |
+| 2026-06 | 154.27 | 54 | 238.57 | 66.39 |
+| 2026-07 | 113.85 | 54.32 | 191.26 | 50.8 |
+| 2026-08 | 125.77 | 54.63 | 155.66 | 41.29 |
+| 2026-09 | 58.83 | 54.95 | 206.98 | 25.67 |
+| 2026-10 | 16.84 | 55.26 | 310.44 | 24.81 |
+| 2026-11 | 27.08 | 55.58 | 363.72 | 39.8 |
+| 2026-12 | 14.65 | 55.89 | 416.52 | 54.01 |
+| 2027-01 | 121.88 | 56.21 | 522.01 | 66.39 |
+| 2027-02 | 149.42 | 56.52 | 547.73 | 67.61 |
+| 2027-03 | 127.6 | 56.84 | 353.12 | 64.86 |
+
+Fullstendige prediksjons- og prognosefiler er samlet i filregisteret i vedleggstabell A2.
+
 ## Kodevedlegg
 
 Kodevedleggene nedenfor viser modellspesifikke funksjonsuttrekk fra implementasjonen som er brukt i studien. Hensikten er å dokumentere hvordan hver modell er implementert, uten å gjengi hele kodebasen i vedlegget.
 
 ### SARIMA-kode
 
-Vedlegg 11.3.1 viser funksjonen `run_sarima`, som står for fartøyvis modellvalg, residualdiagnostikk og ekspanderende `1`-stegs prediksjon for `ARIMA/SARIMA`.
+Vedlegg 11.6.1 viser funksjonen `run_sarima`, som står for fartøyvis modellvalg, residualdiagnostikk og ekspanderende `1`-stegs prediksjon for `ARIMA/SARIMA`.
 
 ```python
 def run_sarima(
@@ -1135,7 +1409,7 @@ def run_sarima(
 
 ### Eksponentiell glatting-kode
 
-Vedlegg 11.3.2 viser funksjonen `run_exponential_smoothing`, som står for fartøyvis modellvalg mellom `ETS`-varianter og ekspanderende `1`-stegs prediksjon gjennom testperioden.
+Vedlegg 11.6.2 viser funksjonen `run_exponential_smoothing`, som står for fartøyvis modellvalg mellom `ETS`-varianter og ekspanderende `1`-stegs prediksjon gjennom testperioden.
 
 ```python
 def run_exponential_smoothing(
@@ -1300,7 +1574,7 @@ def run_exponential_smoothing(
 
 ### XGBoost-kode
 
-Vedlegg 11.3.3 viser funksjonen `run_xgboost`, som står for feature-basert panelmodellering og ekspanderende `1`-stegs prediksjon med månedlig re-trening.
+Vedlegg 11.6.3 viser funksjonen `run_xgboost`, som står for feature-basert panelmodellering og ekspanderende `1`-stegs prediksjon med månedlig re-trening.
 
 ```python
 def run_xgboost(
@@ -1392,7 +1666,7 @@ def run_xgboost(
 
 ### LSTM-kode
 
-Vedlegg 11.3.4 viser funksjonen `run_lstm`, som står for sekvensbygging, månedlig re-trening og ekspanderende `1`-stegs prediksjon for den globale `LSTM`-modellen.
+Vedlegg 11.6.4 viser funksjonen `run_lstm`, som står for sekvensbygging, månedlig re-trening og ekspanderende `1`-stegs prediksjon for den globale `LSTM`-modellen.
 
 ```python
 def run_lstm(

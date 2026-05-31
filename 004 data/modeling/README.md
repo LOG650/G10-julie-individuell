@@ -18,6 +18,17 @@ Målet er å sammenligne fire modeller mot samme problemstilling:
 - `outputs/models/`: modellspesifikke artefakter
 - `outputs/logs/`: samlet modellsammenligning
 
+## Modellindeks
+
+| Modell | Kodefil | Modellspesifikke resultater |
+| --- | --- | --- |
+| SARIMA | `sarima.py` | `outputs/models/SARIMA/` |
+| Eksponentiell glatting | `exponential_smoothing.py` | `outputs/models/Eksponentiell glatting/` |
+| XGBoost | `xgboost_model.py` | `outputs/models/XGBoost/` |
+| LSTM | `lstm_model.py` | `outputs/models/LSTM/` |
+
+`run_models.py` kjører alle modellene samlet. Felles hjelpefunksjoner ligger i `common_*.py`, mens `outputs/shared/` inneholder sammenligninger, samlede prognoser og figurer på tvers av modellene.
+
 ## Datagrunnlag
 
 Pipelinen bruker `004 data/raw/Data som skal brukes Anonymisert.csv` som masterfil.

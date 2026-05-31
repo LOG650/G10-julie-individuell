@@ -17,14 +17,21 @@ __pycache__/
 
 # Local reference library
 # PDF references are tracked because they are part of the deliverable.
+ekstra info/
 
 # Local report outputs and working Word copies
 Rapport v2 - redigerbar.docx
+Rapport v2 - redigerbar*.docx
+Rapport v2 - redigerbar*.pdf
 Rapport v2.docx
+Rapport v2*.docx
+Rapport v2*.pdf
+099 backups/
 
 # Keep only the Markdown source tracked in the phase 4 report folder
 014 fase 4 - report/*
 !014 fase 4 - report/Rapport.md
+!014 fase 4 - report/Rapport v2 - redigerbar med lesbare vedlegg.docx
 
 # Local review copies
 /Peer-to-peer review LOG650 (1).pdf
